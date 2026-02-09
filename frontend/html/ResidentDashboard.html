@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ApartmentHub – Resident Dashboard</title>
+  <link rel="stylesheet" href="../css/Resident.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">
+      <div class="logo-icon">🏢</div>
+      <div>
+        <h3>ApartmentHub</h3>
+        <p>Resident Dashboard</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-name welcome">Welcome, Guest</div>
+      <a href="#" class="logout logout-btn">Logout</a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <h1>Welcome back!</h1>
+    <p class="subtitle">Browse available services or manage your bookings.</p>
+
+    <div class="actions">
+      <a href="servicebooking.html" class="btn primary">📅 Book Service</a>
+      <a href="mybookings.html" class="btn secondary">📋 My Bookings</a>
+    </div>
+
+    <h2>Available Services</h2>
+
+    <div class="services-grid">
+      <a href="servicebooking.html?service=Plumber" class="service-card">
+        <div class="icon">🔧</div>
+        <h3>Plumber</h3>
+        <p>Pipe repairs & installations</p>
+      </a>
+
+      <a href="servicebooking.html?service=Electrician" class="service-card">
+        <div class="icon">⚡</div>
+        <h3>Electrician</h3>
+        <p>Electrical work & repairs</p>
+      </a>
+
+      <a href="servicebooking.html?service=Carpenter" class="service-card">
+        <div class="icon">🪚</div>
+        <h3>Carpenter</h3>
+        <p>Woodwork & furniture</p>
+      </a>
+
+      <a href="servicebooking.html?service=Painter" class="service-card">
+        <div class="icon">🎨</div>
+        <h3>Painter</h3>
+        <p>Interior & exterior painting</p>
+      </a>
+
+      <a href="servicebooking.html?service=Cleaner" class="service-card">
+        <div class="icon">✨</div>
+        <h3>Cleaner</h3>
+        <p>Deep cleaning services</p>
+      </a>
+
+      <a href="servicebooking.html?service=HVAC" class="service-card">
+        <div class="icon">🌬️</div>
+        <h3>HVAC</h3>
+        <p>Heating & cooling systems</p>
+      </a>
+
+      <a href="servicebooking.html?service=Locksmith" class="service-card">
+        <div class="icon">🔑</div>
+        <h3>Locksmith</h3>
+        <p>Lock repairs & key services</p>
+      </a>
+
+      <a href="servicebooking.html?service=Pest Control" class="service-card">
+        <div class="icon">🐞</div>
+        <h3>Pest Control</h3>
+        <p>Pest removal & prevention</p>
+      </a>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="../javascript/header.js"></script>
+</body>
+</html>

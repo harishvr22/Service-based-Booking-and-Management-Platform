@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign In | ApartmentHub</title>
+  <link rel="stylesheet" href="../css/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<div class="auth-container">
+
+  <!-- LEFT IMAGE SECTION -->
+  <div class="auth-image">
+    <div class="overlay">
+      <h1>Discover Your Dream Apartment</h1>
+      <p>Browse thousands of apartments, connect with landlords, and find the perfect place to call home.</p>
+
+      <div class="stats">
+        <div>
+          <h2>2,500+</h2>
+          <span>Apartments</span>
+        </div>
+        <div>
+          <h2>1,200+</h2>
+          <span>Happy Tenants</span>
+        </div>
+        <div>
+          <h2>98%</h2>
+          <span>Satisfaction</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT FORM SECTION -->
+  <div class="auth-form">
+    <div class="brand">
+      <i class="fa-solid fa-building"></i>
+      <div>
+        <h3>ApartmentHub</h3>
+        <span>Find your perfect home</span>
+      </div>
+    </div>
+
+    <h2>Welcome back</h2>
+    <p class="subtitle">Enter your credentials to access your account</p>
+
+    <form id="loginForm">
+      <label>Email Address</label>
+      <div class="input-box">
+        <i class="fa-regular fa-envelope"></i>
+        <input type="email" id="loginEmail" placeholder="you@example.com">
+      </div>
+
+      <div class="label-row">
+        <label>Password</label>
+        <a href="#" class="forgot">Forgot password?</a>
+      </div>
+
+      <div class="input-box">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="loginPassword" placeholder="••••••••">
+        <i class="fa-regular fa-eye toggle" onclick="togglePass('loginPassword', this)"></i>
+      </div>
+
+      <button type="submit" class="btn">Sign In <i class="fa-solid fa-arrow-right"></i></button>
+
+      <div class="divider">or continue with</div>
+
+      <button type="button" class="google-btn">
+        <i class="fa-brands fa-google"></i> Google
+      </button>
+
+      <p class="switch">Don't have an account? <a href="signup.html">Sign up</a></p>
+    </form>
+  </div>
+
+</div>
+
+<script src="../javascript/auth.js"></script>
+</body>
+</html>

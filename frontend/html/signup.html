@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Account | ApartmentHub</title>
+  <link rel="stylesheet" href="../css/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<div class="auth-container">
+
+  <div class="auth-image">
+    <div class="overlay">
+      <h1>Discover Your Dream Apartment</h1>
+      <p>Browse thousands of apartments, connect with landlords, and find the perfect place to call home.</p>
+
+      <div class="stats">
+        <div>
+          <h2>2,500+</h2>
+          <span>Apartments</span>
+        </div>
+        <div>
+          <h2>1,200+</h2>
+          <span>Happy Tenants</span>
+        </div>
+        <div>
+          <h2>98%</h2>
+          <span>Satisfaction</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form">
+    <div class="brand">
+      <i class="fa-solid fa-building"></i>
+      <div>
+        <h3>ApartmentHub</h3>
+        <span>Find your perfect home</span>
+      </div>
+    </div>
+
+    <h2>Create account</h2>
+    <p class="subtitle">Start your journey to finding the perfect apartment</p>
+
+    <form id="signupForm">
+      <label>Full Name</label>
+      <div class="input-box">
+        <i class="fa-regular fa-user"></i>
+        <input type="text" id="name" placeholder="John Doe">
+      </div>
+
+      <label>Email Address</label>
+      <div class="input-box">
+        <i class="fa-regular fa-envelope"></i>
+        <input type="email" id="email" placeholder="you@example.com">
+      </div>
+
+      <label>Password</label>
+      <div class="input-box">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="password" placeholder="••••••••">
+        <i class="fa-regular fa-eye toggle" onclick="togglePass('password', this)"></i>
+      </div>
+
+      <label>Role</label>
+      <div class="role">
+        <label class="radio-label"><input type="radio" name="role" value="Resident" checked> Resident</label>
+        <label class="radio-label"><input type="radio" name="role" value="Provider"> Provider</label>
+      </div>
+
+      <label id="apartmentLabel">Apartment ID</label>
+      <div class="input-box" id="apartmentField">
+        <i class="fa-solid fa-house"></i>
+        <input type="text" id="apartmentId" placeholder="Enter your apartment ID">
+      </div>
+
+      <label id="serviceLabel" style="display:none;">Service Type</label>
+      <div id="serviceDropdownWrapper" style="display:none;" class="custom-dropdown-wrapper">
+        <div class="custom-dropdown" id="customDropdown">
+          <div class="dropdown-selected" id="dropdownSelected">
+            <span>Select your service</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <ul class="dropdown-menu" id="dropdownMenu">
+            <li data-value="">Select your service</li>
+            <li data-value="Plumber">Plumber</li>
+            <li data-value="Electrician">Electrician</li>
+            <li data-value="Carpenter">Carpenter</li>
+            <li data-value="Painter">Painter</li>
+            <li data-value="Cleaner">Cleaner</li>
+            <li data-value="HVAC Technician">HVAC Technician</li>
+            <li data-value="Locksmith">Locksmith</li>
+            <li data-value="Pest Control">Pest Control</li>
+          </ul>
+        </div>
+        <input type="hidden" id="serviceValue" name="service">
+      </div>
+
+      <button class="btn" type="submit">Create Account <i class="fa-solid fa-arrow-right"></i></button>
+
+      <div class="divider">or continue with</div>
+
+      <button type="button" class="google-btn">
+        <i class="fa-brands fa-google"></i> Google
+      </button>
+
+      <p class="switch">Already have an account? <a href="login.html">Sign in</a></p>
+    </form>
+  </div>
+
+</div>
+
+<script src="../javascript/auth.js"></script>
+</body>
+</html>

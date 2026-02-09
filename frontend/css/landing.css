@@ -1,0 +1,425 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #fafafa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #fff;
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    stroke: #E07856;
+    stroke-width: 2;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-login {
+    background-color: transparent;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.btn-login:hover {
+    background-color: #f5f5f5;
+}
+
+.btn-signup {
+    background-color: #E07856;
+    color: white;
+}
+
+.btn-signup:hover {
+    background-color: #d66a47;
+}
+
+.btn-primary {
+    background-color: #E07856;
+    color: white;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-primary:hover {
+    background-color: #d66a47;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #333;
+    border: 1px solid #333;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-secondary:hover {
+    background-color: #f5f5f5;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+    padding: 6rem 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.8;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* How It Works Section */
+.how-it-works {
+    padding: 5rem 0;
+    background-color: #fff;
+}
+
+.how-it-works h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.step {
+    text-align: center;
+    flex: 0 1 auto;
+}
+
+.step-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #E07856;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.step-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.step h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.step p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.arrow {
+    font-size: 2rem;
+    color: #E07856;
+    font-weight: bold;
+}
+
+/* User Roles Section */
+.user-roles {
+    padding: 5rem 0;
+    background-color: #fafafa;
+}
+
+.user-roles h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.role-card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+}
+
+.role-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #E07856;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.role-icon svg {
+    width: 30px;
+    height: 30px;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.role-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.role-card p {
+    color: #666;
+    line-height: 1.8;
+    font-size: 0.95rem;
+}
+
+/* Key Features Section */
+.key-features {
+    padding: 5rem 0;
+    background-color: #fff;
+}
+
+.key-features h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    background-color: #fafafa;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #E07856;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.feature-icon svg {
+    width: 30px;
+    height: 30px;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.feature-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.feature-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+    background-color: #f5f5f5;
+    padding: 3rem 0;
+    margin-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.footer-content {
+    text-align: center;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.footer-logo .logo-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.footer-text {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer-copyright {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .steps {
+        gap: 1rem;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+        margin: 1rem 0;
+    }
+
+    .how-it-works h2,
+    .user-roles h2,
+    .key-features h2 {
+        font-size: 1.8rem;
+    }
+
+    .nav-buttons {
+        gap: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 3rem 0;
+    }
+
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .how-it-works,
+    .user-roles,
+    .key-features {
+        padding: 2rem 0;
+    }
+
+    .roles-grid,
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}

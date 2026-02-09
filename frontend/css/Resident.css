@@ -1,0 +1,170 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #fafafa;
+  color: #222;
+}
+
+/* Navbar */
+.navbar {
+  background: #fff;
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  background: #e95220;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.logo h3 {
+  font-size: 18px;
+}
+
+.logo p {
+  font-size: 12px;
+  color: #777;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.logout {
+  text-decoration: none;
+  color: #ed5927;
+  font-size: 13px;
+  border: 1px solid #ed5927;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.logout:hover {
+  background: #ed5927;
+  color: #fff;
+}
+
+/* Main Container */
+.container {
+  padding: 40px;
+}
+
+.subtitle {
+  margin-top: 8px;
+  color: #666;
+}
+
+/* Buttons */
+.actions {
+  margin: 25px 0;
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.primary {
+  background: #ed5927;
+  color: white;
+}
+
+.primary:hover {
+  background: #d84315;
+}
+
+.secondary {
+  background: white;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.secondary:hover {
+  border-color: #ed5927;
+  color: #ed5927;
+}
+
+/* Services */
+h2 {
+  margin: 30px 0 20px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.service-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  border: 1px solid #eee;
+  transition: 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
+}
+
+.service-card:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  transform: translateY(-3px);
+  border-color: #ed5927;
+}
+
+.icon {
+  background: #fff1eb;
+  color: #d4582f;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.service-card h3 {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.service-card p {
+  font-size: 13px;
+  color: #777;
+}

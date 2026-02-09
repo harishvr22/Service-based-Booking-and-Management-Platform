@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Bookings | ApartmentHub</title>
+  <link rel="stylesheet" href="../css/mybookings.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="logo">
+      <a href="#" class="back" onclick="goBack(event)">←</a>
+      <div class="logo-content">
+        <div class="logo-icon">📋</div>
+        <div>
+          <h3>My Bookings</h3>
+          <p>Track your service requests</p>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-name welcome">Welcome, Guest</div>
+      <a href="#" class="logout logout-btn">Logout</a>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container">
+    <div class="bookings-wrapper">
+      <!-- Clear History Button -->
+      <div id="clearButtonContainer" style="margin-bottom: 20px; display: none;">
+        <button class="btn-clear-history" onclick="clearHistory()">🗑️ Clear History</button>
+      </div>
+      <!-- Bookings will be loaded here -->
+      <div id="bookingsList"></div>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-icon">📭</div>
+        <h2>No bookings placed</h2>
+        <p>You haven't booked any services yet. Start by booking a service.</p>
+        <a href="../html/ResidentDashboard.html" class="btn-primary">Book a Service</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function goBack(event) {
+      event.preventDefault();
+      window.history.back();
+    }
+  </script>
+  <script src="../javascript/mybookings.js"></script>
+  <script src="../javascript/header.js"></script>
+</body>
+</html>
