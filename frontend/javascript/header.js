@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.removeItem('isLoggedIn');
       // optional: remove userName to fully clear
       // localStorage.removeItem('userName');
-      window.location.href = 'login.html';
+      window.location.href = 'landingpage.html';
     });
   });
 });
