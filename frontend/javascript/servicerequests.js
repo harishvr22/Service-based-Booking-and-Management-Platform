@@ -4,8 +4,7 @@
 
 // Update Job Status Button Handler
 document.querySelector('.update-status-btn')?.addEventListener('click', () => {
-    console.log('Update Job Status clicked');
-    // Navigate to job update page or open modal
+    window.location.href = 'UpdateJobStatus.html';
 });
 
 // Accept Button Handlers

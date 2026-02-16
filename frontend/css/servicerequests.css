@@ -233,6 +233,10 @@ body {
     gap: 12px;
 }
 
+.request-card.accepted-card .request-actions {
+    display: none;
+}
+
 .btn-accept,
 .btn-reject {
     display: flex;

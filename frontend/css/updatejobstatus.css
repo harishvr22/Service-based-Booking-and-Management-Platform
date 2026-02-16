@@ -1,0 +1,376 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+}
+
+/* Header Styles */
+.header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e8ecf0;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background-color: #f0f2f5;
+    color: #2c3e50;
+}
+
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #e07856 0%, #d97649 100%);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.header-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.header-content h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 2px;
+    letter-spacing: -0.3px;
+}
+
+.header-content p {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* Container */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 32px;
+}
+
+/* Content Header */
+.content-header {
+    margin-bottom: 32px;
+}
+
+.content-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.content-header p {
+    font-size: 14px;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+/* Jobs List */
+.jobs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Job Card */
+.job-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e8ecf0;
+    transition: all 0.2s;
+}
+
+.job-card:hover {
+    border-color: #d0d7e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+}
+
+.job-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.resident-info {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.accepted {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-badge.in-progress {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.status-badge.completed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Job Details */
+.job-details {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.detail-item svg {
+    width: 16px;
+    height: 16px;
+    color: #adb5bd;
+    flex-shrink: 0;
+}
+
+/* Status Change Section */
+.status-change {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.dropdown-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 250px;
+}
+
+.status-dropdown {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e07856;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #2c3e50;
+    background-color: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 32px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.status-dropdown:hover {
+    border-color: #d97649;
+    background-color: #fff9f7;
+}
+
+.status-dropdown:focus {
+    outline: none;
+    border-color: #e07856;
+    box-shadow: 0 0 0 3px rgba(224, 120, 86, 0.15);
+    background-color: #fafafa;
+}
+
+.status-dropdown option {
+    padding: 8px 12px;
+    background-color: white;
+    color: #50422c;
+}
+
+.status-dropdown option:hover {
+    background-color: #fff9f7;
+    color: #e07856;
+}
+
+.status-dropdown option:checked {
+    background: linear-gradient(#e07856, #e07856);
+    background-color: #e07856 !important;
+    color: white;
+}
+
+.dropdown-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #e07856;
+    pointer-events: none;
+}
+
+.btn-update {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: #e07856;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    letter-spacing: -0.2px;
+}
+
+.btn-update:hover {
+    background-color: #d97649;
+    box-shadow: 0 2px 6px rgba(224, 120, 86, 0.2);
+}
+
+.btn-update svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Completed Job Card */
+.job-card.completed .status-change {
+    display: none;
+}
+
+.job-card.completed {
+    opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        padding: 16px;
+    }
+
+    .container {
+        padding: 20px 16px;
+    }
+
+    .content-header h1 {
+        font-size: 22px;
+    }
+
+    .job-details {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .status-change {
+        flex-direction: column;
+    }
+
+    .dropdown-wrapper {
+        max-width: 100%;
+    }
+
+    .btn-update {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .job-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 12px 16px;
+    }
+
+    .container {
+        padding: 16px 12px;
+    }
+
+    .content-header h1 {
+        font-size: 20px;
+    }
+
+    .job-card {
+        padding: 16px;
+    }
+
+    .job-info h3 {
+        font-size: 15px;
+    }
+
+    .resident-info {
+        font-size: 12px;
+    }
+}
