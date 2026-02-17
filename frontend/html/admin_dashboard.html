@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApartmentCare - Admin Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/admin_dashboard.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>ApartmentCare</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-user-tie"></i> Providers</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li>
+                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Analytics Overview</h1>
+                <p>Track bookings, revenue, and service performance</p>
+            </header>
+
+            <!-- Stats Cards -->
+            <section class="stats-grid">
+                <!-- Total Bookings -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-orange-light">
+                            <i class="fas fa-clipboard-list text-orange"></i>
+                        </div>
+                        <span class="trend positive"><i class="fas fa-arrow-up"></i> +12%</span>
+                    </div>
+                    <div class="stat-body">
+                        <h3>276</h3>
+                        <p>Total Bookings</p>
+                    </div>
+                </div>
+
+                <!-- Active Providers -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-blue-light">
+                            <i class="fas fa-user-friends text-blue"></i>
+                        </div>
+                        <span class="trend positive"><i class="fas fa-arrow-up"></i> +3</span>
+                    </div>
+                    <div class="stat-body">
+                        <h3>18</h3>
+                        <p>Active Providers</p>
+                    </div>
+                </div>
+
+                <!-- Revenue -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-green-light">
+                            <i class="fas fa-rupee-sign text-green"></i>
+                        </div>
+                        <span class="trend negative"><i class="fas fa-arrow-down"></i> -8%</span>
+                    </div>
+                    <div class="stat-body">
+                        <h3>₹38,000</h3>
+                        <p>Revenue (Feb)</p>
+                    </div>
+                </div>
+
+                <!-- Avg Rating -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-yellow-light">
+                            <i class="fas fa-chart-line text-yellow"></i>
+                        </div>
+                        <span class="trend positive"><i class="fas fa-arrow-up"></i> +0.2</span>
+                    </div>
+                    <div class="stat-body">
+                        <h3>4.6</h3>
+                        <p>Avg. Rating</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-grid">
+                <!-- Booking Trends -->
+                <div class="chart-card">
+                    <h3>Booking Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="bookingTrendsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Service Breakdown -->
+                <div class="chart-card">
+                    <h3>Service Breakdown</h3>
+                    <div class="chart-container donut-container">
+                        <canvas id="serviceBreakdownChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Revenue Trend -->
+            <section class="full-width-chart">
+                <div class="chart-card">
+                    <h3>Revenue Trend</h3>
+                    <div class="chart-container wide-chart">
+                        <canvas id="revenueTrendChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../javascript/admin_dashboard.js"></script>
+</body>
+
+</html>
