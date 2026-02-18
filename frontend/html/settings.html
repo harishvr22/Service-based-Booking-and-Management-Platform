@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApartmentCare - Admin Settings</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/admin_dashboard.css">
+    <link rel="stylesheet" href="../css/settings.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>ApartmentCare</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-user-tie"></i> Providers</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li>
+                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                    <li class="active">
+                        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Settings</h1>
+                <p>Configure apartment complex and system preferences</p>
+            </header>
+
+            <!-- Apartment Details Section -->
+            <section class="settings-card">
+                <div class="settings-header">
+                    <i class="far fa-building text-orange"></i>
+                    <h3>Apartment Details</h3>
+                </div>
+                <div class="settings-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="apartmentName">Apartment Name</label>
+                            <input type="text" id="apartmentName" value="Sunrise Apartments">
+                        </div>
+                        <div class="form-group">
+                            <label for="totalUnits">Total Units</label>
+                            <input type="number" id="totalUnits" value="120">
+                        </div>
+                    </div>
+                    <button class="btn-save">Save Changes</button>
+                </div>
+            </section>
+
+            <!-- Service Categories Section -->
+            <section class="settings-card">
+                <div class="settings-header">
+                    <i class="fas fa-tools text-orange"></i>
+                    <h3>Service Categories</h3>
+                </div>
+                <div class="settings-body">
+                    <div class="tags-container">
+                        <span class="tag">Plumbing</span>
+                        <span class="tag">Electrical</span>
+                        <span class="tag">Cleaning</span>
+                        <span class="tag">Carpentry</span>
+                        <span class="tag">Painting</span>
+                        <span class="tag">Pest Control</span>
+                    </div>
+                    <p class="helper-text">Contact support to add or remove service categories</p>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section class="settings-card">
+                <div class="settings-header">
+                    <i class="far fa-bell text-orange"></i>
+                    <h3>Notifications</h3>
+                </div>
+                <div class="settings-body">
+                    <div class="toggle-item">
+                        <div class="toggle-info">
+                            <h4>Email Notifications</h4>
+                            <p>Receive booking alerts via email</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="toggle-item">
+                        <div class="toggle-info">
+                            <h4>SMS Notifications</h4>
+                            <p>Receive urgent alerts via SMS</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Section -->
+            <section class="settings-card">
+                <div class="settings-header">
+                    <i class="fas fa-shield-alt text-orange"></i>
+                    <h3>System</h3>
+                </div>
+                <div class="settings-body">
+                    <div class="toggle-item">
+                        <div class="toggle-info">
+                            <h4>Auto-Approve Providers</h4>
+                            <p>Skip manual verification for new providers</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="toggle-item">
+                        <div class="toggle-info">
+                            <h4>Maintenance Mode</h4>
+                            <p>Disable bookings temporarily</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+
+</html>
