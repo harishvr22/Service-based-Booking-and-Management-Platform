@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApartmentCare - Announcements</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/admin_dashboard.css">
+    <link rel="stylesheet" href="../css/announcements.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>ApartmentCare</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-user-tie"></i> Providers</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li class="active">
+                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div>
+                    <h1>Announcements</h1>
+                    <p>Broadcast notices to residents and providers</p>
+                </div>
+                <button class="btn-primary" id="newAnnouncementBtn">
+                    <i class="fas fa-plus"></i> New Announcement
+                </button>
+            </header>
+
+            <!-- Create Announcement Form (Hidden by default) -->
+            <section class="create-announcement-section" id="createAnnouncementForm" style="display: none;">
+                <div class="form-card">
+                    <h3>Create Announcement</h3>
+                    <form id="announcementForm">
+                        <div class="form-group">
+                            <input type="text" placeholder="Announcement title" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Write your announcement message..." class="form-control"
+                                rows="4"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <div class="custom-dropdown">
+                                <div class="dropdown-select">
+                                    <span class="select-value">All Users</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="dropdown-list">
+                                    <div class="dropdown-item selected" data-value="All Users">
+                                        <i class="fas fa-check check-icon"></i> All Users
+                                    </div>
+                                    <div class="dropdown-item" data-value="Residents Only">
+                                        <i class="fas fa-check check-icon" style="opacity: 0;"></i> Residents Only
+                                    </div>
+                                    <div class="dropdown-item" data-value="Providers Only">
+                                        <i class="fas fa-check check-icon" style="opacity: 0;"></i> Providers Only
+                                    </div>
+                                </div>
+                                <input type="hidden" id="audienceInput" value="All Users">
+                            </div>
+                            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Publish</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Announcements List -->
+            <section class="announcements-list">
+                <!-- Example Announcement Item -->
+                <div class="announcement-card">
+                    <div class="announcement-header">
+                        <div class="announcement-title">
+                            <i class="fas fa-bullhorn text-orange"></i>
+                            <h3>Provider Payment Update</h3>
+                            <span class="badge badge-purple">Providers</span>
+                        </div>
+                        <button class="btn-icon delete-btn"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <p class="announcement-text">
+                        Payments for January will be processed by Feb 18.
+                    </p>
+                    <span class="announcement-date">Feb 13, 2026</span>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../javascript/announcements.js"></script>
+</body>
+
+</html>

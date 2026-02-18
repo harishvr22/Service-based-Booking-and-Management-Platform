@@ -1,0 +1,295 @@
+/* Inherits variables from admin_dashboard.css */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.page-header p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-cancel {
+    background-color: var(--white);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #fff5f2;
+    border-color: var(--primary-hover);
+    color: var(--primary-hover);
+}
+
+/* Create Form Styles */
+.create-announcement-section {
+    margin-bottom: 30px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-card {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+}
+
+.form-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #fcfcfc;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    background-color: var(--white);
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Custom Dropdown */
+.custom-dropdown {
+    position: relative;
+    width: 200px;
+}
+
+.dropdown-select {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--white);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.3s;
+}
+
+.dropdown-select:hover {
+    border-color: #ccc;
+}
+
+.dropdown-select i {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    padding: 5px;
+    z-index: 100;
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+.dropdown-list.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #fcece8;
+    /* Very light orange for hover backup */
+    color: var(--primary-color);
+}
+
+.dropdown-item.selected {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.dropdown-item.selected:hover {
+    background-color: var(--primary-hover);
+}
+
+.check-icon {
+    font-size: 0.8rem;
+    width: 16px;
+}
+
+.btn-submit {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-submit:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Announcement List Styles */
+.announcements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.announcement-card {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s;
+}
+
+.announcement-card:hover {
+    transform: translateY(-2px);
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.announcement-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.announcement-title h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.announcement-title i {
+    color: var(--primary-color);
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-purple {
+    background-color: #f3e5f5;
+    color: #9c27b0;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.delete-btn:hover {
+    color: var(--red);
+}
+
+.announcement-text {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.announcement-date {
+    font-size: 0.75rem;
+    color: #999;
+}

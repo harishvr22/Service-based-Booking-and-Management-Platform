@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 display: false
             }
         },
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
         scales: {
             y: {
                 beginAtZero: true,
