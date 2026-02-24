@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApartmentCare - User Management</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/admin_dashboard.css">
+    <link rel="stylesheet" href="../css/users.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>ApartmentCare</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fas fa-user-tie"></i> Providers</a>
+                    </li>
+                    <li class="active">
+                        <a href="users.html"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li>
+                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>User Management</h1>
+                <p>Manage residents, service providers, and admin accounts separately</p>
+            </header>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-blue">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-label">Residents</span>
+                        <h2 class="stat-value">6</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-purple">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-label">Service Providers</span>
+                        <h2 class="stat-value">5</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-orange">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-label">Admins</span>
+                        <h2 class="stat-value">1</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Management Section -->
+            <div class="management-card">
+                <div class="management-nav">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="residents">Residents</button>
+                        <button class="tab-btn" data-tab="providers">Service Providers</button>
+                        <button class="tab-btn" data-tab="admins">Admins</button>
+                    </div>
+                </div>
+
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="userSearch" placeholder="Search by name or flat number...">
+                </div>
+
+                <div class="table-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Flat / Block</th>
+                                <th>Move-in</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Residents Data (Default) -->
+                            <tr>
+                                <td class="font-600">John Doe</td>
+                                <td class="text-light">john@apt.com</td>
+                                <td class="text-light">+91 98765 00001</td>
+                                <td>
+                                    <div class="flat-info">
+                                        <span class="flat-number">A-101</span>
+                                        <span class="block-name">A Block</span>
+                                    </div>
+                                </td>
+                                <td class="text-light">Jan 2024</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">Jane Smith</td>
+                                <td class="text-light">jane@apt.com</td>
+                                <td class="text-light">+91 98765 00002</td>
+                                <td>
+                                    <div class="flat-info">
+                                        <span class="flat-number">B-205</span>
+                                        <span class="block-name">B Block</span>
+                                    </div>
+                                </td>
+                                <td class="text-light">Mar 2024</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">Mike Wilson</td>
+                                <td class="text-light">mike@apt.com</td>
+                                <td class="text-light">+91 98765 00003</td>
+                                <td>
+                                    <div class="flat-info">
+                                        <span class="flat-number">C-302</span>
+                                        <span class="block-name">C Block</span>
+                                    </div>
+                                </td>
+                                <td class="text-light">Jun 2023</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">Sara Lee</td>
+                                <td class="text-light">sara@apt.com</td>
+                                <td class="text-light">+91 98765 00004</td>
+                                <td>
+                                    <div class="flat-info">
+                                        <span class="flat-number">A-404</span>
+                                        <span class="block-name">A Block</span>
+                                    </div>
+                                </td>
+                                <td class="text-light">Nov 2024</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">Ravi Patel</td>
+                                <td class="text-light">ravi@apt.com</td>
+                                <td class="text-light">+91 98765 00005</td>
+                                <td>
+                                    <div class="flat-info">
+                                        <span class="flat-number">D-110</span>
+                                        <span class="block-name">D Block</span>
+                                    </div>
+                                </td>
+                                <td class="text-light">Feb 2025</td>
+                                <td><span class="badge badge-inactive">Inactive</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="../javascript/users.js"></script>
+</body>
+
+</html>
