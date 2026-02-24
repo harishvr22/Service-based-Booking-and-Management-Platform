@@ -40,7 +40,7 @@
                         <a href="#"><i class="fas fa-user-tie"></i> Providers</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fas fa-users"></i> Users</a>
+                        <a href="users.html"><i class="fas fa-users"></i> Users</a>
                     </li>
                     <li>
                         <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
@@ -59,30 +59,132 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="dashboard-header">
-                <h1>Settings</h1>
-                <p>Configure apartment complex and system preferences</p>
+                <div class="header-title">
+                    <h1>Settings</h1>
+                    <p>Configure apartment complex and system preferences</p>
+                </div>
             </header>
 
-            <!-- Apartment Details Section -->
-            <section class="settings-card">
-                <div class="settings-header">
-                    <i class="far fa-building text-orange"></i>
-                    <h3>Apartment Details</h3>
-                </div>
-                <div class="settings-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="apartmentName">Apartment Name</label>
-                            <input type="text" id="apartmentName" value="Sunrise Apartments">
+            <div class="settings-grid">
+                <div class="settings-column">
+                    <!-- Profile Settings Section -->
+                    <section class="settings-card">
+                        <div class="settings-header">
+                            <i class="far fa-user-circle text-orange"></i>
+                            <h3>Admin Profile</h3>
                         </div>
-                        <div class="form-group">
-                            <label for="totalUnits">Total Units</label>
-                            <input type="number" id="totalUnits" value="120">
+                        <div class="settings-body">
+                            <div class="profile-preview">
+                                <div class="avatar">AD</div>
+                                <div class="avatar-info">
+                                    <h4>Admin User</h4>
+                                    <p>Super Administrator</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminName">Full Name</label>
+                                <input type="text" id="adminName" value="Admin User">
+                            </div>
+                            <div class="form-group">
+                                <label for="adminEmail">Email Address</label>
+                                <input type="email" id="adminEmail" value="admin@apartmentcare.com">
+                            </div>
+                            <button class="btn-save">Update Profile</button>
                         </div>
-                    </div>
-                    <button class="btn-save">Save Changes</button>
+                    </section>
+
+                    <!-- Apartment Details Section -->
+                    <section class="settings-card">
+                        <div class="settings-header">
+                            <i class="far fa-building text-orange"></i>
+                            <h3>Apartment Details</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="form-group">
+                                <label for="apartmentName">Apartment Name</label>
+                                <input type="text" id="apartmentName" value="Sunrise Apartments">
+                            </div>
+                            <div class="form-group">
+                                <label for="totalUnits">Total Units</label>
+                                <input type="number" id="totalUnits" value="120">
+                            </div>
+                            <button class="btn-save">Save Details</button>
+                        </div>
+                    </section>
                 </div>
-            </section>
+
+                <div class="settings-column">
+                    <!-- Notifications Section -->
+                    <section class="settings-card">
+                        <div class="settings-header">
+                            <i class="far fa-bell text-orange"></i>
+                            <h3>Notifications</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="toggle-item">
+                                <div class="toggle-info">
+                                    <h4>Email Notifications</h4>
+                                    <p>Receive booking alerts via email</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="toggle-item">
+                                <div class="toggle-info">
+                                    <h4>SMS Notifications</h4>
+                                    <p>Receive urgent alerts via SMS</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Security Section -->
+                    <section class="settings-card">
+                        <div class="settings-header">
+                            <i class="fas fa-lock text-orange"></i>
+                            <h3>Security</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" placeholder="New Password">
+                            </div>
+                            <button class="btn-save">Change Password</button>
+                        </div>
+                    </section>
+
+                    <!-- System Section -->
+                    <section class="settings-card">
+                        <div class="settings-header">
+                            <i class="fas fa-shield-alt text-orange"></i>
+                            <h3>System</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="toggle-item">
+                                <div class="toggle-info">
+                                    <h4>Maintenance Mode</h4>
+                                    <p>Disable bookings temporarily</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="maintenanceToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
 
             <!-- Service Categories Section -->
             <section class="settings-card">
@@ -103,69 +205,16 @@
                 </div>
             </section>
 
-            <!-- Notifications Section -->
-            <section class="settings-card">
-                <div class="settings-header">
-                    <i class="far fa-bell text-orange"></i>
-                    <h3>Notifications</h3>
-                </div>
-                <div class="settings-body">
-                    <div class="toggle-item">
-                        <div class="toggle-info">
-                            <h4>Email Notifications</h4>
-                            <p>Receive booking alerts via email</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="toggle-item">
-                        <div class="toggle-info">
-                            <h4>SMS Notifications</h4>
-                            <p>Receive urgent alerts via SMS</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-            </section>
-
-            <!-- System Section -->
-            <section class="settings-card">
-                <div class="settings-header">
-                    <i class="fas fa-shield-alt text-orange"></i>
-                    <h3>System</h3>
-                </div>
-                <div class="settings-body">
-                    <div class="toggle-item">
-                        <div class="toggle-info">
-                            <h4>Auto-Approve Providers</h4>
-                            <p>Skip manual verification for new providers</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="toggle-item">
-                        <div class="toggle-info">
-                            <h4>Maintenance Mode</h4>
-                            <p>Disable bookings temporarily</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-            </section>
-
         </main>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Custom JS -->
+    <script src="../javascript/settings.js"></script>
+
+    </main>
     </div>
 </body>
 
