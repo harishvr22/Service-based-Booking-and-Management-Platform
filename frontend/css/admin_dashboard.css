@@ -325,3 +325,68 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Global Utility Colors */
+.text-orange {
+    color: #f82 !important;
+}
+
+.text-blue {
+    color: #3498db !important;
+}
+
+.text-green {
+    color: #2ecc71 !important;
+}
+
+.text-purple {
+    color: #9b59b6 !important;
+}
+
+.text-red {
+    color: #e74c3c !important;
+}
+
+.bg-orange-light {
+    background-color: rgba(255, 136, 34, 0.1) !important;
+}
+
+.bg-blue-light {
+    background-color: rgba(52, 152, 219, 0.1) !important;
+}
+
+.bg-green-light {
+    background-color: rgba(46, 204, 113, 0.1) !important;
+}
+
+.bg-purple-light {
+    background-color: rgba(155, 89, 182, 0.1) !important;
+}
+
+.bg-red-light {
+    background-color: rgba(231, 76, 60, 0.1) !important;
+}
+
+.font-600 {
+    font-weight: 600;
+}
+
+/* Interactive Hover Effects */
+.stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-nav ul li a {
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav ul li:not(.active) a:hover {
+    background: rgba(232, 90, 45, 0.05);
+    color: var(--primary-color);
+    padding-left: 25px;
+}

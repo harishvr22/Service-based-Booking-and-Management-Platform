@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApartmentCare - Service Bookings</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/admin_dashboard.css">
+    <link rel="stylesheet" href="../css/admin_bookings.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>ApartmentCare</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    </li>
+                    <li class="active">
+                        <a href="admin_bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    </li>
+                    <li>
+                        <a href="admin_providers.html"><i class="fas fa-user-tie"></i> Providers</a>
+                    </li>
+                    <li>
+                        <a href="users.html"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li>
+                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Service Bookings</h1>
+                <p>Track and manage all apartment maintenance & service requests</p>
+            </header>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-blue-light">
+                            <i class="fas fa-clipboard-list text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>7</h3>
+                        <p>Total Bookings</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-orange-light">
+                            <i class="fas fa-clock text-orange"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>2</h3>
+                        <p>Pending Approval</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-purple-light">
+                            <i class="fas fa-spinner text-purple"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>3</h3>
+                        <p>Active Tasks</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-green-light">
+                            <i class="fas fa-check-double text-green"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>1</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="management-card">
+                <div class="toolbar">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="bookingSearch" placeholder="Search by name, booking ID, or flat no...">
+                    </div>
+                    <div class="filter-container">
+                        <button class="filter-btn">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <select class="status-select">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="in-progress">In Progress</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Resident / Flat</th>
+                                <th>Service</th>
+                                <th>Assigned Provider</th>
+                                <th>Schedule</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-600">BK-1001</td>
+                                <td>
+                                    <div class="resident-info">
+                                        <div class="name">John Doe</div>
+                                        <div class="flat">A-101</div>
+                                    </div>
+                                </td>
+                                <td class="text-blue">Pipe Leakage Repair</td>
+                                <td>Rajesh Kumar</td>
+                                <td>
+                                    <div class="schedule-info">
+                                        <div class="date">Feb 18, 2026</div>
+                                        <div class="time">10:00 AM - 12:00 PM</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge-priority priority-high">High</span></td>
+                                <td><span class="badge-status status-pending">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">BK-1002</td>
+                                <td>
+                                    <div class="resident-info">
+                                        <div class="name">Jane Smith</div>
+                                        <div class="flat">B-205</div>
+                                    </div>
+                                </td>
+                                <td>AC Servicing</td>
+                                <td>Sunil Verma</td>
+                                <td>
+                                    <div class="schedule-info">
+                                        <div class="date">Feb 18, 2026</div>
+                                        <div class="time">2:00 PM - 4:00 PM</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge-priority priority-medium">Medium</span></td>
+                                <td><span class="badge-status status-confirmed">Confirmed</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">BK-1003</td>
+                                <td>
+                                    <div class="resident-info">
+                                        <div class="name">Mike Wilson</div>
+                                        <div class="flat">C-302</div>
+                                    </div>
+                                </td>
+                                <td>Deep Cleaning</td>
+                                <td>Deepak Sharma</td>
+                                <td>
+                                    <div class="schedule-info">
+                                        <div class="date">Feb 17, 2026</div>
+                                        <div class="time">9:00 AM - 1:00 PM</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge-priority priority-low">Low</span></td>
+                                <td><span class="badge-status status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">BK-1004</td>
+                                <td>
+                                    <div class="resident-info">
+                                        <div class="name">Sara Lee</div>
+                                        <div class="flat">A-404</div>
+                                    </div>
+                                </td>
+                                <td>Toilet Blockage</td>
+                                <td>Rajesh Kumar</td>
+                                <td>
+                                    <div class="schedule-info">
+                                        <div class="date">Feb 19, 2026</div>
+                                        <div class="time">8:00 AM - 9:00 AM</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge-priority priority-urgent">Urgent</span></td>
+                                <td><span class="badge-status status-pending">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">BK-1005</td>
+                                <td>
+                                    <div class="resident-info">
+                                        <div class="name">Ravi Patel</div>
+                                        <div class="flat">D-110</div>
+                                    </div>
+                                </td>
+                                <td>Door Hinge Repair</td>
+                                <td>Amit Singh</td>
+                                <td>
+                                    <div class="schedule-info">
+                                        <div class="date">Feb 16, 2026</div>
+                                        <div class="time">11:00 AM - 12:00 PM</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge-priority priority-low">Low</span></td>
+                                <td><span class="badge-status status-cancelled">Cancelled</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-600">BK-1006</td>
+                                <td>
+                                    <div class="resident-info">
+                                        <div class="name">Priya Sharma</div>
+                                        <div class="flat">B-308</div>
+                                    </div>
+                                </td>
+                                <td>Wiring Issue Fix</td>
+                                <td>Sunil Verma</td>
+                                <td>
+                                    <div class="schedule-info">
+                                        <div class="date">Feb 19, 2026</div>
+                                        <div class="time">3:00 PM - 5:00 PM</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge-priority priority-high">High</span></td>
+                                <td><span class="badge-status status-in-progress">In Progress</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../javascript/admin_bookings.js"></script>
+</body>
+
+</html>

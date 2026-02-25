@@ -1,0 +1,249 @@
+/* admin_bookings.css */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: var(--white);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f0f0f0;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.text-orange {
+    color: #E85A2D;
+}
+
+.text-blue {
+    color: #3498db;
+}
+
+.text-green {
+    color: #2ecc71;
+}
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 600px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+#bookingSearch {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #fcfcfc;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s;
+}
+
+#bookingSearch:focus {
+    border-color: var(--primary-color);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(232, 90, 45, 0.1);
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-btn {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    background: #f8f8f8;
+    border-color: #ddd;
+}
+
+.status-select {
+    padding: 10px 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fff;
+    color: #444;
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    min-width: 140px;
+}
+
+/* Table Styles - Overriding user-table to match screenshot */
+.management-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.user-table th {
+    text-align: left;
+    padding: 15px 20px;
+    color: #777;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.user-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #f8f8f8;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.resident-info .name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.resident-info .flat {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.text-blue {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.schedule-info .date {
+    color: #444;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.schedule-info .time {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* Badges */
+.badge-priority {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.priority-high {
+    background-color: #fff2ef;
+    color: #ff5e3a;
+    border: 1px solid #ffe1da;
+}
+
+.priority-medium {
+    background-color: #fff9e6;
+    color: #f1c40f;
+    border: 1px solid #fdf2cd;
+}
+
+.priority-low {
+    background-color: #f0f7ff;
+    color: #3498db;
+    border: 1px solid #d6ebff;
+}
+
+.priority-urgent {
+    background-color: #ffeef2;
+    color: #ff3a6f;
+    border: 1px solid #ffdae4;
+}
+
+.badge-status {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 85px;
+    text-align: center;
+}
+
+.status-pending {
+    background-color: #fff9e6;
+    color: #f39c12;
+}
+
+.status-confirmed {
+    background-color: #ebf5fb;
+    color: #3498db;
+}
+
+.status-completed {
+    background-color: #eafaf1;
+    color: #2ecc71;
+}
+
+.status-cancelled {
+    background-color: #fdedec;
+    color: #e74c3c;
+}
+
+.status-in-progress {
+    background-color: #f5f0ff;
+    color: #8e44ad;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .user-table {
+        min-width: 900px;
+    }
+}
