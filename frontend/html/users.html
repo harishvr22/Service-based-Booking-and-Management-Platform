@@ -34,10 +34,10 @@
                         <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fas fa-calendar-check"></i> Bookings</a>
+                        <a href="admin_bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fas fa-user-tie"></i> Providers</a>
+                        <a href="admin_providers.html"><i class="fas fa-user-tie"></i> Providers</a>
                     </li>
                     <li class="active">
                         <a href="users.html"><i class="fas fa-users"></i> Users</a>
@@ -60,36 +60,41 @@
         <main class="main-content">
             <header class="dashboard-header">
                 <h1>User Management</h1>
-                <p>Manage residents, service providers, and admin accounts separately</p>
+                <p>Manage residents, service providers, and administrative staff</p>
             </header>
 
-            <!-- Stats Overview -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon icon-blue">
-                        <i class="fas fa-home"></i>
+                    <div class="stat-header">
+                        <div class="icon-box bg-blue-light">
+                            <i class="fas fa-home text-blue"></i>
+                        </div>
                     </div>
-                    <div class="stat-details">
-                        <span class="stat-label">Residents</span>
-                        <h2 class="stat-value">6</h2>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon icon-purple">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <div class="stat-details">
-                        <span class="stat-label">Service Providers</span>
-                        <h2 class="stat-value">5</h2>
+                    <div class="stat-body">
+                        <h3>6</h3>
+                        <p>Residents</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon icon-orange">
-                        <i class="fas fa-user-shield"></i>
+                    <div class="stat-header">
+                        <div class="icon-box bg-purple-light">
+                            <i class="fas fa-tools text-purple"></i>
+                        </div>
                     </div>
-                    <div class="stat-details">
-                        <span class="stat-label">Admins</span>
-                        <h2 class="stat-value">1</h2>
+                    <div class="stat-body">
+                        <h3>5</h3>
+                        <p>Service Providers</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-orange-light">
+                            <i class="fas fa-user-shield text-orange"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>1</h3>
+                        <p>Admins</p>
                     </div>
                 </div>
             </div>
