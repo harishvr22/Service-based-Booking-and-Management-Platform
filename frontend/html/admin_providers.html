@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApartmentCare - Provider Management</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/admin_dashboard.css">
+    <link rel="stylesheet" href="../css/admin_providers.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>ApartmentCare</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    </li>
+                    <li>
+                        <a href="admin_bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    </li>
+                    <li class="active">
+                        <a href="admin_providers.html"><i class="fas fa-user-tie"></i> Providers</a>
+                    </li>
+                    <li>
+                        <a href="users.html"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li>
+                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Service Provider Management</h1>
+                <p>Verify, approve, and manage apartment service providers</p>
+            </header>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-blue-light">
+                            <i class="fas fa-user-tie text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>6</h3>
+                        <p>Total Providers</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-orange-light">
+                            <i class="fas fa-user-clock text-orange"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>3</h3>
+                        <p>Awaiting Verification</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-green-light">
+                            <i class="fas fa-user-check text-green"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>2</h3>
+                        <p>Approved & Active</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="icon-box bg-red-light">
+                            <i class="fas fa-user-times text-red"></i>
+                        </div>
+                    </div>
+                    <div class="stat-body">
+                        <h3>1</h3>
+                        <p>Rejected</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar Section -->
+            <div class="toolbar">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="providerSearch" placeholder="Search provider name or specialization...">
+                </div>
+                <div class="filter-container">
+                    <div class="category-select">
+                        <i class="fas fa-toolbox"></i>
+                        <select>
+                            <option value="all">All Categories</option>
+                            <option value="plumbing">Plumbing</option>
+                            <option value="electrical">Electrical</option>
+                            <option value="cleaning">Cleaning</option>
+                            <option value="carpentry">Carpentry</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Provider Grid -->
+            <div class="provider-grid">
+                <!-- Provider 1 -->
+                <div class="provider-card">
+                    <div class="provider-header">
+                        <div class="info">
+                            <h3>Rajesh Kumar</h3>
+                            <p><i class="fas fa-phone-alt"></i> +91 98765 43210</p>
+                        </div>
+                        <span class="badge badge-approved">Approved</span>
+                    </div>
+                    <div class="provider-body">
+                        <div class="specialization">
+                            <span class="tag">Plumbing</span>
+                            <p>Pipe Fitting & Leak Repair</p>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div class="val">South Block</div>
+                                <div class="lbl">Area</div>
+                            </div>
+                            <div class="metric-item">
+                                <i class="fas fa-star text-orange"></i>
+                                <div class="val">4.7</div>
+                                <div class="lbl">Rating</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="val">142</div>
+                                <div class="lbl">Jobs Done</div>
+                            </div>
+                        </div>
+                        <div class="experience">
+                            <i class="fas fa-briefcase"></i> 8 years experience
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <button class="btn-suspend">
+                            <i class="fas fa-ban"></i> Suspend
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Provider 2 -->
+                <div class="provider-card">
+                    <div class="provider-header">
+                        <div class="info">
+                            <h3>Sunil Verma</h3>
+                            <p><i class="fas fa-phone-alt"></i> +91 87654 32109</p>
+                        </div>
+                        <span class="badge badge-pending">Pending Verification</span>
+                    </div>
+                    <div class="provider-body">
+                        <div class="specialization">
+                            <span class="tag">Electrical</span>
+                            <p>Wiring, AC & Appliance Repair</p>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div class="val">East Block</div>
+                                <div class="lbl">Area</div>
+                            </div>
+                            <div class="metric-item">
+                                <i class="fas fa-star text-orange"></i>
+                                <div class="val">4.3</div>
+                                <div class="lbl">Rating</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="val">89</div>
+                                <div class="lbl">Jobs Done</div>
+                            </div>
+                        </div>
+                        <div class="experience">
+                            <i class="fas fa-briefcase"></i> 5 years experience
+                        </div>
+                    </div>
+                    <div class="provider-footer double">
+                        <button class="btn-approve">
+                            <i class="fas fa-check-circle"></i> Approve
+                        </button>
+                        <button class="btn-reject">
+                            <i class="fas fa-times-circle"></i> Reject
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Provider 3 -->
+                <div class="provider-card">
+                    <div class="provider-header">
+                        <div class="info">
+                            <h3>Amit Singh</h3>
+                            <p><i class="fas fa-phone-alt"></i> +91 76543 21098</p>
+                        </div>
+                        <span class="badge badge-pending">Pending Verification</span>
+                    </div>
+                    <div class="provider-body">
+                        <div class="specialization">
+                            <span class="tag">Carpentry</span>
+                            <p>Furniture & Door Repair</p>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric-item">
+                                <i class="fas fa-globe"></i>
+                                <div class="val">All Blocks</div>
+                                <div class="lbl">Area</div>
+                            </div>
+                            <div class="metric-item">
+                                <i class="fas fa-star text-orange"></i>
+                                <div class="val">4.8</div>
+                                <div class="lbl">Rating</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="val">210</div>
+                                <div class="lbl">Jobs Done</div>
+                            </div>
+                        </div>
+                        <div class="experience">
+                            <i class="fas fa-briefcase"></i> 10 years experience
+                        </div>
+                    </div>
+                    <div class="provider-footer double">
+                        <button class="btn-approve">
+                            <i class="fas fa-check-circle"></i> Approve
+                        </button>
+                        <button class="btn-reject">
+                            <i class="fas fa-times-circle"></i> Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../javascript/admin_providers.js"></script>
+</body>
+
+</html>
