@@ -1,117 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Create Account | ApartmentHub</title>
   <link rel="stylesheet" href="../css/login.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body>
 
-<div class="auth-container">
+  <div class="auth-container">
 
-  <div class="auth-image">
-    <div class="overlay">
-      <h1>Discover Your Dream Apartment</h1>
-      <p>Browse thousands of apartments, connect with landlords, and find the perfect place to call home.</p>
+    <div class="auth-image">
+      <div class="overlay">
+        <h1>Discover Your Dream Apartment</h1>
+        <p>Browse thousands of apartments, connect with landlords, and find the perfect place to call home.</p>
 
-      <div class="stats">
-        <div>
-          <h2>2,500+</h2>
-          <span>Apartments</span>
-        </div>
-        <div>
-          <h2>1,200+</h2>
-          <span>Happy Tenants</span>
-        </div>
-        <div>
-          <h2>98%</h2>
-          <span>Satisfaction</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="auth-form">
-    <div class="brand">
-      <i class="fa-solid fa-building"></i>
-      <div>
-        <h3>ApartmentHub</h3>
-        <span>Find your perfect home</span>
-      </div>
-    </div>
-
-    <h2>Create account</h2>
-    <p class="subtitle">Start your journey to finding the perfect apartment</p>
-
-    <form id="signupForm">
-      <label>Full Name</label>
-      <div class="input-box">
-        <i class="fa-regular fa-user"></i>
-        <input type="text" id="name" placeholder="John Doe">
-      </div>
-
-      <label>Email Address</label>
-      <div class="input-box">
-        <i class="fa-regular fa-envelope"></i>
-        <input type="email" id="email" placeholder="you@example.com">
-      </div>
-
-      <label>Password</label>
-      <div class="input-box">
-        <i class="fa-solid fa-lock"></i>
-        <input type="password" id="password" placeholder="••••••••">
-        <i class="fa-regular fa-eye toggle" onclick="togglePass('password', this)"></i>
-      </div>
-
-      <label>Role</label>
-      <div class="role">
-        <label class="radio-label"><input type="radio" name="role" value="Resident" checked> Resident</label>
-        <label class="radio-label"><input type="radio" name="role" value="Provider"> Provider</label>
-      </div>
-
-      <label id="apartmentLabel">Apartment ID</label>
-      <div class="input-box" id="apartmentField">
-        <i class="fa-solid fa-house"></i>
-        <input type="text" id="apartmentId" placeholder="Enter your apartment ID">
-      </div>
-
-      <label id="serviceLabel" style="display:none;">Service Type</label>
-      <div id="serviceDropdownWrapper" style="display:none;" class="custom-dropdown-wrapper">
-        <div class="custom-dropdown" id="customDropdown">
-          <div class="dropdown-selected" id="dropdownSelected">
-            <span>Select your service</span>
-            <i class="fa-solid fa-chevron-down"></i>
+        <div class="stats">
+          <div>
+            <h2>2,500+</h2>
+            <span>Apartments</span>
           </div>
-          <ul class="dropdown-menu" id="dropdownMenu">
-            <li data-value="">Select your service</li>
-            <li data-value="Plumber">Plumber</li>
-            <li data-value="Electrician">Electrician</li>
-            <li data-value="Carpenter">Carpenter</li>
-            <li data-value="Painter">Painter</li>
-            <li data-value="Cleaner">Cleaner</li>
-            <li data-value="HVAC Technician">HVAC Technician</li>
-            <li data-value="Locksmith">Locksmith</li>
-            <li data-value="Pest Control">Pest Control</li>
-          </ul>
+          <div>
+            <h2>1,200+</h2>
+            <span>Happy Tenants</span>
+          </div>
+          <div>
+            <h2>98%</h2>
+            <span>Satisfaction</span>
+          </div>
         </div>
-        <input type="hidden" id="serviceValue" name="service">
+      </div>
+    </div>
+
+    <div class="auth-form">
+      <div class="brand">
+        <i class="fa-solid fa-building"></i>
+        <div>
+          <h3>ApartmentHub</h3>
+          <span>Find your perfect home</span>
+        </div>
       </div>
 
-      <button class="btn" type="submit">Create Account <i class="fa-solid fa-arrow-right"></i></button>
+      <!-- Progress Indicator -->
+      <div class="progress-stepper">
+        <div class="step active" id="stepIndicator1">
+          <div class="circle"><i class="fa-solid fa-check"></i></div>
+          <span>Account</span>
+        </div>
+        <div class="line"></div>
+        <div class="step" id="stepIndicator2">
+          <div class="circle">2</div>
+          <span>Profile</span>
+        </div>
+      </div>
 
-      <div class="divider">or continue with</div>
+      <form id="signupForm">
+        <!-- Step 1: Account Details -->
+        <div class="form-step active" id="step1">
+          <h2>Create account</h2>
+          <p class="subtitle">Start your journey to finding the perfect apartment</p>
 
-      <button type="button" class="google-btn">
-        <i class="fa-brands fa-google"></i> Google
-      </button>
+          <label>Full Name</label>
+          <div class="input-box">
+            <i class="fa-regular fa-user"></i>
+            <input type="text" id="name" placeholder="John Doe">
+          </div>
 
-      <p class="switch">Already have an account? <a href="login.html">Sign in</a></p>
-    </form>
+          <label>Email Address</label>
+          <div class="input-box">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="email" placeholder="you@example.com">
+          </div>
+
+          <label>Password</label>
+          <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="password" placeholder="••••••••">
+            <i class="fa-regular fa-eye toggle" onclick="togglePass('password', this)"></i>
+          </div>
+
+          <label>Role</label>
+          <div class="role">
+            <label class="radio-label"><input type="radio" name="role" value="Resident" checked> Resident</label>
+            <label class="radio-label"><input type="radio" name="role" value="Provider"> Provider</label>
+          </div>
+
+          <button class="btn" type="button" onclick="nextStep()">Next <i class="fa-solid fa-arrow-right"></i></button>
+
+          <div class="divider">or continue with</div>
+
+          <button type="button" class="google-btn">
+            <i class="fa-brands fa-google"></i> Google
+          </button>
+
+          <p class="switch">Already have an account? <a href="login.html">Sign in</a></p>
+        </div>
+
+        <!-- Step 2: Complete Profile -->
+        <div class="form-step" id="step2">
+          <h2 id="step2Title">Complete your profile</h2>
+          <p class="subtitle" id="step2Subtitle">Tell us about your apartment details</p>
+
+          <!-- Resident Specific Fields -->
+          <div id="residentFields">
+            <label>Phone Number</label>
+            <div class="input-box">
+              <i class="fa-solid fa-phone"></i>
+              <input type="tel" id="phone" placeholder="+91 98765 43210">
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label>Flat Number</label>
+                <div class="input-box">
+                  <i class="fa-solid fa-house"></i>
+                  <input type="text" id="flatNumber" placeholder="A-101">
+                </div>
+              </div>
+              <div class="field-group">
+                <label>Block</label>
+                <div class="input-box">
+                  <select id="block" class="theme-select">
+                    <option value="" disabled selected>Select block</option>
+                    <option value="A">Block A</option>
+                    <option value="B">Block B</option>
+                    <option value="C">Block C</option>
+                    <option value="D">Block D</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down select-icon"></i>
+                </div>
+              </div>
+            </div>
+
+            <label>Move-in Date</label>
+            <div class="input-box">
+              <i class="fa-solid fa-calendar-days"></i>
+              <input type="date" id="moveInDate">
+            </div>
+          </div>
+
+          <!-- Provider Specific Fields -->
+          <div id="providerFields" style="display: none;">
+            <label>Phone Number</label>
+            <div class="input-box">
+              <i class="fa-solid fa-phone"></i>
+              <input type="tel" id="providerPhone" placeholder="+91 98765 43210">
+            </div>
+
+            <label>Service Category</label>
+            <div class="input-box">
+              <select id="serviceCategory" class="theme-select">
+                <option value="" disabled selected>Select your service</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Carpentry">Carpentry</option>
+                <option value="HVAC">HVAC</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-icon"></i>
+            </div>
+
+            <label>Specialization</label>
+            <div class="input-box">
+              <i class="fa-solid fa-tools"></i>
+              <input type="text" id="specialization" placeholder="e.g. Pipe Fitting & Leak Repair">
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label>Service Area</label>
+                <div class="input-box">
+                  <select id="serviceArea" class="theme-select">
+                    <option value="" disabled selected>Select area</option>
+                    <option value="North">North Wing</option>
+                    <option value="South">South Wing</option>
+                    <option value="East">East Wing</option>
+                    <option value="West">West Wing</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down select-icon"></i>
+                </div>
+              </div>
+              <div class="field-group">
+                <label>Experience</label>
+                <div class="input-box">
+                  <i class="fa-solid fa-briefcase"></i>
+                  <input type="text" id="experience" placeholder="e.g. 5 years">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn-outline" type="button" onclick="prevStep()"><i class="fa-solid fa-arrow-left"></i>
+              Back</button>
+            <button class="btn" type="submit">Create Account <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <div class="divider">or continue with</div>
+
+          <button type="button" class="google-btn">
+            <i class="fa-brands fa-google"></i> Google
+          </button>
+        </div>
+      </form>
+    </div>
+
   </div>
 
-</div>
-
-<script src="../javascript/auth.js"></script>
+  <script src="../javascript/auth.js"></script>
 </body>
+
 </html>

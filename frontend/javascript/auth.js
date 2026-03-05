@@ -28,28 +28,112 @@ if (loginForm) {
   });
 }
 
-// SIGNUP
+// SIGNUP MULTI-STEP LOGIC
+let currentStep = 1;
+
+function nextStep() {
+  if (validateStep(currentStep)) {
+    if (currentStep === 1) {
+      const role = document.querySelector('input[name="role"]:checked').value;
+      const resFields = document.getElementById('residentFields');
+      const provFields = document.getElementById('providerFields');
+      const s2Title = document.getElementById('step2Title');
+      const s2Subtitle = document.getElementById('step2Subtitle');
+
+      if (role === 'Provider') {
+        resFields.style.display = 'none';
+        provFields.style.display = 'block';
+        s2Title.textContent = "Complete your profile";
+        s2Subtitle.textContent = "Tell us about your service expertise";
+      } else {
+        resFields.style.display = 'block';
+        provFields.style.display = 'none';
+        s2Title.textContent = "Complete your profile";
+        s2Subtitle.textContent = "Tell us about your apartment details";
+      }
+    }
+    currentStep++;
+    updateStepUI();
+  }
+}
+
+function prevStep() {
+  currentStep--;
+  updateStepUI();
+}
+
+function updateStepUI() {
+  // Update form steps
+  document.querySelectorAll('.form-step').forEach((step, index) => {
+    step.classList.toggle('active', index + 1 === currentStep);
+  });
+
+  // Update progress indicators
+  const step1 = document.getElementById('stepIndicator1');
+  const step2 = document.getElementById('stepIndicator2');
+  const line = document.querySelector('.progress-stepper .line');
+
+  if (currentStep === 1) {
+    step1.classList.add('active');
+    step1.classList.remove('completed');
+    step1.querySelector('.circle').innerHTML = '1';
+    step2.classList.remove('active');
+    line.classList.remove('active');
+  } else {
+    step1.classList.add('completed');
+    step1.querySelector('.circle').innerHTML = '<i class="fa-solid fa-check"></i>';
+    step2.classList.add('active');
+    line.classList.add('active');
+  }
+}
+
+function validateStep(step) {
+  if (step === 1) {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    if (!name || !email || !password) {
+      alert("Please fill in all account details.");
+      return false;
+    }
+  }
+  return true;
+}
+
 const signupForm = document.getElementById("signupForm");
 if (signupForm) {
   signupForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
+    const role = document.querySelector('input[name="role"]:checked').value;
     const data = {
       name: document.getElementById("name").value,
       email: document.getElementById("email").value,
       password: document.getElementById("password").value,
-      role: document.querySelector('input[name="role"]:checked') ? document.querySelector('input[name="role"]:checked').value : 'Resident'
+      role: role
     };
 
-    console.log("Signup:", data);
+    if (role === 'Resident') {
+      data.phone = document.getElementById("phone").value;
+      data.flatNumber = document.getElementById("flatNumber").value;
+      data.block = document.getElementById("block").value;
+      data.moveInDate = document.getElementById("moveInDate").value;
+    } else {
+      data.phone = document.getElementById("providerPhone").value;
+      data.serviceCategory = document.getElementById("serviceCategory").value;
+      data.specialization = document.getElementById("specialization").value;
+      data.serviceArea = document.getElementById("serviceArea").value;
+      data.experience = document.getElementById("experience").value;
+    }
 
-    // Demo: store user info locally so header can show name
-    if (data.name) localStorage.setItem('userName', data.name);
-    if (data.email) localStorage.setItem('userEmail', data.email);
-    if (data.role) localStorage.setItem('userRole', data.role);
+    console.log("Signup Complete:", data);
+
+    // Demo: store user info locally
+    localStorage.setItem('userName', data.name);
+    localStorage.setItem('userEmail', data.email);
+    localStorage.setItem('userRole', data.role);
     localStorage.setItem('isLoggedIn', 'true');
 
-    // Later: connect Flask API
     alert("Signup successful (demo)");
     window.location.href = "login.html";
   });
