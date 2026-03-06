@@ -188,7 +188,7 @@ body {
     transition: background 0.3s ease;
 }
 
-.toggle-switch input:checked + label {
+.toggle-switch input:checked+label {
     background: #4CAF50;
 }
 
@@ -204,7 +204,7 @@ body {
     transition: left 0.3s ease;
 }
 
-.toggle-switch input:checked + label::after {
+.toggle-switch input:checked+label::after {
     left: 29px;
 }
 
@@ -214,11 +214,32 @@ body {
     min-width: 70px;
 }
 
-.toggle-switch input:not(:checked) + label {
+.btn-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.btn-profile:hover {
+    border-color: #E07856;
+    color: #E07856;
+    background: #fffafa;
+}
+
+.toggle-switch input:not(:checked)+label {
     background: #e0e0e0;
 }
 
-.toggle-switch input:not(:checked) ~ .status-text {
+.toggle-switch input:not(:checked)~.status-text {
     color: #999;
 }
 

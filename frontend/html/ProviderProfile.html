@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Provider Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/ProviderProfile.css">
+</head>
+
+<body>
+    <div class="profile-container">
+        <!-- Header -->
+        <header class="profile-header">
+            <div class="header-left">
+                <a href="ProviderDashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+                <div class="icon-box">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <div class="header-info">
+                    <h2>My Profile</h2>
+                    <p>Manage your provider details</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="cancelBtn" class="btn btn-cancel" style="display: none;">Cancel</button>
+                <button id="editBtn" class="btn btn-save"><i class="fas fa-edit"></i> Edit Profile</button>
+            </div>
+        </header>
+
+        <!-- Avatar Section -->
+        <section class="avatar-section">
+            <div class="avatar-circle" id="avatarInitials">RK</div>
+            <h1 id="profileNameDisplay">Rajesh Kumar</h1>
+            <p id="profileSubInfo">Plumber • South Zone</p>
+        </section>
+
+        <!-- Personal Information -->
+        <div class="profile-card">
+            <div class="card-title-row">
+                <i class="far fa-user"></i>
+                <h3>Personal Information</h3>
+            </div>
+            <p class="card-subtitle">Your basic contact details</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="profName" value="Rajesh Kumar" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="profEmail" value="rajesh.kumar@email.com" readonly>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone-alt"></i> Phone Number</label>
+                    <input type="text" id="profPhone" value="+91 99876 54321" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Details -->
+        <div class="profile-card">
+            <div class="card-title-row">
+                <i class="fas fa-wrench"></i>
+                <h3>Service Details</h3>
+            </div>
+            <p class="card-subtitle">Your service category and expertise</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Service Category</label>
+                    <select id="profCategory" disabled>
+                        <option value="Plumber">Plumber</option>
+                        <option value="Electrician">Electrician</option>
+                        <option value="Carpenter">Carpenter</option>
+                        <option value="Painter">Painter</option>
+                        <option value="Cleaner">Cleaner</option>
+                        <option value="HVAC">HVAC</option>
+                        <option value="Locksmith">Locksmith</option>
+                        <option value="Pest Control">Pest Control</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Specialization</label>
+                    <input type="text" id="profSpecialization" value="Pipe Fitting & Leak Repair" readonly>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-location-dot"></i> Service Area</label>
+                    <select id="profArea" disabled>
+                        <option value="North Zone">North Zone</option>
+                        <option value="South Zone" selected>South Zone</option>
+                        <option value="East Zone">East Zone</option>
+                        <option value="West Zone">West Zone</option>
+                        <option value="Central">Central</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-briefcase"></i> Years of Experience</label>
+                    <input type="number" id="profExperience" value="8" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Info -->
+        <div class="profile-card">
+            <div class="card-title-row">
+                <i class="fas fa-award"></i>
+                <h3>Professional Info</h3>
+            </div>
+            <p class="card-subtitle">Bio, certifications and working hours</p>
+
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Bio / About</label>
+                    <textarea id="profBio"
+                        readonly>Experienced plumber with 8+ years of expertise in residential pipe fitting, leak repair, and bathroom installations.</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Certifications</label>
+                    <input type="text" id="profCertifications"
+                        value="ISI Certified Plumber, Safety Training Certificate" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Available Hours</label>
+                    <input type="text" id="profHours" value="9 AM - 6 PM" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../javascript/provider_profile.js"></script>
+</body>
+
+</html>
