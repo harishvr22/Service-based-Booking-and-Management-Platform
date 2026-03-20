@@ -9,22 +9,45 @@ if (loginForm) {
 
     console.log("Login:", email, password);
 
-    // Demo: set user name if stored, otherwise derive from email
-    let storedName = localStorage.getItem('userName');
-    if (!storedName) {
-      storedName = email ? email.split('@')[0] : 'User';
-      localStorage.setItem('userName', storedName);
-    }
-    localStorage.setItem('userEmail', email);
-    // Default role is Resident for demo, can be updated with API
-    if (!localStorage.getItem('userRole')) {
-      localStorage.setItem('userRole', 'Resident');
-    }
-    localStorage.setItem('isLoggedIn', 'true');
-
-    // Later: connect Flask API
-    alert("Login successful (demo)");
-    window.location.href = "ResidentDashboard.html";
+    // Connect to Flask API
+    fetch('http://localhost:5000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userRole', data.role);
+        localStorage.setItem('isLoggedIn', 'true');
+        // For demo, set name from email
+        let storedName = localStorage.getItem('userName');
+        if (!storedName) {
+          storedName = email.split('@')[0];
+          localStorage.setItem('userName', storedName);
+        }
+        alert("Login successful");
+        if (data.role === 'Resident') {
+          window.location.href = "ResidentDashboard.html";
+        } else if (data.role === 'Provider') {
+          window.location.href = "ProviderDashboard.html";
+        } else {
+          window.location.href = "admin_dashboard.html";
+        }
+      } else {
+        alert("Invalid credentials");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert("Login failed. Please try again.");
+    });
   });
 }
 
@@ -110,32 +133,39 @@ if (signupForm) {
       name: document.getElementById("name").value,
       email: document.getElementById("email").value,
       password: document.getElementById("password").value,
-      role: role
+      role: role,
+      apartment_id: 1  // Assuming default apartment
     };
 
     if (role === 'Resident') {
       data.phone = document.getElementById("phone").value;
-      data.flatNumber = document.getElementById("flatNumber").value;
-      data.block = document.getElementById("block").value;
-      data.moveInDate = document.getElementById("moveInDate").value;
     } else {
       data.phone = document.getElementById("providerPhone").value;
-      data.serviceCategory = document.getElementById("serviceCategory").value;
-      data.specialization = document.getElementById("specialization").value;
-      data.serviceArea = document.getElementById("serviceArea").value;
-      data.experience = document.getElementById("experience").value;
     }
 
     console.log("Signup Complete:", data);
 
-    // Demo: store user info locally
-    localStorage.setItem('userName', data.name);
-    localStorage.setItem('userEmail', data.email);
-    localStorage.setItem('userRole', data.role);
-    localStorage.setItem('isLoggedIn', 'true');
-
-    alert("Signup successful (demo)");
-    window.location.href = "login.html";
+    // Connect to Flask API
+    fetch('http://localhost:5000/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.status === 'registered') {
+        alert("Signup successful");
+        window.location.href = "login.html";
+      } else {
+        alert("Signup failed. Please try again.");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert("Signup failed. Please try again.");
+    });
   });
 }
 

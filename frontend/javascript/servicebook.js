@@ -109,25 +109,48 @@ document.querySelector(".submit").addEventListener("click", () => {
 
   // Get service from query param or default
   const urlParams = new URLSearchParams(window.location.search);
-  const service = urlParams.get('service') || 'General Service';
+  const serviceName = urlParams.get('service') || 'General Service';
 
-  // Create booking object
-  const booking = {
-    service: service,
-    apartmentId: apartmentId,
-    contactNumber: contactNumber,
-    date: dateText,
-    time: timeText,
-    description: problemSummary,
-    status: 'pending',
-    bookedAt: new Date().toISOString()
-  };
+  // Fetch services to get service_id
+  fetch('http://localhost:5000/services')
+    .then(response => response.json())
+    .then(services => {
+      const service = services.find(s => s.name === serviceName);
+      if (!service) {
+        alert("Service not found");
+        return;
+      }
 
-  // Save to localStorage
-  const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-  bookings.push(booking);
-  localStorage.setItem('bookings', JSON.stringify(bookings));
+      // Assume resident_id is 1 for now (should get from login response or localStorage)
+      const residentId = 1; // TODO: get actual resident id
 
-  alert("Service booked successfully!");
-  window.location.href = "mybookings.html";
+      // Post to backend
+      fetch('http://localhost:5000/book-service', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resident_id: residentId,
+          service_id: service.id
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'booking_created') {
+          alert("Service booked successfully!");
+          window.location.href = "mybookings.html";
+        } else {
+          alert("Booking failed. Please try again.");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("Booking failed. Please try again.");
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching services:', error);
+      alert("Failed to load services. Please try again.");
+    });
 });

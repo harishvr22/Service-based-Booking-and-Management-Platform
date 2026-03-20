@@ -2,50 +2,103 @@
  * Service Requests Page JavaScript
  */
 
+document.addEventListener('DOMContentLoaded', () => {
+  loadServiceRequests();
+});
+
 // Update Job Status Button Handler
 document.querySelector('.update-status-btn')?.addEventListener('click', () => {
     window.location.href = 'UpdateJobStatus.html';
 });
 
-// Accept Button Handlers
-document.querySelectorAll('.btn-accept').forEach((btn) => {
-    btn.addEventListener('click', function() {
-        const requestCard = this.closest('.request-card');
-        const statusBadge = requestCard.querySelector('.status-badge');
-        const residentInfo = requestCard.querySelector('.resident-info').textContent;
-        
-        // Update status badge
-        statusBadge.textContent = 'Accepted';
-        statusBadge.classList.remove('pending');
-        statusBadge.classList.add('accepted');
-        
-        // Disable action buttons
-        disableActionButtons(requestCard);
-        
-        console.log('Request accepted:', residentInfo);
-        showNotification('Request accepted successfully!', 'success');
+function loadServiceRequests() {
+  // Fetch bookings from backend
+  fetch('http://localhost:5000/bookings')
+    .then(response => response.json())
+    .then(bookings => {
+      // Fetch services to map service_id to name
+      return fetch('http://localhost:5000/services')
+        .then(response => response.json())
+        .then(services => {
+          const serviceMap = {};
+          services.forEach(service => {
+            serviceMap[service.id] = service.name;
+          });
+          
+          const requestsList = document.querySelector('.requests-list');
+          requestsList.innerHTML = ''; // Clear existing
+          
+          bookings.forEach(booking => {
+            const requestCard = document.createElement('div');
+            requestCard.className = 'request-card';
+            requestCard.innerHTML = `
+              <div class="request-header">
+                <div class="request-info">
+                  <h3>${serviceMap[booking.service_id] || 'Unknown Service'}</h3>
+                  <p class="resident-info">Resident ID: ${booking.resident_id}</p>
+                </div>
+                <span class="status-badge ${booking.status}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+              </div>
+              <div class="request-actions">
+                <button class="btn-accept" data-booking-id="${booking.id}">Accept</button>
+                <button class="btn-reject" data-booking-id="${booking.id}">Reject</button>
+              </div>
+            `;
+            requestsList.appendChild(requestCard);
+          });
+          
+          // Add event listeners for accept/reject buttons
+          attachActionListeners();
+        });
+    })
+    .catch(error => {
+      console.error('Error loading service requests:', error);
     });
-});
+}
 
-// Reject Button Handlers
-document.querySelectorAll('.btn-reject').forEach((btn) => {
+function attachActionListeners() {
+  // Accept Button Handlers
+  document.querySelectorAll('.btn-accept').forEach((btn) => {
     btn.addEventListener('click', function() {
-        const requestCard = this.closest('.request-card');
-        const statusBadge = requestCard.querySelector('.status-badge');
-        const residentInfo = requestCard.querySelector('.resident-info').textContent;
-        
-        // Update status badge
-        statusBadge.textContent = 'Rejected';
-        statusBadge.classList.remove('pending');
-        statusBadge.classList.add('rejected');
-        
-        // Disable action buttons
-        disableActionButtons(requestCard);
-        
-        console.log('Request rejected:', residentInfo);
-        showNotification('Request rejected successfully!', 'success');
+      const bookingId = this.getAttribute('data-booking-id');
+      updateBookingStatus(bookingId, 'accepted');
     });
-});
+  });
+
+  // Reject Button Handlers
+  document.querySelectorAll('.btn-reject').forEach((btn) => {
+    btn.addEventListener('click', function() {
+      const bookingId = this.getAttribute('data-booking-id');
+      updateBookingStatus(bookingId, 'rejected');
+    });
+  });
+}
+
+function updateBookingStatus(bookingId, status) {
+  fetch('http://localhost:5000/update-status', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      booking_id: bookingId,
+      status: status
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'updated') {
+      showNotification(`Request ${status} successfully!`, 'success');
+      loadServiceRequests(); // Reload the list
+    } else {
+      showNotification('Failed to update status', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error updating status:', error);
+    showNotification('Failed to update status', 'error');
+  });
+}
 
 /**
  * Disable action buttons for a request card
