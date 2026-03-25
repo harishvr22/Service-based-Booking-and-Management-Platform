@@ -231,3 +231,36 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Danger Zone */
+.profile-card.danger {
+    border: 1px solid #ff6b6b;
+    background-color: #fff5f5;
+}
+
+.profile-card.danger .card-title-row i {
+    color: #ff6b6b;
+}
+
+.btn-danger {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #ff5252;
+}
+
+.warning-text {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 8px;
+    font-style: italic;
+}
