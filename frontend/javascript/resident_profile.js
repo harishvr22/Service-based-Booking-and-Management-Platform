@@ -52,6 +52,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Delete Account Handler
+    document.getElementById('deleteAccountBtn').addEventListener('click', function () {
+        const confirmDelete = confirm('Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.');
+        if (!confirmDelete) return;
+
+        const password = prompt('Please enter your password to confirm account deletion:');
+        if (!password) return;
+
+        fetch('http://localhost:5000/delete-account', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: localStorage.getItem('userEmail'),
+                password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Account deleted successfully') {
+                alert('Account deleted successfully. You will be redirected to the login page.');
+                localStorage.clear();
+                window.location.href = 'login.html';
+            } else {
+                alert('Error: ' + (data.error || 'Failed to delete account'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the account. Please try again.');
+        });
+    });
+
     function saveProfile() {
         const updatedData = {
             name: document.getElementById('dispName').value,

@@ -7,12 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (servicesGrid) {
         servicesGrid.innerHTML = ''; // Clear existing hardcoded services
         services.forEach(service => {
+          const serviceName = service.service_name || service.name || 'Unknown Service';
           const serviceCard = document.createElement('a');
-          serviceCard.href = `servicebooking.html?service=${service.name}`;
+          serviceCard.href = `servicebooking.html?service=${encodeURIComponent(serviceName)}`;
           serviceCard.className = 'service-card';
           serviceCard.innerHTML = `
-            <div class="icon">${getServiceIcon(service.name)}</div>
-            <h3>${service.name}</h3>
+            <div class="icon">${getServiceIcon(serviceName)}</div>
+            <h3>${serviceName}</h3>
             <p>${service.description || 'Professional service'}</p>
           `;
           servicesGrid.appendChild(serviceCard);
