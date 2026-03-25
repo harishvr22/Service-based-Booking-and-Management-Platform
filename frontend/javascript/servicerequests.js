@@ -22,7 +22,8 @@ function loadServiceRequests() {
         .then(services => {
           const serviceMap = {};
           services.forEach(service => {
-            serviceMap[service.id] = service.name;
+            const serviceName = service.service_name || service.name || 'Unknown Service';
+            serviceMap[service.id] = serviceName;
           });
           
           const requestsList = document.querySelector('.requests-list');

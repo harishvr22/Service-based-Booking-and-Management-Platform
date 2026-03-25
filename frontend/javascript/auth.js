@@ -24,7 +24,8 @@ if (loginForm) {
     .then(data => {
       if (data.status === 'success') {
         localStorage.setItem('userEmail', email);
-        localStorage.setItem('userRole', data.role);
+        const role = data.role ? String(data.role).trim() : '';
+        localStorage.setItem('userRole', role);
         localStorage.setItem('isLoggedIn', 'true');
         // For demo, set name from email
         let storedName = localStorage.getItem('userName');
@@ -33,9 +34,11 @@ if (loginForm) {
           localStorage.setItem('userName', storedName);
         }
         alert("Login successful");
-        if (data.role === 'Resident') {
+
+        const normalizedRole = role.toLowerCase();
+        if (normalizedRole === 'resident') {
           window.location.href = "ResidentDashboard.html";
-        } else if (data.role === 'Provider') {
+        } else if (normalizedRole === 'provider') {
           window.location.href = "ProviderDashboard.html";
         } else {
           window.location.href = "admin_dashboard.html";

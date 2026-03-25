@@ -23,7 +23,8 @@ function loadBookings() {
         .then(services => {
           const serviceMap = {};
           services.forEach(service => {
-            serviceMap[service.id] = service.name;
+            const serviceName = service.service_name || service.name || 'Unknown Service';
+            serviceMap[service.id] = serviceName;
           });
           
           const bookingsList = document.getElementById('bookingsList');

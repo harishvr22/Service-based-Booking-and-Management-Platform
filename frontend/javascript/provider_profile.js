@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial Data loading
     function loadProfile() {
         const data = {
-            name: localStorage.getItem('provName') || 'Rajesh Kumar',
-            email: localStorage.getItem('provEmail') || 'rajesh.kumar@email.com',
-            phone: localStorage.getItem('provPhone') || '+91 99876 54321',
+            name: localStorage.getItem('userName') || 'Rajesh Kumar',
+            email: localStorage.getItem('userEmail') || 'rajesh.kumar@email.com',
+            phone: localStorage.getItem('userPhone') || '+91 99876 54321',
             category: localStorage.getItem('provCategory') || 'Plumber',
             specialization: localStorage.getItem('provSpecialization') || 'Pipe Fitting & Leak Repair',
             area: localStorage.getItem('provArea') || 'South Zone',
@@ -123,6 +123,51 @@ document.addEventListener('DOMContentLoaded', function () {
         updateStaticUI(newData);
         stopEditing();
         alert('Provider profile updated successfully!');
+    }
+
+    // Delete Account Handler
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', async function() {
+            const confirmed = confirm('Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.');
+            if (!confirmed) return;
+
+            const password = prompt('Please enter your password to confirm account deletion:');
+            if (!password) return;
+
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                alert('User not logged in.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/delete-account', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'deleted') {
+                    // Clear localStorage and redirect
+                    localStorage.clear();
+                    alert('Account deleted successfully.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Failed to delete account. Please check your password.');
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
     }
 
     loadProfile();
