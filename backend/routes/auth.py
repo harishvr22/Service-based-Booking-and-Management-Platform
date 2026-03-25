@@ -38,6 +38,10 @@ def login():
 
     email = data["email"]
     password = data["password"]
+    
+    # DEBUG: Print what was received
+    print(f"DEBUG LOGIN - Email: '{email}' (len={len(email)})")
+    print(f"DEBUG LOGIN - Password: '{password}' (len={len(password)})")
 
     cursor = db.cursor(dictionary=True)
 
@@ -46,14 +50,21 @@ def login():
     cursor.execute(query,(email,password))
 
     user = cursor.fetchone()
+    
+    # DEBUG: Print query result
+    print(f"DEBUG LOGIN - User found: {user}")
 
     if user:
+        print(f"✓ Login successful for {email} with role {user['role']}")
         return jsonify({
             "status":"success",
-            "role":user["role"]
+            "role":user["role"],
+            "id":user["id"],
+            "name":user["name"]
         })
     else:
-        return jsonify({"status":"invalid"})
+        print(f"✗ Login failed - Invalid credentials for {email}")
+        return jsonify({"status":"invalid", "message":"Invalid email or password"})
 
 
 # DELETE ACCOUNT API

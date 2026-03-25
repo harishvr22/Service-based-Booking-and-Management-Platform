@@ -22,9 +22,10 @@ if (loginForm) {
     })
     .then(response => response.json())
     .then(data => {
+      console.log('Login response:', data);
       if (data.status === 'success') {
         localStorage.setItem('userEmail', email);
-        const role = data.role ? String(data.role).trim() : '';
+        const role = data.role ? String(data.role).trim() : 'admin';
         localStorage.setItem('userRole', role);
         localStorage.setItem('isLoggedIn', 'true');
         // For demo, set name from email
@@ -36,20 +37,24 @@ if (loginForm) {
         alert("Login successful");
 
         const normalizedRole = role.toLowerCase();
+        console.log('Normalized role:', normalizedRole);
         if (normalizedRole === 'resident') {
           window.location.href = "ResidentDashboard.html";
         } else if (normalizedRole === 'provider') {
           window.location.href = "ProviderDashboard.html";
+        } else if (normalizedRole.includes('admin')) {
+          window.location.href = "admin_dashboard.html";
         } else {
           window.location.href = "admin_dashboard.html";
         }
       } else {
-        alert("Invalid credentials");
+        console.error('Login failed:', data);
+        alert("Invalid credentials. Please check your email and password.");
       }
     })
     .catch(error => {
       console.error('Error:', error);
-      alert("Login failed. Please try again.");
+      alert("Login failed. Please check if the server is running.");
     });
   });
 }
