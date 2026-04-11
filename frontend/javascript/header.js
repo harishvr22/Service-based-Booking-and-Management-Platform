@@ -18,8 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       localStorage.removeItem('isLoggedIn');
-      // optional: remove userName to fully clear
-      // localStorage.removeItem('userName');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('userId');
       window.location.href = 'landingpage.html';
     });
   });

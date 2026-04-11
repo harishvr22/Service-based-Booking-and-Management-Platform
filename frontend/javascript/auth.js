@@ -28,12 +28,9 @@ if (loginForm) {
         const role = data.role ? String(data.role).trim() : 'admin';
         localStorage.setItem('userRole', role);
         localStorage.setItem('isLoggedIn', 'true');
-        // For demo, set name from email
-        let storedName = localStorage.getItem('userName');
-        if (!storedName) {
-          storedName = email.split('@')[0];
-          localStorage.setItem('userName', storedName);
-        }
+        // Store the actual name from backend response
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userId', data.id);
         alert("Login successful");
 
         const normalizedRole = role.toLowerCase();
