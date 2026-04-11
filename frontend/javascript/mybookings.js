@@ -36,21 +36,23 @@ function loadBookings() {
           } else {
             bookingsList.style.display = 'flex';
             emptyState.style.display = 'none';
-            bookingsList.innerHTML = bookings.map((booking, index) => `
-              <div class="booking-card">
-                <div class="booking-info">
-                  <div class="booking-service">${serviceMap[booking.service_id] || 'Unknown Service'}</div>
-                  <div class="booking-details">
-                    <div class="booking-detail">
-                      🏠 Resident ID: ${booking.resident_id}
+            bookingsList.innerHTML = bookings.map((booking) => {
+              const serviceName = serviceMap[booking.service_id] || serviceMap[booking.serviceId] || 'Unknown Service';
+              const bookingStatus = booking.status ? booking.status.charAt(0).toUpperCase() + booking.status.slice(1) : 'Unknown';
+              return `
+                <div class="booking-card">
+                  <div class="booking-info">
+                    <div class="booking-service">${serviceName}</div>
+                    <div class="booking-details">
+                      <div class="booking-detail">🧾 Booking #${booking.id || 'N/A'}</div>
+                      <div class="booking-detail">🧍 Resident ${booking.resident_id ? `#${booking.resident_id}` : 'N/A'}</div>
+                      <div class="booking-detail">📌 Status: ${bookingStatus}</div>
                     </div>
                   </div>
+                  <div class="booking-status status-${booking.status}">${bookingStatus}</div>
                 </div>
-                <div class="booking-status status-${booking.status}">
-                  ${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                </div>
-              </div>
-            `).join('');
+              `;
+            }).join('');
           }
         });
     })
@@ -67,31 +69,24 @@ function loadBookings() {
       } else {
         bookingsList.style.display = 'flex';
         emptyState.style.display = 'none';
-        bookingsList.innerHTML = bookings.map((booking, index) => `
-          <div class="booking-card">
-            <div class="booking-info">
-              <div class="booking-service">${booking.service}</div>
-              <div class="booking-details">
-                <div class="booking-detail">
-                  📅 ${booking.date}
-                </div>
-                <div class="booking-detail">
-                  🕐 ${booking.time}
-                </div>
-                <div class="booking-detail">
-                  🏠 Apt: ${booking.apartmentId}
+        bookingsList.innerHTML = bookings.map((booking) => {
+          const bookingStatus = booking.status ? booking.status.charAt(0).toUpperCase() + booking.status.slice(1) : 'Unknown';
+          return `
+            <div class="booking-card">
+              <div class="booking-info">
+                <div class="booking-service">${booking.service || booking.serviceName || 'Unknown Service'}</div>
+                <div class="booking-details">
+                  <div class="booking-detail">🧾 Booking #${booking.id || 'N/A'}</div>
+                  <div class="booking-detail">🧍 Resident ${booking.resident_id ? `#${booking.resident_id}` : 'N/A'}</div>
+                  <div class="booking-detail">📌 Status: ${bookingStatus}</div>
                 </div>
               </div>
-              ${booking.description ? `<div style="color: #666; font-size: 13px; margin-top: 8px;">📝 ${booking.description}</div>` : ''}
+              <div class="booking-status status-${booking.status}">${bookingStatus}</div>
             </div>
-            <div class="booking-status status-${booking.status}">
-              ${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
     });
-}
 }
 function clearHistory() {
   const confirmDelete = confirm('Are you sure you want to clear all your booking history? This action cannot be undone.');

@@ -35,9 +35,9 @@ if (loginForm) {
 
         const normalizedRole = role.toLowerCase();
         console.log('Normalized role:', normalizedRole);
-        if (normalizedRole === 'resident') {
+        if (normalizedRole.includes('resident')) {
           window.location.href = "ResidentDashboard.html";
-        } else if (normalizedRole === 'provider') {
+        } else if (normalizedRole.includes('provider')) {
           window.location.href = "ProviderDashboard.html";
         } else if (normalizedRole.includes('admin')) {
           window.location.href = "admin_dashboard.html";
