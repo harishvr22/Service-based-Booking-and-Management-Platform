@@ -3,88 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApartmentCare - Service Management System</title>
+    <title>ServiceBook - Trusted Services</title>
     <link rel="stylesheet" href="../css/landing.css">
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-                <span>ApartmentCare</span>
+        <div class="container nav-content">
+            <a href="#" class="brand">ServiceBook</a>
+            <div class="nav-links">
+                <a href="#">HOME</a>
+                <a href="#">SERVICES</a>
+                <a href="#">HOW IT WORKS</a>
+                <a href="#">CONTACT</a>
             </div>
             <div class="nav-buttons">
                 <button class="btn btn-login">Login</button>
-                <button class="btn btn-signup">Sign Up</button>
+                <button class="btn btn-signup">Contact Us</button>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="container">
-            <h1>Apartment Service Management System</h1>
-            <p>A streamlined platform connecting apartment residents with verified service providers. Book maintenance services, track requests, and manage your apartment needs — all in one place.</p>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1><span class="accent">Book</span> Trusted <span>Services</span></h1>
+            <p>Connect with verified professionals near you — easily and quickly.</p>
             <div class="hero-buttons">
-                <button class="btn btn-primary">Get Started</button>
-                <button class="btn btn-secondary">Learn More</button>
+                <button class="btn btn-primary">BOOK A SERVICE</button>
+                <button class="btn btn-secondary">BECOME A PROVIDER</button>
             </div>
         </div>
     </section>
 
-    <!-- Key Features Section -->
-    <section class="key-features">
+    <!-- Service Showcase -->
+    <section class="services-showcase">
         <div class="container">
-            <h2>Key Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                    </div>
-                    <h3>Apartment-Focused</h3>
-                    <p>Designed specifically for residential complexes and apartment communities</p>
+            <div class="service-grid">
+                <div class="service-card service-card-1">
+                    <img class="service-card-image" src="../assets/electrical.png" alt="Electrician service">
+                    <div class="service-icon"></div>
+                    <div class="service-label">ELECTRICIAN</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </div>
-                    <h3>Verified Providers</h3>
-                    <p>All service providers are verified and approved by administrators</p>
+                <div class="service-card service-card-2">
+                    <img class="service-card-image" src="../assets/plumber.png" alt="Plumber service">
+                    <div class="service-icon"></div>
+                    <div class="service-label">PLUMBER</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <path d="M16 2v4"></path>
-                            <path d="M8 2v4"></path>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                            <path d="M9 14h2v2H9zM13 14h2v2h-2z"></path>
-                        </svg>
-                    </div>
-                    <h3>Booking Tracking</h3>
-                    <p>Real-time status updates from booking to service completion</p>
+                <div class="service-card service-card-3">
+                    <img class="service-card-image" src="../assets/cleaning.png" alt="Cleaning service">
+                    <div class="service-icon"></div>
+                    <div class="service-label">CLEANING</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            <path d="M12 12.5v3M10 14h4"></path>
-                        </svg>
-                    </div>
-                    <h3>Admin Security</h3>
-                    <p>Centralized admin control for user and provider management</p>
+                <div class="service-card service-card-4">
+                    <img class="service-card-image" src="../assets/ac service.png" alt="AC repair service">
+                    <div class="service-icon"></div>
+                    <div class="service-label">AC REPAIR</div>
+                </div>
+                <div class="service-card service-card-5">
+                    <img class="service-card-image" src="../assets/painting.png" alt="Painting service">
+                    <div class="service-icon"></div>
+                    <div class="service-label">PAINTING</div>
+                </div>
+                <div class="service-card service-card-6">
+                    <img class="service-card-image" src="../assets/carpentering.png" alt="Carpentering service">
+                    <div class="service-icon"></div>
+                    <div class="service-label">CARPENTERING</div>
                 </div>
             </div>
         </div>
@@ -93,104 +78,142 @@
     <!-- How It Works Section -->
     <section class="how-it-works">
         <div class="container">
-            <h2>How It Works</h2>
+            <p class="section-label">HOW IT WORKS</p>
+            <h2>Three Simple Steps</h2>
             <div class="steps">
-                <div class="step">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                    </div>
-                    <h3>Resident</h3>
-                    <p>Signs up & logs in</p>
+                <div class="step-card">
+                    <span class="step-number">01</span>
+                    <h3>Choose a Service</h3>
+                    <p>Browse categories and pick what you need.</p>
                 </div>
-                <div class="arrow">→</div>
-                <div class="step">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-                            <path d="M16 2v4M8 2v4M3 10h18"></path>
-                        </svg>
-                    </div>
-                    <h3>Book Service</h3>
-                    <p>Select date & time</p>
+                <div class="step-card">
+                    <span class="step-number">02</span>
+                    <h3>Book a Time</h3>
+                    <p>Select a convenient date and time slot.</p>
                 </div>
-                <div class="arrow">→</div>
-                <div class="step">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 1 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-                        </svg>
-                    </div>
-                    <h3>Provider Accepts</h3>
-                    <p>Confirms booking</p>
-                </div>
-                <div class="arrow">→</div>
-                <div class="step">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                    </div>
-                    <h3>Service Completed</h3>
-                    <p>Job done & tracked</p>
+                <div class="step-card">
+                    <span class="step-number">03</span>
+                    <h3>Get the Job Done</h3>
+                    <p>A verified pro arrives and handles it.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- User Roles Section -->
-    <section class="user-roles">
+    <!-- Why Choose Us Section -->
+    <section class="key-features">
         <div class="container">
-            <h2>User Roles</h2>
-            <div class="roles-grid">
-                <div class="role-card">
-                    <div class="role-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                    </div>
-                    <h3>Resident</h3>
-                    <p>Apartment residents can browse available services, book appointments, and track the status of their service requests in real-time.</p>
+            <h2>Built for Trust</h2>
+            <div class="feature-grid">
+                <div class="feature-tile">
+                    <h3>500+</h3>
+                    <p>Verified Professionals</p>
                 </div>
-                <div class="role-card">
-                    <div class="role-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-                        </svg>
-                    </div>
-                    <h3>Service Provider</h3>
-                    <p>Verified professionals receive booking requests, accept or decline jobs, and update service status as they complete work.</p>
+                <div class="feature-tile">
+                    <h3>2min</h3>
+                    <p>Fast Booking</p>
                 </div>
-                <div class="role-card">
-                    <div class="role-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
-                        </svg>
-                    </div>
-                    <h3>Admin</h3>
-                    <p>System administrators manage users, verify service providers, oversee bookings, and ensure platform security.</p>
+                <div class="feature-tile">
+                    <h3>0%</h3>
+                    <p>Affordable Pricing</p>
                 </div>
+                <div class="feature-tile">
+                    <h3>100%</h3>
+                    <p>Secure Platform</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Provider Section -->
+    <section class="provider-section">
+        <div class="container provider-grid">
+            <div class="provider-copy">
+                <p class="section-label">FOR PROVIDERS</p>
+                <h2>Earn Money by Offering Your Services</h2>
+                <p>Join thousands of professionals already growing their business on our platform.</p>
+                <ul class="provider-benefits">
+                    <li>Flexible work schedule</li>
+                    <li>Access to more customers</li>
+                    <li>Easy registration process</li>
+                </ul>
+                <button class="btn btn-primary">JOIN AS PROVIDER</button>
+            </div>
+            <div class="experience-card">
+                <span class="experience-number">20+</span>
+                <p>Years of Experience</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <p class="section-label">TESTIMONIALS</p>
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>“The electrician arrived on time and fixed everything perfectly. Highly recommended!”</p>
+                    <h3>Sarah Ahmed</h3>
+                    <span>Homeowner</span>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>“Booking was so easy. The plumber was professional and friendly. Will use again!”</p>
+                    <h3>Omar Khalid</h3>
+                    <span>Business Owner</span>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★☆</div>
+                    <p>“Great cleaning service. My apartment has never looked better. Very affordable too.”</p>
+                    <h3>Layla Hassan</h3>
+                    <span>Apartment Tenant</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container cta-content">
+            <p class="section-label">GET STARTED</p>
+            <h2>Ready to Book Your First Service?</h2>
+            <p>Join thousands of happy customers who trust our platform for their home service needs.</p>
+            <div class="cta-buttons">
+                <button class="btn btn-primary">GET STARTED</button>
+                <button class="btn btn-secondary">BOOK NOW</button>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
-                    <span>ApartmentCare</span>
+        <div class="container footer-grid">
+            <div>
+                <div class="footer-brand">ServiceBook</div>
+                <p>Connecting you with trusted professionals for every home service need.</p>
+            </div>
+            <div>
+                <h4>QUICK LINKS</h4>
+                <a href="#">Home</a>
+                <a href="#">Services</a>
+                <a href="#">How It Works</a>
+                <a href="#">About</a>
+            </div>
+            <div>
+                <h4>CONTACT</h4>
+                <p>support@servicebook.com</p>
+                <p>+1 (555) 123-4567</p>
+                <p>New York, NY</p>
+            </div>
+            <div>
+                <h4>FOLLOW US</h4>
+                <div class="social-links">
+                    <a href="#">T</a>
+                    <a href="#">F</a>
+                    <a href="#">I</a>
                 </div>
-                <p class="footer-text">An academic project for Software Engineering coursework</p>
-                <p class="footer-copyright">© 2025 ApartmentCare. Built for educational purposes.</p>
             </div>
         </div>
     </footer>
