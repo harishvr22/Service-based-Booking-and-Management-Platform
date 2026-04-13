@@ -1,18 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>My Bookings | ApartmentHub</title>
   <link rel="stylesheet" href="../css/mybookings.css" />
+    <link rel="stylesheet" href="../css/theme.css">
 </head>
 <body>
 
   <!-- Header -->
   <header class="navbar">
     <div class="logo">
-      <a href="#" class="back" onclick="goBack(event)">←</a>
+      <a href="#" class="back" onclick="goBack(event)">â†</a>
       <div class="logo-content">
-        <div class="logo-icon">📋</div>
+        <div class="logo-icon">ðŸ“‹</div>
         <div>
           <h3>My Bookings</h3>
           <p>Track your service requests</p>
@@ -30,14 +31,14 @@
     <div class="bookings-wrapper">
       <!-- Clear History Button -->
       <div id="clearButtonContainer" style="margin-bottom: 20px; display: none;">
-        <button class="btn-clear-history" onclick="clearHistory()">🗑️ Clear History</button>
+        <button class="btn-clear-history" onclick="clearHistory()">ðŸ—‘ï¸ Clear History</button>
       </div>
       <!-- Bookings will be loaded here -->
       <div id="bookingsList"></div>
 
       <!-- Empty state -->
       <div id="emptyState" class="empty-state" style="display: none;">
-        <div class="empty-icon">📭</div>
+        <div class="empty-icon">ðŸ“­</div>
         <h2>No bookings placed</h2>
         <p>You haven't booked any services yet. Start by booking a service.</p>
         <a href="../html/ResidentDashboard.html" class="btn-primary">Book a Service</a>
@@ -53,5 +54,8 @@
   </script>
   <script src="../javascript/mybookings.js"></script>
   <script src="../javascript/header.js"></script>
+  <script src="../javascript/theme.js"></script>
 </body>
 </html>
+
+
