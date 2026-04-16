@@ -14,7 +14,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (signupBtn) {
         signupBtn.addEventListener('click', function() {
-            window.location.href = 'signup.html';
+            const contactSection = document.querySelector('#contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth' });
+            }
         });
     }
 
@@ -30,6 +33,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    document.querySelectorAll('[data-action]').forEach(button => {
+        button.addEventListener('click', function () {
+            const action = this.dataset.action;
+            if (!action) return;
+
+            switch (action) {
+                case 'book-service':
+                case 'become-provider':
+                case 'join-provider':
+                case 'get-started':
+                case 'book-now':
+                    window.location.href = 'signup.html';
+                    break;
+                default:
+                    break;
+            }
+        });
+    });
+
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -40,4 +62,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Experience image slider
+    const experienceSlider = document.querySelector('.experience-slider');
+    if (experienceSlider) {
+        const experienceImages = [
+            '../assets/ac service.png',
+            '../assets/carpentering.png',
+            '../assets/cleaning.png',
+            '../assets/electrical.png',
+            '../assets/plumber.png',
+            '../assets/painting.png'
+        ];
+        let experienceIndex = 0;
+        experienceSlider.style.backgroundImage = `url("${encodeURI(experienceImages[experienceIndex])}")`;
+
+        setInterval(() => {
+            experienceSlider.style.opacity = '0';
+            experienceIndex = (experienceIndex + 1) % experienceImages.length;
+            setTimeout(() => {
+                experienceSlider.style.backgroundImage = `url("${encodeURI(experienceImages[experienceIndex])}")`;
+                experienceSlider.style.opacity = '1';
+            }, 350);
+        }, 4000);
+    }
 });

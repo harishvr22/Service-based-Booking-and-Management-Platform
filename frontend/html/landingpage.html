@@ -11,12 +11,12 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="container nav-content">
-            <a href="#" class="brand">ServiceBook</a>
+            <a href="#home" class="brand">ServiceBook</a>
             <div class="nav-links">
-                <a href="#">HOME</a>
-                <a href="#">SERVICES</a>
-                <a href="#">HOW IT WORKS</a>
-                <a href="#">CONTACT</a>
+                <a href="#home">HOME</a>
+                <a href="#services">SERVICES</a>
+                <a href="#how-it-works">HOW IT WORKS</a>
+                <a href="#contact">CONTACT</a>
             </div>
             <div class="nav-buttons">
                 <button class="btn btn-login">Login</button>
@@ -26,20 +26,20 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section id="home" class="hero">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
-            <h1><span class="accent">Book</span> Trusted <span>Services</span></h1>
+            <h1><span class="accent">Book</span> Trusted <span><br>Services</span></h1>
             <p>Connect with verified professionals near you â€” easily and quickly.</p>
             <div class="hero-buttons">
-                <button class="btn btn-primary">BOOK A SERVICE</button>
-                <button class="btn btn-secondary">BECOME A PROVIDER</button>
+                <button type="button" class="btn btn-primary" data-action="book-service">BOOK A SERVICE</button>
+                <button type="button" class="btn btn-secondary" data-action="become-provider">BECOME A PROVIDER</button>
             </div>
         </div>
     </section>
 
     <!-- Service Showcase -->
-    <section class="services-showcase">
+    <section id="services" class="services-showcase">
         <div class="container">
             <div class="service-grid">
                 <div class="service-card service-card-1">
@@ -77,23 +77,23 @@
     </section>
 
     <!-- How It Works Section -->
-    <section class="how-it-works">
+    <section id="how-it-works" class="how-it-works">
         <div class="container">
             <p class="section-label">HOW IT WORKS</p>
             <h2>Three Simple Steps</h2>
             <div class="steps">
                 <div class="step-card">
-                    <span class="step-number">01</span>
+                    <span>01</span>
                     <h3>Choose a Service</h3>
                     <p>Browse categories and pick what you need.</p>
                 </div>
                 <div class="step-card">
-                    <span class="step-number">02</span>
+                    <span>02</span>
                     <h3>Book a Time</h3>
                     <p>Select a convenient date and time slot.</p>
                 </div>
                 <div class="step-card">
-                    <span class="step-number">03</span>
+                    <span>03</span>
                     <h3>Get the Job Done</h3>
                     <p>A verified pro arrives and handles it.</p>
                 </div>
@@ -104,23 +104,34 @@
     <!-- Why Choose Us Section -->
     <section class="key-features">
         <div class="container">
-            <h2>Built for Trust</h2>
+            <div class="section-header">
+                <p class="section-label">Why Choose Us</p>
+                <h2>Built for Trust</h2>
+            </div>
             <div class="feature-grid">
-                <div class="feature-tile">
-                    <h3>500+</h3>
-                    <p>Verified Professionals</p>
+                <div class="feature-card">
+                    <span>500+</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                    <h3>Verified Professionals</h3>
+                    <p>Background-checked and certified service providers.</p>
                 </div>
-                <div class="feature-tile">
-                    <h3>2min</h3>
-                    <p>Fast Booking</p>
+                <div class="feature-card">
+                    <span>2min</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <h3>Fast Booking</h3>
+                    <p>Book a service in under 2 minutes.</p>
                 </div>
-                <div class="feature-tile">
-                    <h3>0%</h3>
-                    <p>Affordable Pricing</p>
+                <div class="feature-card">
+                    <span>0%</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <h3>Affordable Pricing</h3>
+                    <p>Transparent pricing with no hidden fees.</p>
                 </div>
-                <div class="feature-tile">
-                    <h3>100%</h3>
-                    <p>Secure Platform</p>
+                <div class="feature-card">
+                    <span>100%</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <h3>Secure Platform</h3>
+                    <p>Your data and payments are fully protected.</p>
                 </div>
             </div>
         </div>
@@ -130,46 +141,90 @@
     <section class="provider-section">
         <div class="container provider-grid">
             <div class="provider-copy">
-                <p class="section-label">FOR PROVIDERS</p>
+                <p class="section-label provider-label">For Providers</p>
                 <h2>Earn Money by Offering Your Services</h2>
-                <p>Join thousands of professionals already growing their business on our platform.</p>
-                <ul class="provider-benefits">
-                    <li>Flexible work schedule</li>
-                    <li>Access to more customers</li>
-                    <li>Easy registration process</li>
-                </ul>
-                <button class="btn btn-primary">JOIN AS PROVIDER</button>
+                <p class="provider-description">Join thousands of professionals already growing their business on our platform.</p>
+                <div class="provider-benefits">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
+                        </div>
+                        <span>Flexible work schedule</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <span>Access to more customers</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg>
+                        </div>
+                        <span>Easy registration process</span>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary provider-btn" data-action="join-provider">JOIN AS PROVIDER</button>
             </div>
             <div class="experience-card">
-                <span class="experience-number">20+</span>
-                <p>Years of Experience</p>
+                <div class="experience-slider"></div>
+                <div class="experience-card-inner">
+                    <span class="experience-number">20+</span>
+                    <p>Years of Experience</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section class="testimonials">
+    <section id="testimonials" class="testimonials">
         <div class="container">
-            <p class="section-label">TESTIMONIALS</p>
-            <h2>What Our Users Say</h2>
+            <div class="text-center mb-16">
+                <p class="section-label">TESTIMONIALS</p>
+                <h2>What Our Users Say</h2>
+            </div>
             <div class="testimonial-grid">
                 <div class="testimonial-card">
-                    <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
-                    <p>â€œThe electrician arrived on time and fixed everything perfectly. Highly recommended!â€</p>
-                    <h3>Sarah Ahmed</h3>
-                    <span>Homeowner</span>
+                    <div class="testimonial-stars">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                    </div>
+                    <p class="testimonial-copy">"The electrician arrived on time and fixed everything perfectly. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <p>Sarah Ahmed</p>
+                        <p>Homeowner</p>
+                    </div>
                 </div>
                 <div class="testimonial-card">
-                    <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
-                    <p>â€œBooking was so easy. The plumber was professional and friendly. Will use again!â€</p>
-                    <h3>Omar Khalid</h3>
-                    <span>Business Owner</span>
+                    <div class="testimonial-stars">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                    </div>
+                    <p class="testimonial-copy">"Booking was so easy. The plumber was professional and friendly. Will use again!"</p>
+                    <div class="testimonial-author">
+                        <p>Omar Khalid</p>
+                        <p>Business Owner</p>
+                    </div>
                 </div>
                 <div class="testimonial-card">
-                    <div class="stars">â˜…â˜…â˜…â˜…â˜†</div>
-                    <p>â€œGreat cleaning service. My apartment has never looked better. Very affordable too.â€</p>
-                    <h3>Layla Hassan</h3>
-                    <span>Apartment Tenant</span>
+                    <div class="testimonial-stars">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                    </div>
+                    <p class="testimonial-copy">"Great cleaning service. My apartment has never looked better. Very affordable too."</p>
+                    <div class="testimonial-author">
+                        <p>Layla Hassan</p>
+                        <p>Apartment Tenant</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,41 +237,61 @@
             <h2>Ready to Book Your First Service?</h2>
             <p>Join thousands of happy customers who trust our platform for their home service needs.</p>
             <div class="cta-buttons">
-                <button class="btn btn-primary">GET STARTED</button>
-                <button class="btn btn-secondary">BOOK NOW</button>
+                <button type="button" class="btn btn-primary" data-action="get-started">GET STARTED</button>
+                <button type="button" class="btn btn-secondary" data-action="book-now">BOOK NOW</button>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-grid">
+    <footer id="contact" class="footer border-top">
+        <div class="container footer-grid footer-new-grid">
             <div>
-                <div class="footer-brand">ServiceBook</div>
-                <p>Connecting you with trusted professionals for every home service need.</p>
+                <h3 class="footer-title">ServiceBook</h3>
+                <p class="footer-copy">Connecting you with trusted professionals for every home service need.</p>
             </div>
             <div>
-                <h4>QUICK LINKS</h4>
-                <a href="#">Home</a>
-                <a href="#">Services</a>
-                <a href="#">How It Works</a>
-                <a href="#">About</a>
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-list">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
             </div>
             <div>
-                <h4>CONTACT</h4>
-                <p>support@servicebook.com</p>
-                <p>+1 (555) 123-4567</p>
-                <p>New York, NY</p>
+                <h4 class="footer-heading">Contact</h4>
+                <ul class="footer-list footer-contact-list">
+                    <li>
+                        <span class="footer-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                        </span>
+                        support@servicebook.com
+                    </li>
+                    <li>
+                        <span class="footer-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </span>
+                        +1 (555) 123-4567
+                    </li>
+                    <li>
+                        <span class="footer-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </span>
+                        New York, NY
+                    </li>
+                </ul>
             </div>
             <div>
-                <h4>FOLLOW US</h4>
-                <div class="social-links">
+                <h4 class="footer-heading">Follow Us</h4>
+                <div class="footer-socials">
                     <a href="#">T</a>
                     <a href="#">F</a>
                     <a href="#">I</a>
                 </div>
             </div>
         </div>
+        <div class="container footer-subtext">© 2026 ServiceBook. All rights reserved.</div>
     </footer>
 
     <script src="../javascript/landing.js"></script>
