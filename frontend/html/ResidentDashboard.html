@@ -1,99 +1,157 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <title>ApartmentHub – Resident Dashboard</title>
+  <title>ServiceBook – Resident Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="../css/Resident.css" />
-    <link rel="stylesheet" href="../css/theme.css">
 </head>
+<body class="dark-theme">
 
-<body>
-
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">
-      <div class="logo-icon">🏢</div>
-      <div>
-        <h3>ApartmentHub</h3>
-        <p>Resident Dashboard</p>
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h2>ServiceBook</h2>
       </div>
-    </div>
-    <div class="header-right">
-      <div class="user-name welcome">Welcome, Guest</div>
-      <a href="#" class="logout logout-btn">Logout</a>
-    </div>
-  </header>
+      <div class="menu-section">
+        <p class="menu-title">MENU</p>
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="active">
+              <a href="ResidentDashboard.html"><i class="fas fa-th-large"></i> Overview</a>
+            </li>
+            <li>
+              <a href="servicebooking.html"><i class="fas fa-wrench"></i> Services</a>
+            </li>
+            <li>
+              <a href="mybookings.html"><i class="far fa-calendar-alt"></i> Bookings</a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="far fa-bell"></i> Notifications
+                <span class="badge">2</span>
+              </a>
+            </li>
+            <li>
+              <a href="ResidentProfile.html"><i class="far fa-user"></i> Profile</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class="logout-section">
+        <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </aside>
 
-  <!-- Main Content -->
-  <main class="container">
-    <h1>Welcome back!</h1>
-    <p class="subtitle">Browse available services or manage your bookings.</p>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Navbar -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <i class="fas fa-columns"></i>
+          <span>Overview</span>
+        </div>
+        <div class="nav-right">
+          <button class="nav-icon-btn"><i class="far fa-bell"></i></button>
+          <div class="user-profile">
+            <div class="avatar user-initial">A</div>
+            <div class="user-details">
+              <span class="user-name">Guest</span>
+              <span class="user-role">Resident</span>
+            </div>
+          </div>
+        </div>
+      </header>
 
-    <div class="actions">
-      <a href="servicebooking.html" class="btn primary">📅 Book Service</a>
-      <a href="mybookings.html" class="btn secondary">📋 My Bookings</a>
-      <a href="ResidentProfile.html" class="btn secondary">👤 My Profile</a>
-    </div>
+      <!-- Dashboard Body -->
+      <div class="dashboard-body">
+        
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+          <p class="welcome-sub">WELCOME BACK</p>
+          <h1><span class="user-name">Guest</span>.</h1>
+          <p class="welcome-desc">Manage your service bookings, track requests, and book trusted professionals — all in one place.</p>
+        </section>
 
-    <h2>Available Services</h2>
+        <!-- Stats Grid -->
+        <section class="stats-grid">
+          <div class="stat-card">
+            <p class="stat-title">TOTAL BOOKINGS</p>
+            <h3>4</h3>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">PENDING</p>
+            <h3>1</h3>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">COMPLETED</p>
+            <h3>2</h3>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">AVG. RATING</p>
+            <h3 class="text-orange">5.0</h3>
+          </div>
+        </section>
 
-    <div class="services-grid">
-      <a href="servicebooking.html?service=Plumber" class="service-card">
-        <div class="icon">🔧</div>
-        <h3>Plumber</h3>
-        <p>Pipe repairs & installations</p>
-      </a>
+        <div class="content-split">
+          
+          <!-- Upcoming Bookings (Left) -->
+          <div class="upcoming-bookings">
+            <div class="section-header">
+              <h2>Upcoming Bookings</h2>
+              <a href="mybookings.html" class="view-all">View all &rarr;</a>
+            </div>
+            
+            <div class="booking-list">
+              <!-- Mockup data matching the design -->
+              <div class="list-item">
+                <div class="item-img"><img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=150&q=80" alt="Plumbing"></div>
+                <div class="item-details">
+                  <h4>Plumbing</h4>
+                  <p>Apr 19, 2026 - 11:00 AM</p>
+                </div>
+                <div class="item-status status-approved">
+                  <i class="far fa-check-circle"></i> Approved
+                </div>
+              </div>
+              
+              <div class="list-item">
+                <div class="item-img"><img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=150&q=80" alt="Electrical Repair"></div>
+                <div class="item-details">
+                  <h4>Electrical Repair</h4>
+                  <p>Apr 22, 2026 - 03:00 PM</p>
+                </div>
+                <div class="item-status status-pending">
+                  <i class="far fa-clock"></i> Pending
+                </div>
+              </div>
+            </div>
+          </div>
 
-      <a href="servicebooking.html?service=Electrician" class="service-card">
-        <div class="icon">⚡</div>
-        <h3>Electrician</h3>
-        <p>Electrical work & repairs</p>
-      </a>
-
-      <a href="servicebooking.html?service=Carpenter" class="service-card">
-        <div class="icon">🪚</div>
-        <h3>Carpenter</h3>
-        <p>Woodwork & furniture</p>
-      </a>
-
-      <a href="servicebooking.html?service=Painter" class="service-card">
-        <div class="icon">🎨</div>
-        <h3>Painter</h3>
-        <p>Interior & exterior painting</p>
-      </a>
-
-      <a href="servicebooking.html?service=Cleaner" class="service-card">
-        <div class="icon">✨</div>
-        <h3>Cleaner</h3>
-        <p>Deep cleaning services</p>
-      </a>
-
-      <a href="servicebooking.html?service=HVAC" class="service-card">
-        <div class="icon">🌬️</div>
-        <h3>HVAC</h3>
-        <p>Heating & cooling systems</p>
-      </a>
-
-      <a href="servicebooking.html?service=Locksmith" class="service-card">
-        <div class="icon">🔑</div>
-        <h3>Locksmith</h3>
-        <p>Lock repairs & key services</p>
-      </a>
-
-      <a href="servicebooking.html?service=Pest Control" class="service-card">
-        <div class="icon">🐞</div>
-        <h3>Pest Control</h3>
-        <p>Pest removal & prevention</p>
-      </a>
-    </div>
-  </main>
+          <!-- Quick Book & Services (Right) -->
+          <div class="quick-book-section">
+            <h2>Quick Book</h2>
+            <p>Need help fast? Browse all available services.</p>
+            <a href="servicebooking.html" class="btn-primary">BROWSE SERVICES &rarr;</a>
+            
+            <!-- JS populated services list -->
+            <div class="services-grid">
+              <!-- Dynamically populated by resident_dashboard.js -->
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </main>
+  </div>
 
   <script src="../javascript/resident_dashboard.js"></script>
   <script src="../javascript/header.js"></script>
-  <script src="../javascript/theme.js"></script>
 </body>
-
 </html>
-
-
