@@ -1,190 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApartmentCare - Service Provider Portal</title>
-    <link rel="stylesheet" href="../css/providerdashboard.css">
-    <link rel="stylesheet" href="../css/theme.css">
+  <meta charset="UTF-8" />
+  <title>ServiceBook – Provider Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/Resident.css" />
 </head>
+<body class="dark-theme">
 
-<body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <div class="logo">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
-                </div>
-                <div class="logo-text">
-                    <h3>ApartmentCare</h3>
-                    <p>Service Provider Portal</p>
-                </div>
-            </div>
-            <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
-                <a href="provider_notifications.html" class="nav-icon-btn" style="position: relative; color: white; text-decoration: none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                    <span class="badge" style="position: absolute; top: -5px; right: -5px; background: var(--orange, #ff8c00); color: black; border-radius: 50%; padding: 2px 5px; font-size: 10px; font-weight: bold; display: none;">0</span>
-                </a>
-                <a href="landingpage.html" class="logout-btn">Logout</a>
-            </div>
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h2 style="color: var(--orange);">ServiceBook</h2>
+        <p style="font-size: 10px; letter-spacing: 2px; color: #a0a0a0; margin-top: -5px; font-weight: 600;">PROVIDER PORTAL</p>
+      </div>
+      <div class="menu-section">
+        <p class="menu-title">WORKSPACE</p>
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="active">
+              <a href="ProviderDashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a>
+            </li>
+            <li>
+              <a href="ServiceRequests.html"><i class="fas fa-clipboard-list"></i> REQUESTS</a>
+            </li>
+            <li>
+              <a href="UpdateJobStatus.html"><i class="far fa-calendar-check"></i> SCHEDULE</a>
+            </li>
+            <li>
+              <a href="JobHistory.html"><i class="fas fa-history"></i> HISTORY</a>
+            </li>
+            <li>
+              <a href="ProviderProfile.html"><i class="far fa-user"></i> PROFILE</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class="logout-section">
+        <a href="landingpage.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Navbar -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <i class="fas fa-columns" style="color: #888;"></i>
+          <span><span style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px;">PROVIDER</span> &nbsp;/&nbsp; Overview</span>
         </div>
-    </nav>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Provider Profile Section -->
-        <div class="provider-section">
-            <div class="provider-info">
-                <div class="provider-avatar">RK</div>
-                <div class="provider-details">
-                    <h2>Rajesh Kumar</h2>
-                    <p class="provider-role">
-                        <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 12a9 9 0 1 0 18 0A9 9 0 0 0 3 12Z"></path>
-                            <path d="M12 6v6l4 2"></path>
-                        </svg>
-                        Plumber <span class="rating">â­ 4.8</span>
-                    </p>
-                </div>
-            </div>
-
-            <div class="provider-status">
-                <a href="ProviderProfile.html" class="btn-profile">ðŸ‘¤ My Profile</a>
-                <div class="availability">
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="status-toggle" checked>
-                        <label for="status-toggle"></label>
-                    </div>
-                    <span class="status-text">Available</span>
-                </div>
-                <button class="btn-offline">Go Offline</button>
-            </div>
-
-            <div class="verification-badge">
-                <div class="badge-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"></path>
-                    </svg>
-                </div>
-                <div class="badge-text">
-                    <h4>Verified Provider</h4>
-                    <p>Admin verified - Since Jan 2025</p>
-                    <span class="active-status">Active</span>
-                </div>
-            </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+          <!-- Custom Status Pill from Image -->
+          <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; color: #2ecc71; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <div style="width: 6px; height: 6px; background: #2ecc71; border-radius: 50%;"></div>
+            Online
+          </div>
+          <a href="provider_notifications.html" class="nav-icon-btn" style="position: relative;">
+              <i class="far fa-bell"></i>
+              <span class="badge" style="position: absolute; top: 0px; right: 0px; background: var(--orange, #ff8c00); color: black; border-radius: 50%; padding: 2px 5px; font-size: 10px; font-weight: bold; display: none;">0</span>
+          </a>
+          <div class="user-profile">
+            <div class="avatar" style="background: var(--orange); color: black; font-weight: bold; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;">AV</div>
+          </div>
         </div>
+      </header>
 
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon jobs">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2M9 7h6M9 11h6M9 15h6">
-                        </path>
-                    </svg>
+      <!-- Dashboard Body -->
+      <div class="dashboard-body">
+        
+        <!-- Welcome Section -->
+        <section class="welcome-section" style="margin-bottom: 30px;">
+          <p class="welcome-sub" style="color: var(--orange); letter-spacing: 2px; font-size: 12px; font-weight: 600; margin-bottom: 5px;">WELCOME BACK</p>
+          <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 10px; color: white;">Hi, Arjun.</h1>
+          <p class="welcome-desc" style="color: #9e9e9e;">Here's a snapshot of your assigned work and performance today.</p>
+        </section>
+
+        <!-- Stats Grid matching Image -->
+        <!-- We use old generic classes to partially absorb JS interactions -->
+        <section class="stats-grid-wrapper" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px;">
+          <!-- Card 1 -->
+          <div class="stat-card" style="background: #1c1c1c; padding: 20px; border-radius: 8px; border: 1px solid #ff8c00; position: relative;">
+            <p class="stat-title" style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin-bottom: 15px;">NEW REQUESTS</p>
+            <h3 style="font-size: 32px; color: white; margin: 0; display: inline-block;">2</h3>
+            <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: var(--orange); width: 40px; height: 40px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: black;">
+                <i class="fas fa-clipboard-list" style="font-size: 20px;"></i>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="stat-card" style="background: #1c1c1c; padding: 20px; border-radius: 8px; border: 1px solid #333; position: relative;">
+            <p class="stat-title" style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin-bottom: 15px;">IN PROGRESS</p>
+            <h3 style="font-size: 32px; color: white; margin: 0; display: inline-block;">1</h3>
+            <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,140,0,0.1); width: 40px; height: 40px; border-radius: 6px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="far fa-play-circle" style="font-size: 20px;"></i>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="stat-card" style="background: #1c1c1c; padding: 20px; border-radius: 8px; border: 1px solid #333; position: relative;">
+            <p class="stat-title" style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin-bottom: 15px;">COMPLETED</p>
+            <h3 style="font-size: 32px; color: white; margin: 0; display: inline-block;">2</h3>
+            <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,140,0,0.1); width: 40px; height: 40px; border-radius: 6px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="far fa-check-circle" style="font-size: 20px;"></i>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="stat-card" style="background: #1c1c1c; padding: 20px; border-radius: 8px; border: 1px solid #333; position: relative;">
+            <p class="stat-title" style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin-bottom: 15px;">AVG. RATING</p>
+            <h3 style="font-size: 32px; color: white; margin: 0; display: inline-block;">4.5</h3>
+            <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,140,0,0.1); width: 40px; height: 40px; border-radius: 6px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="far fa-star" style="font-size: 20px;"></i>
+            </div>
+          </div>
+        </section>
+
+        <!-- Main Structure (Split) -->
+        <div class="content-split" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+          
+          <!-- Pending Requests (Left) -->
+          <div style="background: #141414; border: 1px solid #333; border-radius: 8px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 25px; align-items: flex-start;">
+                <div>
+                    <span style="color: var(--orange); font-size: 10px; font-weight: 700; letter-spacing: 1px;">ACTION NEEDED</span>
+                    <h2 style="font-size: 18px; color: white; margin-top: 5px;">Pending Requests</h2>
                 </div>
-                <div class="stat-content">
-                    <h3>47</h3>
-                    <p>Total Jobs</p>
-                </div>
+                <a href="ServiceRequests.html" style="color: var(--orange); text-decoration: none; font-size: 14px; font-weight: 600;">View all</a>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon pending">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z">
-                        </path>
-                    </svg>
+            <!-- List -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- Req 1 -->
+                <div style="border: 1px solid #333; background: #1c1c1c; border-radius: 8px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <div>
+                            <span style="color: #888; font-size: 12px; font-family: monospace;">REQ-1001</span>
+                            <span style="background: rgba(255,140,0,0.2); color: var(--orange); padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-left: 10px; border: 1px solid var(--orange);">Pending</span>
+                            <h3 style="color: white; font-size: 16px; margin-top: 8px; margin-bottom: 0px;">Electrical — Fan Installation</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px; min-width: 120px;">
+                            <button style="background: var(--orange); color: black; border: none; padding: 6px; border-radius: 4px; font-weight: 600; font-size: 12px; cursor: pointer;"><i class="far fa-check-circle"></i> Accept</button>
+                            <button style="background: transparent; color: #ff4757; border: 1px solid #ff4757; padding: 6px; border-radius: 4px; font-weight: 600; font-size: 12px; cursor: pointer;"><i class="far fa-times-circle"></i> Reject</button>
+                            <button style="background: transparent; color: white; border: 1px solid #444; padding: 6px; border-radius: 4px; font-weight: 600; font-size: 12px; cursor: pointer;">Details</button>
+                        </div>
+                    </div>
+                    <!-- Details Sub info -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: #aaa;">
+                        <div><i class="far fa-user" style="color: var(--orange); width: 16px;"></i> Aarav Sharma</div>
+                        <div><i class="fas fa-phone" style="color: var(--orange); width: 16px;"></i> +91 98200 11223</div>
+                        <div><i class="far fa-calendar-alt" style="color: var(--orange); width: 16px;"></i> Apr 19, 2026 • 10:00 AM</div>
+                        <div><i class="fas fa-map-marker-alt" style="color: var(--orange); width: 16px;"></i> Block A-204, Skyline Residency</div>
+                    </div>
                 </div>
-                <div class="stat-content">
-                    <h3>3</h3>
-                    <p>Pending</p>
-                </div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-icon in-progress">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <h3>2</h3>
-                    <p>In Progress</p>
+                <!-- Req 2 -->
+                <div style="border: 1px solid #333; background: #1c1c1c; border-radius: 8px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <div>
+                            <span style="color: #888; font-size: 12px; font-family: monospace;">REQ-1002</span>
+                            <span style="background: rgba(255,140,0,0.2); color: var(--orange); padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-left: 10px; border: 1px solid var(--orange);">Pending</span>
+                            <h3 style="color: white; font-size: 16px; margin-top: 8px; margin-bottom: 0px;">Plumbing — Leak Repair</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px; min-width: 120px;">
+                            <button style="background: var(--orange); color: black; border: none; padding: 6px; border-radius: 4px; font-weight: 600; font-size: 12px; cursor: pointer;"><i class="far fa-check-circle"></i> Accept</button>
+                            <button style="background: transparent; color: #ff4757; border: 1px solid #ff4757; padding: 6px; border-radius: 4px; font-weight: 600; font-size: 12px; cursor: pointer;"><i class="far fa-times-circle"></i> Reject</button>
+                        </div>
+                    </div>
                 </div>
             </div>
+          </div>
 
-            <div class="stat-card">
-                <div class="stat-icon completed">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"></path>
-                    </svg>
+          <!-- Performance Section (Right) -->
+          <div style="background: #141414; border: 1px solid #333; border-radius: 8px; padding: 20px; display: flex; flex-direction: column;">
+            <div style="margin-bottom: 25px;">
+                <span style="color: var(--orange); font-size: 10px; font-weight: 700; letter-spacing: 1px;">PERFORMANCE</span>
+                <h2 style="font-size: 18px; color: white; margin-top: 5px;">This Month</h2>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 20px; border-bottom: 1px solid #333; padding-bottom: 20px; flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #888; font-size: 14px;">Jobs Completed</span>
+                    <span style="color: white; font-size: 20px; font-weight: 600;">2</span>
                 </div>
-                <div class="stat-content">
-                    <h3>42</h3>
-                    <p>Completed</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #888; font-size: 14px;">Acceptance Rate</span>
+                    <span style="color: #2ecc71; font-size: 20px; font-weight: 600;">96%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #888; font-size: 14px;">Avg. Response</span>
+                    <span style="color: white; font-size: 20px; font-weight: 600;">12m</span>
                 </div>
             </div>
+            
+            <div style="padding-top: 20px;">
+                <span style="color: var(--orange); font-size: 12px; font-weight: 600;"><i class="fas fa-chart-line"></i> +18% vs last month</span>
+            </div>
+          </div>
+          
         </div>
+      </div>
+    </main>
+  </div>
 
-        <!-- Quick Actions Section -->
-        <div class="quick-actions-section">
-            <h3>Quick Actions</h3>
-            <div class="actions-grid">
-                <a href="ServiceRequests.html" class="action-card action-link">
-                    <div class="action-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path
-                                d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2M9 7h6M9 11h6M9 15h6">
-                            </path>
-                        </svg>
-                    </div>
-                    <h4>Service Requests</h4>
-                    <p>View & respond to incoming requests</p>
-                    <span class="badge">3 new</span>
-                </a>
+  <!-- Keep old hidden elements to not break providerdashboard.js variables -->
+  <div style="display: none;">
+      <input type="checkbox" id="status-toggle">
+      <span class="status-text">Available</span>
+      <button class="btn-offline">Offline</button>
+      <span class="active-status">Active</span>
+      <div class="provider-details">
+          <h2>Arjun</h2>
+      </div>
+      <div class="provider-role">Plumber</div>
+  </div>
 
-                <a href="UpdateJobStatus.html" class="action-card action-link">
-                    <div class="action-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2">
-                            </path>
-                        </svg>
-                    </div>
-                    <h4>Update Job Status</h4>
-                    <p>Change progress of active jobs</p>
-                    <span class="badge active-jobs">2 active</span>
-                </a>
-
-                <a href="JobHistory.html" class="action-card action-link">
-                    <div class="action-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                    </div>
-                    <h4>Job History</h4>
-                    <p>View past completed services</p>
-                    <span class="badge completed-jobs">42 done</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <script src="../javascript/providerdashboard.js"></script>
+  <script src="../javascript/providerdashboard.js"></script>
+  <script src="../javascript/header.js"></script>
   <script src="../javascript/theme.js"></script>
 </body>
-
 </html>
-
