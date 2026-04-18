@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,11 +7,64 @@
     <title>My Profile - ApartmentHub</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/Resident.css">
     <link rel="stylesheet" href="../css/ResidentProfile.css">
-    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Using Resident.css for the main layout theme instead of missing theme.css -->
 </head>
 
-<body>
+<body class="dark-theme">
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <h2>ServiceBook</h2>
+            </div>
+            <div class="menu-section">
+                <p class="menu-title">MENU</p>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li>
+                            <a href="ResidentDashboard.html"><i class="fas fa-th-large"></i> Overview</a>
+                        </li>
+                        <li>
+                            <a href="servicebooking.html"><i class="fas fa-wrench"></i> Services</a>
+                        </li>
+                        <li>
+                            <a href="mybookings.html"><i class="far fa-calendar-alt"></i> Bookings</a>
+                        </li>
+                        <li class="active">
+                            <a href="ResidentProfile.html"><i class="far fa-user"></i> Profile</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="logout-section">
+                <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-nav">
+                <div class="nav-left">
+                    <i class="far fa-user"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="nav-right">
+                    <a href="notifications.html" class="nav-icon-btn"><i class="far fa-bell"></i></a>
+                    <div class="user-profile">
+                        <div class="avatar user-initial">R</div>
+                        <div class="user-details">
+                            <span class="user-name">Rahul Sharma</span>
+                            <span class="user-role">Resident</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Body -->
+            <div class="dashboard-body">
     <div class="profile-container">
         <!-- Header -->
         <header class="profile-header">
@@ -123,9 +176,12 @@
         </div>
     </div>
 
-    <script src="../javascript/resident_profile.js"></script>
-  <script src="../javascript/theme.js"></script>
-</body>
+            </div>
+        </main>
+    </div>
 
+    <script src="../javascript/resident_profile.js"></script>
+    <script src="../javascript/header.js"></script>
+</body>
 </html>
 

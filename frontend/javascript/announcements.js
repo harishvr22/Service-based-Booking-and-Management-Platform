@@ -144,6 +144,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 <span class="announcement-date">${dateString}</span>
             `;
 
+            // Save to localStorage for Notifications
+            const newNotif = {
+                id: Date.now().toString(),
+                title: title,
+                message: message,
+                audience: audience,
+                date: new Date().toISOString(),
+                read: false,
+                iconClass: iconClass
+            };
+            let allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+            allNotifs.unshift(newNotif);
+            localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
+
             // Prepend to List
             if (announcementsList) {
                 announcementsList.insertBefore(newCard, announcementsList.firstChild);
