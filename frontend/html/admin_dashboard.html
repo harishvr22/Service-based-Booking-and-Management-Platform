@@ -1,163 +1,162 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApartmentCare - Admin Dashboard</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
+    <title>ServiceBook - Admin Console (Overview)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/admin_dashboard.css">
-    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/admin_dark.css">
 </head>
-
-<body>
-    <div class="dashboard-container">
+<body class="admin-dark">
+    <div class="admin-wrapper">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="logo-text">
-                    <h2>ApartmentCare</h2>
-                    <span>Admin Panel</span>
-                </div>
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <h2>ServiceBook</h2>
+                <p>ADMIN CONSOLE</p>
             </div>
-
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="active">
-                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
-                    </li>
-                    <li>
-                        <a href="admin_bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a>
-                    </li>
-                    <li>
-                        <a href="admin_providers.html"><i class="fas fa-user-tie"></i> Providers</a>
-                    </li>
-                    <li>
-                        <a href="admin_residents.html"><i class="fas fa-users"></i> Residents</a>
-                    </li>
-                    <li>
-                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
-                    </li>
-                    <li>
-                        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            
+            <div class="admin-menu-section">
+                <p class="admin-menu-title">MANAGE</p>
+                <nav class="admin-nav">
+                    <ul>
+                        <li class="active"><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
+                        <li><a href="admin_residents.html"><i class="fas fa-users"></i> USERS</a></li>
+                        <li><a href="admin_providers.html"><i class="fas fa-user-tie"></i> PROVIDERS</a></li>
+                        <li><a href="admin_bookings.html"><i class="fas fa-calendar-alt"></i> BOOKINGS</a></li>
+                        <li><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
+                        <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                        <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="admin-avatar">AR</div>
+                <div class="admin-info">
+                    <div class="name">Alex Reed</div>
+                    <div class="role">SUPER ADMIN</div>
+                </div>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <header class="dashboard-header">
-                <h1>Analytics Overview</h1>
-                <p>Track bookings, revenue, and service performance</p>
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <i class="fas fa-columns"></i>
+                    <span>ADMIN CONSOLE</span> / <span class="admin-header-title">Overview</span>
+                </div>
+                <div class="admin-sys-status">
+                    <div class="status-dot"></div> SYSTEM ONLINE
+                </div>
             </header>
 
-            <!-- Stats Cards -->
-            <section class="stats-grid">
-                <!-- Total Bookings -->
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="icon-box bg-orange-light">
-                            <i class="fas fa-clipboard-list text-orange"></i>
+            <div class="admin-body">
+                <!-- Stats Grid -->
+                <div class="ad-stats-grid">
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="fas fa-users text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+12%</span></div>
+                        <div class="ad-stat-val">5</div>
+                        <div class="ad-stat-label">TOTAL USERS</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="fas fa-wrench text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+5%</span></div>
+                        <div class="ad-stat-val">3</div>
+                        <div class="ad-stat-label">ACTIVE PROVIDERS</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="far fa-calendar-check text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+8%</span></div>
+                        <div class="ad-stat-val">4</div>
+                        <div class="ad-stat-label">ACTIVE BOOKINGS</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="fas fa-dollar-sign text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+18%</span></div>
+                        <div class="ad-stat-val">$200</div>
+                        <div class="ad-stat-label">REVENUE</div>
+                    </div>
+                </div>
+
+                <!-- Split Content -->
+                <div class="ad-split">
+                    <!-- Left Table -->
+                    <div class="ad-panel">
+                        <h3 class="ad-panel-title">RECENT BOOKINGS</h3>
+                        <p class="ad-panel-desc">Latest activity across the platform</p>
+                        
+                        <table class="ad-table">
+                            <thead>
+                                <tr>
+                                    <th>RESIDENT</th>
+                                    <th>SERVICE</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: 500;">Sarah Mitchell</td>
+                                    <td style="color: #aaa;">Leak Repair</td>
+                                    <td><span class="badge-solid badge-approved">APPROVED</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">James Carter</td>
+                                    <td style="color: #aaa;">Deep Clean</td>
+                                    <td><span class="badge-solid badge-in-progress">IN PROGRESS</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">David Park</td>
+                                    <td style="color: #aaa;">Wiring Check</td>
+                                    <td><span class="badge-solid badge-completed">COMPLETED</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">Maria Lopez</td>
+                                    <td style="color: #aaa;">Faucet Install</td>
+                                    <td><span class="badge-solid badge-pending">PENDING</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">Aisha Khan</td>
+                                    <td style="color: #aaa;">Lawn Care</td>
+                                    <td><span class="badge-solid badge-cancelled">CANCELLED</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Right Action List -->
+                    <div class="ad-panel">
+                        <h3 class="ad-panel-title">ACTION REQUIRED</h3>
+                        <p class="ad-panel-desc">&nbsp;</p> <!-- spacer -->
+
+                        <div class="ad-action-item">
+                            <div class="ad-action-icon icon-orange"><i class="fas fa-wrench"></i></div>
+                            <div class="ad-action-info">
+                                <h4>Provider Approvals</h4>
+                                <p>2 awaiting review</p>
+                            </div>
                         </div>
-                        <span class="trend positive"><i class="fas fa-arrow-up"></i> +12%</span>
-                    </div>
-                    <div class="stat-body">
-                        <h3>276</h3>
-                        <p>Total Bookings</p>
-                    </div>
-                </div>
 
-                <!-- Active Providers -->
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="icon-box bg-blue-light">
-                            <i class="fas fa-user-friends text-blue"></i>
+                        <div class="ad-action-item">
+                            <div class="ad-action-icon icon-red"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="ad-action-info">
+                                <h4>Open Complaints</h4>
+                                <p>2 need attention</p>
+                            </div>
                         </div>
-                        <span class="trend positive"><i class="fas fa-arrow-up"></i> +3</span>
-                    </div>
-                    <div class="stat-body">
-                        <h3>18</h3>
-                        <p>Active Providers</p>
-                    </div>
-                </div>
 
-                <!-- Revenue -->
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="icon-box bg-green-light">
-                            <i class="fas fa-rupee-sign text-green"></i>
+                        <div class="ad-action-item">
+                            <div class="ad-action-icon icon-orange"><i class="far fa-clock"></i></div>
+                            <div class="ad-action-info">
+                                <h4>Pending Bookings</h4>
+                                <p>2 to approve</p>
+                            </div>
                         </div>
-                        <span class="trend negative"><i class="fas fa-arrow-down"></i> -8%</span>
-                    </div>
-                    <div class="stat-body">
-                        <h3>â‚¹38,000</h3>
-                        <p>Revenue (Feb)</p>
+
                     </div>
                 </div>
 
-                <!-- Avg Rating -->
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="icon-box bg-yellow-light">
-                            <i class="fas fa-chart-line text-yellow"></i>
-                        </div>
-                        <span class="trend positive"><i class="fas fa-arrow-up"></i> +0.2</span>
-                    </div>
-                    <div class="stat-body">
-                        <h3>4.6</h3>
-                        <p>Avg. Rating</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Charts Section -->
-            <section class="charts-grid">
-                <!-- Booking Trends -->
-                <div class="chart-card">
-                    <h3>Booking Trends</h3>
-                    <div class="chart-container">
-                        <canvas id="bookingTrendsChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Service Breakdown -->
-                <div class="chart-card">
-                    <h3>Service Breakdown</h3>
-                    <div class="chart-container donut-container">
-                        <canvas id="serviceBreakdownChart"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Revenue Trend -->
-            <section class="full-width-chart">
-                <div class="chart-card">
-                    <h3>Revenue Trend</h3>
-                    <div class="chart-container wide-chart">
-                        <canvas id="revenueTrendChart"></canvas>
-                    </div>
-                </div>
-            </section>
+            </div>
         </main>
     </div>
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../javascript/admin_dashboard.js"></script>
-  <script src="../javascript/theme.js"></script>
 </body>
-
 </html>
-

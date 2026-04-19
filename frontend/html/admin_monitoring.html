@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceBook - Admin Console (Monitoring)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin_dark.css">
+</head>
+<body class="admin-dark">
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <h2>ServiceBook</h2>
+                <p>ADMIN CONSOLE</p>
+            </div>
+            
+            <div class="admin-menu-section">
+                <p class="admin-menu-title">MANAGE</p>
+                <nav class="admin-nav">
+                    <ul>
+                        <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
+                        <li><a href="admin_residents.html"><i class="fas fa-users"></i> USERS</a></li>
+                        <li><a href="admin_providers.html"><i class="fas fa-user-tie"></i> PROVIDERS</a></li>
+                        <li><a href="admin_bookings.html"><i class="fas fa-calendar-alt"></i> BOOKINGS</a></li>
+                        <li class="active"><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
+                        <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                        <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="admin-avatar">AR</div>
+                <div class="admin-info">
+                    <div class="name">Alex Reed</div>
+                    <div class="role">SUPER ADMIN</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <i class="fas fa-columns"></i>
+                    <span>ADMIN CONSOLE</span> / <span class="admin-header-title">Monitoring</span>
+                </div>
+                <div class="admin-sys-status">
+                    <div class="status-dot"></div> SYSTEM ONLINE
+                </div>
+            </header>
+
+            <div class="admin-body">
+                <!-- Stats Grid -->
+                <div class="ad-stats-grid">
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="far fa-clock text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-val">2</div>
+                        <div class="ad-stat-label">PENDING</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="fas fa-bolt text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-val">1</div>
+                        <div class="ad-stat-label">IN PROGRESS</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="far fa-check-circle text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-val">1</div>
+                        <div class="ad-stat-label">COMPLETED</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="far fa-times-circle text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-val">1</div>
+                        <div class="ad-stat-label">CANCELLED</div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="monitor-tabs">
+                    <button class="monitor-tab active">ONGOING</button>
+                    <button class="monitor-tab">COMPLETED</button>
+                </div>
+
+                <!-- Monitor List -->
+                <div class="monitor-list">
+                    <div class="monitor-item">
+                        <div class="monitor-item-left">
+                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="monitor-details">
+                                <h4>Leak Repair</h4>
+                                <p>Sarah Mitchell &bull; Mike's Plumbing</p>
+                            </div>
+                        </div>
+                        <span class="badge-solid badge-approved" style="font-size: 11px;">APPROVED</span>
+                    </div>
+
+                    <div class="monitor-item">
+                        <div class="monitor-item-left">
+                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="monitor-details">
+                                <h4>Deep Clean</h4>
+                                <p>James Carter &bull; Crystal Cleaning Co.</p>
+                            </div>
+                        </div>
+                        <span class="badge-solid badge-in-progress" style="font-size: 11px;">IN PROGRESS</span>
+                    </div>
+
+                    <div class="monitor-item">
+                        <div class="monitor-item-left">
+                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="monitor-details">
+                                <h4>Faucet Install</h4>
+                                <p>Maria Lopez &bull; Mike's Plumbing</p>
+                            </div>
+                        </div>
+                        <span class="badge-solid badge-pending" style="font-size: 11px;">PENDING</span>
+                    </div>
+
+                    <div class="monitor-item">
+                        <div class="monitor-item-left">
+                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="monitor-details">
+                                <h4>Window Wash</h4>
+                                <p>Sarah Mitchell &bull; Crystal Cleaning Co.</p>
+                            </div>
+                        </div>
+                        <span class="badge-solid badge-pending" style="font-size: 11px;">PENDING</span>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>
