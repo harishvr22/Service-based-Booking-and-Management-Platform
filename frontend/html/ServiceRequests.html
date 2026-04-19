@@ -1,186 +1,153 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Requests - ApartmentCare</title>
-    <link rel="stylesheet" href="../css/servicerequests.css">
-    <link rel="stylesheet" href="../css/theme.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ServiceBook – Assigned Requests</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/Resident.css" />
+  <link rel="stylesheet" href="../css/servicerequests.css" />
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-left">
-            <a href="ProviderDashboard.html" class="back-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-            </a>
-            <div class="header-content">
-                <div class="header-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
-                    </svg>
-                </div>
-                <div>
-                    <h2>Provider Dashboard</h2>
-                    <p>Manage service requests</p>
-                </div>
-            </div>
-        </div>
-        <button class="update-status-btn">Update Job Status</button>
-    </div>
+<body class="dark-theme">
+
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h2 style="color: var(--orange);">ServiceBook</h2>
+        <p style="font-size: 10px; letter-spacing: 2px; color: #a0a0a0; margin-top: -5px; font-weight: 600;">PROVIDER PORTAL</p>
+      </div>
+      <div class="menu-section">
+        <p class="menu-title">WORKSPACE</p>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="ProviderDashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a>
+            </li>
+            <li class="active">
+              <a href="ServiceRequests.html"><i class="fas fa-clipboard-list"></i> REQUESTS</a>
+            </li>
+            <li>
+              <a href="UpdateJobStatus.html"><i class="far fa-calendar-check"></i> SCHEDULE</a>
+            </li>
+            <li>
+              <a href="JobHistory.html"><i class="fas fa-history"></i> HISTORY</a>
+            </li>
+            <li>
+              <a href="ProviderProfile.html"><i class="far fa-user"></i> PROFILE</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="logout-section">
+        <a href="landingpage.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+      </div>
+    </aside>
 
     <!-- Main Content -->
-    <div class="container">
-        <div class="content-header">
-            <h1>Service Requests</h1>
-            <p>Review and respond to incoming requests from residents.</p>
+    <main class="main-content">
+      <!-- Top Navbar -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <i class="fas fa-columns" style="color: #888;"></i>
+          <span><span style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px;">PROVIDER</span> &nbsp;/&nbsp; Requests</span>
+        </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+          <div style="background: rgba(46,204,113,0.1); border: 1px solid #2ecc71; color: #2ecc71; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <div style="width: 6px; height: 6px; background: #2ecc71; border-radius: 50%;"></div> Online
+          </div>
+          <a href="provider_notifications.html" class="nav-icon-btn" style="position: relative;">
+            <i class="far fa-bell"></i>
+          </a>
+          <div class="user-profile">
+            <div class="avatar" style="background: var(--orange); color: black; font-weight: bold; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;">AV</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Body -->
+      <div class="dashboard-body">
+
+        <!-- Page Header -->
+        <section style="margin-bottom: 30px;">
+          <p style="color: var(--orange); letter-spacing: 2px; font-size: 12px; font-weight: 600; margin-bottom: 5px;">INBOX</p>
+          <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 8px; color: white;">Assigned Requests</h1>
+          <p style="color: #9e9e9e; font-size: 14px;">Accept or reject new bookings, and manage in-progress jobs.</p>
+        </section>
+
+        <!-- Search + Filter Bar -->
+        <div class="sr-toolbar">
+          <div class="sr-search-wrap">
+            <i class="fas fa-search sr-search-icon"></i>
+            <input type="text" id="sr-search" class="sr-search" placeholder="Search by resident, service, or ID..." />
+          </div>
+          <div class="sr-filter-wrap">
+            <select id="sr-filter" class="sr-filter">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+            <i class="fas fa-chevron-down sr-filter-arrow"></i>
+          </div>
         </div>
 
-        <!-- Service Requests List -->
-        <div class="requests-list">
-            <!-- Request Card 1 -->
-            <div class="request-card">
-                <div class="request-header">
-                    <div class="request-info">
-                        <h3>Plumber</h3>
-                        <p class="resident-info">John Doe Â· Apt A-101</p>
-                    </div>
-                    <span class="status-badge pending">Pending</span>
-                </div>
-                <div class="request-details">
-                    <div class="detail-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span>Feb 12, 2026</span>
-                    </div>
-                    <div class="detail-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <span>10:00 AM</span>
-                    </div>
-                </div>
-                <div class="request-actions">
-                    <button class="btn-accept">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"></path>
-                        </svg>
-                        Accept
-                    </button>
-                    <button class="btn-reject">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
-                        </svg>
-                        Reject
-                    </button>
-                </div>
-            </div>
-
-            <!-- Request Card 2 -->
-            <div class="request-card">
-                <div class="request-header">
-                    <div class="request-info">
-                        <h3>Plumber</h3>
-                        <p class="resident-info">Jane Smith Â· Apt B-205</p>
-                    </div>
-                    <span class="status-badge pending">Pending</span>
-                </div>
-                <div class="request-details">
-                    <div class="detail-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span>Feb 13, 2026</span>
-                    </div>
-                    <div class="detail-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <span>02:00 PM</span>
-                    </div>
-                </div>
-                <div class="request-actions">
-                    <button class="btn-accept">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"></path>
-                        </svg>
-                        Accept
-                    </button>
-                    <button class="btn-reject">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
-                        </svg>
-                        Reject
-                    </button>
-                </div>
-            </div>
-
-            <!-- Request Card 3 -->
-            <div class="request-card accepted-card">
-                <div class="request-header">
-                    <div class="request-info">
-                        <h3>Plumber</h3>
-                        <p class="resident-info">Mike Wilson Â· Apt C-310</p>
-                    </div>
-                    <span class="status-badge accepted">Accepted</span>
-                </div>
-                <div class="request-details">
-                    <div class="detail-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span>Feb 11, 2026</span>
-                    </div>
-                    <div class="detail-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <span>09:00 AM</span>
-                    </div>
-                </div>
-                <div class="request-actions">
-                    <button class="btn-accept">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"></path>
-                        </svg>
-                        Accept
-                    </button>
-                    <button class="btn-reject">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
-                        </svg>
-                        Reject
-                    </button>
-                </div>
-            </div>
+        <!-- Requests List -->
+        <div class="sr-requests-list" id="sr-requests-list">
+          <!-- Cards rendered by JS -->
         </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="sr-modal-overlay" id="sr-modal-overlay">
+    <div class="sr-modal" id="sr-modal">
+      <button class="sr-modal-close" id="sr-modal-close"><i class="fas fa-times"></i></button>
+      <div class="sr-modal-req-id" id="modal-req-id">REQ-1001</div>
+      <h2 class="sr-modal-title" id="modal-title">Electrical — Fan Installation</h2>
+      <p class="sr-modal-sub">Full request details and resident information.</p>
+      <div class="sr-modal-divider"></div>
+
+      <div class="sr-modal-fields">
+        <div class="sr-modal-row">
+          <span class="sr-modal-label">Resident</span>
+          <span class="sr-modal-value" id="modal-resident">—</span>
+        </div>
+        <div class="sr-modal-row">
+          <span class="sr-modal-label">Phone</span>
+          <span class="sr-modal-value" id="modal-phone">—</span>
+        </div>
+        <div class="sr-modal-row">
+          <span class="sr-modal-label">Block / Unit</span>
+          <span class="sr-modal-value" id="modal-block">—</span>
+        </div>
+        <div class="sr-modal-row">
+          <span class="sr-modal-label">Problem</span>
+          <span class="sr-modal-value" id="modal-problem">—</span>
+        </div>
+        <div class="sr-modal-row">
+          <span class="sr-modal-label">Schedule</span>
+          <span class="sr-modal-value">
+            <input type="datetime-local" id="modal-schedule-input" class="sr-schedule-input" />
+          </span>
+        </div>
+        <div class="sr-modal-row">
+          <span class="sr-modal-label">Status</span>
+          <span class="sr-modal-value"><span class="sr-status-badge" id="modal-status">Pending</span></span>
+        </div>
+      </div>
+
+      <div class="sr-modal-divider"></div>
+      <div class="sr-modal-actions">
+        <button class="sr-btn-close-modal" id="sr-btn-close-modal">Close</button>
+        <button class="sr-btn-accept-modal" id="sr-btn-accept-modal"><i class="far fa-check-circle"></i> Accept Job</button>
+      </div>
     </div>
+  </div>
 
-    <script src="../javascript/servicerequests.js"></script>
-  <script src="../javascript/theme.js"></script>
+  <script src="../javascript/servicerequests.js"></script>
+  <script src="../javascript/header.js"></script>
 </body>
 </html>
-
-
