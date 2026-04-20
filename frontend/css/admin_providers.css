@@ -282,6 +282,172 @@
     flex: 1;
 }
 
+/* Dark provider page theme */
+body {
+    background: #0b0b0d;
+    color: #e5e5e5;
+}
+
+.dashboard-container {
+    min-height: 100vh;
+    background: #0b0b0d;
+}
+
+.sidebar {
+    background: #09090b;
+    border-right: 1px solid #181819;
+}
+
+.logo-text h2,
+.logo-text span,
+.sidebar-nav a,
+.logout-container a {
+    color: #c9c9c9;
+}
+
+.logo-text h2 {
+    color: #ff8c00;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav li.active a {
+    background: #141418;
+    color: #fff;
+}
+
+.sidebar-nav li.active a {
+    border-left: 3px solid #ff8c00;
+    padding-left: 12px;
+}
+
+.sidebar-nav a i {
+    color: #999;
+}
+
+.main-content {
+    background: #0b0b0d;
+    color: #e5e5e5;
+}
+
+.dashboard-header h1 {
+    color: #fff;
+}
+
+.dashboard-header p {
+    color: #a0a0a0;
+}
+
+.stats-grid {
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: #121214;
+    border: 1px solid #212126;
+    box-shadow: none;
+}
+
+.stat-body h3,
+.stat-body p {
+    color: #e5e5e5;
+}
+
+.icon-box {
+    background: rgba(255, 140, 0, 0.1);
+}
+
+.toolbar {
+    margin-bottom: 30px;
+}
+
+.search-container input {
+    background: #141418;
+    color: #e5e5e5;
+    border-color: #232328;
+}
+
+.search-container input::placeholder {
+    color: #777;
+}
+
+.category-select {
+    background: #141418;
+    border-color: #232328;
+    color: #e5e5e5;
+}
+
+.category-select select {
+    color: #e5e5e5;
+}
+
+.provider-card {
+    background: #121214;
+    border: 1px solid #1a1a1f;
+}
+
+.provider-header h3,
+.provider-header p,
+.specialization p,
+.metric-item .val,
+.experience {
+    color: #e5e5e5;
+}
+
+.provider-header p,
+.specialization .tag {
+    color: #a0a0a0;
+}
+
+.badge {
+    background: rgba(255, 140, 0, 0.12);
+    color: #ff8c00;
+    border-color: rgba(255, 140, 0, 0.25);
+}
+
+.metrics {
+    border-top: 1px solid #212126;
+    border-bottom: 1px solid #212126;
+}
+
+.metric-item .lbl {
+    color: #999;
+}
+
+.experience {
+    color: #a0a0a0;
+}
+
+.btn-suspend,
+.btn-reject {
+    background: #0d0d10;
+    border: 1px solid #252529;
+    color: #fff;
+}
+
+.btn-suspend:hover,
+.btn-reject:hover {
+    background: #1a1a1f;
+}
+
+.btn-approve {
+    background-color: #ff8c00;
+    color: #000;
+    border: none;
+}
+
+.btn-approve:hover {
+    background-color: #e67e00;
+}
+
+.provider-footer {
+    gap: 16px;
+}
+
+.provider-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
 @media (max-width: 768px) {
     .toolbar {
         flex-direction: column;
