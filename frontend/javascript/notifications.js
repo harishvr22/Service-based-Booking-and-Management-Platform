@@ -1,4 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Socket.IO connection
+    const socket = io('http://localhost:5000');
+
+    socket.on('new_notification', function(data) {
+        console.log('New notification received:', data);
+        // Check if relevant to this user
+        const isProvider = document.title.includes('Provider');
+        const allowedAudiences = isProvider 
+            ? ['All Users', 'Service Providers'] 
+            : ['All Users', 'Residents Only'];
+        
+        if (allowedAudiences.includes(data.audience)) {
+            // Add to localStorage
+            const newNotif = {
+                id: Date.now().toString(),
+                title: data.title,
+                message: data.message,
+                audience: data.audience,
+                date: new Date().toISOString(),
+                read: false,
+                iconClass: 'far fa-bell'
+            };
+            let allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+            allNotifs.unshift(newNotif);
+            localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
+            
+            // Refresh the notifications
+            loadNotifications();
+        }
+    });
     const notifList = document.querySelector('.notification-list');
     const badge = document.querySelector('.sidebar-nav .badge') || document.querySelector('.nav-icon-btn .badge');
     const markAllBtn = document.querySelector('.mark-read-btn');

@@ -1,4 +1,26 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Socket.IO connection
+    const socket = io('http://localhost:5000');
+
+    socket.on('new_notification', function(data) {
+        console.log('New notification received:', data);
+        // Add to localStorage for display
+        const newNotif = {
+            id: Date.now().toString(),
+            title: data.title,
+            message: data.message,
+            audience: data.audience,
+            date: new Date().toISOString(),
+            read: false,
+            iconClass: 'far fa-bell'
+        };
+        let allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+        allNotifs.unshift(newNotif);
+        localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
+        
+        // Optionally refresh the page or update UI
+        location.reload(); // Simple way to refresh
+    });
     const newAnnouncementBtn = document.getElementById('newAnnouncementBtn');
     const createAnnouncementFormSection = document.getElementById('createAnnouncementForm');
     const announcementForm = document.getElementById('announcementForm');
@@ -144,7 +166,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 <span class="announcement-date">${dateString}</span>
             `;
 
-            // Save to localStorage for Notifications
+            // Send to backend
+            fetch('http://localhost:5000/notifications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    message: message,
+                    audience: audience,
+                    created_by: 1 // Assuming admin id is 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Announcement created:', data);
+                // The real-time update will be handled by socket
+            })
+            .catch(error => {
+                console.error('Error creating announcement:', error);
+                alert('Failed to create announcement');
+            });
+
+            // Still save to localStorage for backward compatibility or immediate display
             const newNotif = {
                 id: Date.now().toString(),
                 title: title,
