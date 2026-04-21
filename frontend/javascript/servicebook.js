@@ -154,3 +154,7 @@ document.querySelector(".submit").addEventListener("click", () => {
       alert("Failed to load services. Please try again.");
     });
 });
+function goBack(event) {
+        event.preventDefault();
+        window.history.back();
+      }

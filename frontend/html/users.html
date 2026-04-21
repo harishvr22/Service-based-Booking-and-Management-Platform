@@ -1,202 +1,394 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApartmentCare - User Management</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
+    <title>ServiceBook - Admin Console (Residents)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/admin_dashboard.css">
+    <link rel="stylesheet" href="../css/admin_dark.css">
     <link rel="stylesheet" href="../css/users.css">
-    <link rel="stylesheet" href="../css/theme.css">
 </head>
+<body class="admin-dark">
+<div class="admin-wrapper">
 
-<body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="logo-text">
-                    <h2>ApartmentCare</h2>
-                    <span>Admin Panel</span>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <h2>ServiceBook</h2>
+            <p>ADMIN CONSOLE</p>
+        </div>
+        <div class="admin-menu-section">
+            <p class="admin-menu-title">MANAGE</p>
+            <nav class="admin-nav">
                 <ul>
-                    <li>
-                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
-                    </li>
-
-                    <li>
-                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
-                    </li>
-                    <li>
-                        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-                    </li>
+                    <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
+                    <li class="active"><a href="users.html"><i class="fas fa-users"></i> RESIDENT</a></li>
+                    <li><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
+                    <li><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
+                    <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                    <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
                 </ul>
             </nav>
-
-            <div class="logout-container">
-                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+        <div class="admin-profile">
+            <div class="admin-avatar">AR</div>
+            <div class="admin-info">
+                <div class="name">Alex Reed</div>
+                <div class="role">SUPER ADMIN</div>
             </div>
-        </aside>
+        </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="dashboard-header">
-                <h1>User Management</h1>
-                <p>Manage residents, service providers, and administrative staff</p>
-            </header>
+        <div class="admin-logout">
+            <a href="login.html"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+        </div>
+    </aside>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="icon-box bg-blue-light">
-                            <i class="fas fa-home text-blue"></i>
-                        </div>
-                    </div>
-                    <div class="stat-body">
-                        <h3>6</h3>
-                        <p>Residents</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="icon-box bg-purple-light">
-                            <i class="fas fa-tools text-purple"></i>
-                        </div>
-                    </div>
-                    <div class="stat-body">
-                        <h3>5</h3>
-                        <p>Service Providers</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="icon-box bg-orange-light">
-                            <i class="fas fa-user-shield text-orange"></i>
-                        </div>
-                    </div>
-                    <div class="stat-body">
-                        <h3>1</h3>
-                        <p>Admins</p>
-                    </div>
-                </div>
+    <!-- Main -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <i class="fas fa-columns"></i>
+                <span>ADMIN CONSOLE</span> / <span class="admin-header-title">Residents</span>
+            </div>
+            <div class="admin-sys-status"><div class="status-dot"></div> SYSTEM ONLINE</div>
+        </header>
+
+        <div class="admin-body">
+            <!-- Search -->
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="residentSearch" placeholder="Search residents by name or flat...">
             </div>
 
-            <!-- Management Section -->
-            <div class="management-card">
-                <div class="management-nav">
-                    <div class="tabs">
-                        <button class="tab-btn active" data-tab="residents">Residents</button>
-                        <button class="tab-btn" data-tab="providers">Service Providers</button>
-                        <button class="tab-btn" data-tab="admins">Admins</button>
+            <!-- Cards Grid -->
+            <div class="residents-grid" id="residentsGrid">
+
+                <!-- Card 1 - Active -->
+                <div class="resident-card"
+                     data-name="John Doe"
+                     data-room="A-101"
+                     data-block="A Block"
+                     data-email="john@apt.com"
+                     data-phone="+91 98765 00001"
+                     data-movein="January 2024"
+                     data-bookings="8"
+                     data-status="ACTIVE">
+                    <div class="card-status">ACTIVE</div>
+                    <div class="res-avatar-row">
+                        <div class="res-avatar">JD</div>
+                        <div>
+                            <div class="res-name">John Doe</div>
+                            <div class="res-flat">Flat A-101 &middot; A Block</div>
+                        </div>
+                    </div>
+                    <p class="res-email"><i class="far fa-envelope"></i>john@apt.com</p>
+                    <p class="res-phone"><i class="fas fa-phone-alt"></i>+91 98765 00001</p>
+                    <div class="res-stats">
+                        <span>Moved in: <b>Jan 2024</b></span>
+                        <span><b>8</b> bookings</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-msg" onclick="event.stopPropagation()"><i class="far fa-envelope"></i> MESSAGE</button>
+                        <button class="btn-rem" onclick="event.stopPropagation()">REMOVE</button>
                     </div>
                 </div>
 
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="userSearch" placeholder="Search by name or flat number...">
+                <!-- Card 2 - Active -->
+                <div class="resident-card"
+                     data-name="Jane Smith"
+                     data-room="B-205"
+                     data-block="B Block"
+                     data-email="jane@apt.com"
+                     data-phone="+91 98765 00002"
+                     data-movein="March 2024"
+                     data-bookings="5"
+                     data-status="ACTIVE">
+                    <div class="card-status">ACTIVE</div>
+                    <div class="res-avatar-row">
+                        <div class="res-avatar">JS</div>
+                        <div>
+                            <div class="res-name">Jane Smith</div>
+                            <div class="res-flat">Flat B-205 &middot; B Block</div>
+                        </div>
+                    </div>
+                    <p class="res-email"><i class="far fa-envelope"></i>jane@apt.com</p>
+                    <p class="res-phone"><i class="fas fa-phone-alt"></i>+91 98765 00002</p>
+                    <div class="res-stats">
+                        <span>Moved in: <b>Mar 2024</b></span>
+                        <span><b>5</b> bookings</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-msg" onclick="event.stopPropagation()"><i class="far fa-envelope"></i> MESSAGE</button>
+                        <button class="btn-rem" onclick="event.stopPropagation()">REMOVE</button>
+                    </div>
                 </div>
 
-                <div class="table-container">
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Flat / Block</th>
-                                <th>Move-in</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                            <!-- Residents Data (Default) -->
-                            <tr>
-                                <td class="font-600">John Doe</td>
-                                <td class="text-light">john@apt.com</td>
-                                <td class="text-light">+91 98765 00001</td>
-                                <td>
-                                    <div class="flat-info">
-                                        <span class="flat-number">A-101</span>
-                                        <span class="block-name">A Block</span>
-                                    </div>
-                                </td>
-                                <td class="text-light">Jan 2024</td>
-                                <td><span class="badge badge-active">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td class="font-600">Jane Smith</td>
-                                <td class="text-light">jane@apt.com</td>
-                                <td class="text-light">+91 98765 00002</td>
-                                <td>
-                                    <div class="flat-info">
-                                        <span class="flat-number">B-205</span>
-                                        <span class="block-name">B Block</span>
-                                    </div>
-                                </td>
-                                <td class="text-light">Mar 2024</td>
-                                <td><span class="badge badge-active">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td class="font-600">Mike Wilson</td>
-                                <td class="text-light">mike@apt.com</td>
-                                <td class="text-light">+91 98765 00003</td>
-                                <td>
-                                    <div class="flat-info">
-                                        <span class="flat-number">C-302</span>
-                                        <span class="block-name">C Block</span>
-                                    </div>
-                                </td>
-                                <td class="text-light">Jun 2023</td>
-                                <td><span class="badge badge-active">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td class="font-600">Sara Lee</td>
-                                <td class="text-light">sara@apt.com</td>
-                                <td class="text-light">+91 98765 00004</td>
-                                <td>
-                                    <div class="flat-info">
-                                        <span class="flat-number">A-404</span>
-                                        <span class="block-name">A Block</span>
-                                    </div>
-                                </td>
-                                <td class="text-light">Nov 2024</td>
-                                <td><span class="badge badge-active">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td class="font-600">Ravi Patel</td>
-                                <td class="text-light">ravi@apt.com</td>
-                                <td class="text-light">+91 98765 00005</td>
-                                <td>
-                                    <div class="flat-info">
-                                        <span class="flat-number">D-110</span>
-                                        <span class="block-name">D Block</span>
-                                    </div>
-                                </td>
-                                <td class="text-light">Feb 2025</td>
-                                <td><span class="badge badge-inactive">Inactive</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Card 3 - Active -->
+                <div class="resident-card"
+                     data-name="Mike Wilson"
+                     data-room="C-302"
+                     data-block="C Block"
+                     data-email="mike@apt.com"
+                     data-phone="+91 98765 00003"
+                     data-movein="June 2023"
+                     data-bookings="12"
+                     data-status="ACTIVE">
+                    <div class="card-status">ACTIVE</div>
+                    <div class="res-avatar-row">
+                        <div class="res-avatar">MW</div>
+                        <div>
+                            <div class="res-name">Mike Wilson</div>
+                            <div class="res-flat">Flat C-302 &middot; C Block</div>
+                        </div>
+                    </div>
+                    <p class="res-email"><i class="far fa-envelope"></i>mike@apt.com</p>
+                    <p class="res-phone"><i class="fas fa-phone-alt"></i>+91 98765 00003</p>
+                    <div class="res-stats">
+                        <span>Moved in: <b>Jun 2023</b></span>
+                        <span><b>12</b> bookings</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-msg" onclick="event.stopPropagation()"><i class="far fa-envelope"></i> MESSAGE</button>
+                        <button class="btn-rem" onclick="event.stopPropagation()">REMOVE</button>
+                    </div>
                 </div>
-            </div>
-        </main>
+
+                <!-- Card 4 - Active -->
+                <div class="resident-card"
+                     data-name="Sara Lee"
+                     data-room="A-404"
+                     data-block="A Block"
+                     data-email="sara@apt.com"
+                     data-phone="+91 98765 00004"
+                     data-movein="November 2024"
+                     data-bookings="3"
+                     data-status="ACTIVE">
+                    <div class="card-status">ACTIVE</div>
+                    <div class="res-avatar-row">
+                        <div class="res-avatar">SL</div>
+                        <div>
+                            <div class="res-name">Sara Lee</div>
+                            <div class="res-flat">Flat A-404 &middot; A Block</div>
+                        </div>
+                    </div>
+                    <p class="res-email"><i class="far fa-envelope"></i>sara@apt.com</p>
+                    <p class="res-phone"><i class="fas fa-phone-alt"></i>+91 98765 00004</p>
+                    <div class="res-stats">
+                        <span>Moved in: <b>Nov 2024</b></span>
+                        <span><b>3</b> bookings</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-msg" onclick="event.stopPropagation()"><i class="far fa-envelope"></i> MESSAGE</button>
+                        <button class="btn-rem" onclick="event.stopPropagation()">REMOVE</button>
+                    </div>
+                </div>
+
+                <!-- Card 5 - Inactive -->
+                <div class="resident-card"
+                     data-name="Ravi Patel"
+                     data-room="D-110"
+                     data-block="D Block"
+                     data-email="ravi@apt.com"
+                     data-phone="+91 98765 00005"
+                     data-movein="February 2025"
+                     data-bookings="1"
+                     data-status="INACTIVE">
+                    <div class="card-status inactive">INACTIVE</div>
+                    <div class="res-avatar-row">
+                        <div class="res-avatar inactive-av">RP</div>
+                        <div>
+                            <div class="res-name">Ravi Patel</div>
+                            <div class="res-flat">Flat D-110 &middot; D Block</div>
+                        </div>
+                    </div>
+                    <p class="res-email"><i class="far fa-envelope"></i>ravi@apt.com</p>
+                    <p class="res-phone"><i class="fas fa-phone-alt"></i>+91 98765 00005</p>
+                    <div class="res-stats">
+                        <span>Moved in: <b>Feb 2025</b></span>
+                        <span><b>1</b> bookings</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-msg" onclick="event.stopPropagation()"><i class="far fa-envelope"></i> MESSAGE</button>
+                        <button class="btn-rem" onclick="event.stopPropagation()">REMOVE</button>
+                    </div>
+                </div>
+
+                <!-- Card 6 - Active -->
+                <div class="resident-card"
+                     data-name="Aisha Khan"
+                     data-room="B-108"
+                     data-block="B Block"
+                     data-email="aisha@apt.com"
+                     data-phone="+91 98765 00006"
+                     data-movein="August 2023"
+                     data-bookings="6"
+                     data-status="ACTIVE">
+                    <div class="card-status">ACTIVE</div>
+                    <div class="res-avatar-row">
+                        <div class="res-avatar">AK</div>
+                        <div>
+                            <div class="res-name">Aisha Khan</div>
+                            <div class="res-flat">Flat B-108 &middot; B Block</div>
+                        </div>
+                    </div>
+                    <p class="res-email"><i class="far fa-envelope"></i>aisha@apt.com</p>
+                    <p class="res-phone"><i class="fas fa-phone-alt"></i>+91 98765 00006</p>
+                    <div class="res-stats">
+                        <span>Moved in: <b>Aug 2023</b></span>
+                        <span><b>6</b> bookings</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-msg" onclick="event.stopPropagation()"><i class="far fa-envelope"></i> MESSAGE</button>
+                        <button class="btn-rem" onclick="event.stopPropagation()">REMOVE</button>
+                    </div>
+                </div>
+
+            </div><!-- /residentsGrid -->
+        </div>
+    </main>
+</div>
+
+<!-- ── Detail Side Overlay ── -->
+<div class="overlay-wrap" id="overlayWrap">
+
+    <!-- Close tab sticking out to the left -->
+    <div class="close-tab" id="closeTab">
+        <i class="fas fa-times"></i>
     </div>
 
-    <!-- Custom JS -->
-    <script src="../javascript/users.js"></script>
-  <script src="../javascript/theme.js"></script>
+    <!-- Scrollable panel -->
+    <div class="detail-panel">
+
+        <!-- Avatar + Name -->
+        <div class="d-avatar-row">
+            <div class="d-avatar" id="dAvatar">JD</div>
+            <div>
+                <div class="d-badge" id="dBadge">ACTIVE</div>
+                <div class="d-name" id="dName">John Doe</div>
+                <div class="d-sub" id="dSub">Resident &middot; Flat A-101</div>
+            </div>
+        </div>
+
+        <!-- Flat Highlight Box -->
+        <div class="flat-box">
+            <div class="fb-item">
+                <div class="fb-label">ROOM / FLAT NO.</div>
+                <div class="fb-val" id="dRoom">A-101</div>
+            </div>
+            <div class="fb-item">
+                <div class="fb-label">BLOCK</div>
+                <div class="fb-val" id="dBlock">A Block</div>
+            </div>
+            <div class="fb-item">
+                <div class="fb-label">MOVE-IN DATE</div>
+                <div class="fb-val muted" id="dMovein">January 2024</div>
+            </div>
+            <div class="fb-item">
+                <div class="fb-label">TOTAL BOOKINGS</div>
+                <div class="fb-val muted"><span id="dBookings">8</span> jobs</div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="d-grid">
+            <div class="d-section">
+                <div class="d-label">EMAIL ADDRESS</div>
+                <div class="d-value" id="dEmail">john@apt.com</div>
+            </div>
+            <div class="d-section">
+                <div class="d-label">PHONE NUMBER</div>
+                <div class="d-value" id="dPhone">+91 98765 00001</div>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="d-section">
+            <div class="d-label">RECENT BOOKINGS</div>
+            <div>
+                <div class="bk-item">
+                    <div class="bk-info">
+                        <h5>Leak Repair</h5>
+                        <p>April 20, 2024 &middot; Mike's Plumbing</p>
+                    </div>
+                    <div class="bk-status">COMPLETED</div>
+                </div>
+                <div class="bk-item">
+                    <div class="bk-info">
+                        <h5>Deep Clean</h5>
+                        <p>April 12, 2024 &middot; Crystal Cleaning</p>
+                    </div>
+                    <div class="bk-status">COMPLETED</div>
+                </div>
+                <div class="bk-item">
+                    <div class="bk-info">
+                        <h5>Wiring Check</h5>
+                        <p>April 05, 2024 &middot; Bright Spark</p>
+                    </div>
+                    <div class="bk-status pending">PENDING</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="d-footer">
+            <button class="d-btn-del"><i class="far fa-trash-alt"></i> REMOVE RESIDENT</button>
+            <button class="d-btn-msg"><i class="far fa-envelope"></i> SEND MESSAGE</button>
+        </div>
+
+    </div><!-- /detail-panel -->
+</div><!-- /overlay-wrap -->
+
+<!-- ── Message Resident Modal ── -->
+<div class="modal-overlay" id="messageModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="far fa-envelope text-orange"></i> Send Message</h3>
+            <div class="btn-close-modal" id="closeMsgModal"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="modal-body">
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Sending message to <strong id="msgTargetName" style="color: #fff;">Resident</strong></p>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px;">SUBJECT</label>
+                <input type="text" id="msgSubject" placeholder="e.g. Booking Update" style="width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; outline: none;">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px;">MESSAGE CONTENT</label>
+                <textarea id="msgContent" rows="5" placeholder="Type your message here..." style="width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; outline: none; resize: vertical;"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer" style="display: flex; gap: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+            <button id="cancelMsgBtn" style="flex: 1; background: transparent; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">CANCEL</button>
+            <button id="sendMsgBtn" style="flex: 1; background: var(--orange); border: none; color: #000; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 700;"><i class="fas fa-paper-plane" style="margin-right: 6px;"></i> SEND NOTIFICATION</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Remove Resident Confirmation Modal ── -->
+<div class="modal-overlay" id="removeConfirmModal">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-header" style="justify-content: center; border-bottom: none; margin-bottom: 10px;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(231,76,60,0.1); color: #e74c3c; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+        </div>
+        <div class="modal-body" style="padding-bottom: 10px;">
+            <h3 style="color: #fff; margin-bottom: 15px; font-size: 20px;">Remove Resident?</h3>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 25px;">
+                Are you sure you want to remove <strong id="removeTargetName" style="color: #fff;">Resident</strong>? This action cannot be undone and will revoke all access.
+            </p>
+        </div>
+        <div class="modal-footer" style="display: flex; gap: 12px; border-top: none; justify-content: center;">
+            <button id="cancelRemBtn" style="flex: 1; background: transparent; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">CANCEL</button>
+            <button id="confirmRemBtn" style="flex: 1; background: #e74c3c; border: none; color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 700;">YES, REMOVE</button>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="../javascript/users.js"></script>
+
 </body>
-
 </html>
-

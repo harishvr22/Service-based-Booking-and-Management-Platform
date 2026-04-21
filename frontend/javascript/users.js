@@ -1,109 +1,234 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const tabs = document.querySelectorAll('.tab-btn');
-    const tableBody = document.getElementById('userTableBody');
-    const searchInput = document.getElementById('userSearch');
+    var cards      = document.querySelectorAll('.resident-card');
+    var wrap       = document.getElementById('overlayWrap');
+    var closeTab   = document.getElementById('closeTab');
+    var searchInput = document.getElementById('residentSearch');
 
-    // Sample Data
-    const users = {
-        residents: [
-            { name: 'John Doe', email: 'john@apt.com', phone: '+91 98765 00001', flat: 'A-101', block: 'A Block', moveIn: 'Jan 2024', status: 'Active' },
-            { name: 'Jane Smith', email: 'jane@apt.com', phone: '+91 98765 00002', flat: 'B-205', block: 'B Block', moveIn: 'Mar 2024', status: 'Active' },
-            { name: 'Mike Wilson', email: 'mike@apt.com', phone: '+91 98765 00003', flat: 'C-302', block: 'C Block', moveIn: 'Jun 2023', status: 'Active' },
-            { name: 'Sara Lee', email: 'sara@apt.com', phone: '+91 98765 00004', flat: 'A-404', block: 'A Block', moveIn: 'Nov 2024', status: 'Active' },
-            { name: 'Ravi Patel', email: 'ravi@apt.com', phone: '+91 98765 00005', flat: 'D-110', block: 'D Block', moveIn: 'Feb 2025', status: 'Inactive' }
-        ],
-        providers: [
-            { name: 'FixIt Plumbing', email: 'contact@fixit.com', phone: '+91 98765 11111', category: 'Plumbing', rating: '4.8', status: 'Active' },
-            { name: 'Bright Lights', email: 'info@brightlights.com', phone: '+91 98765 22222', category: 'Electrical', rating: '4.5', status: 'Active' },
-            { name: 'Sparkle Clean', email: 'hello@sparkle.com', phone: '+91 98765 33333', category: 'Cleaning', rating: '4.9', status: 'Active' },
-            { name: 'Wood Works', email: 'build@woodworks.com', phone: '+91 98765 44444', category: 'Carpentry', rating: '4.2', status: 'Pending' }
-        ],
-        admins: [
-            { name: 'Admin User', email: 'admin@apartmentcare.com', phone: '+91 98765 99999', role: 'Super Admin', lastLogin: 'Today, 10:45 AM', status: 'Active' }
-        ]
-    };
+    // Open detail panel when card is clicked
+    cards.forEach(function (card) {
+        card.addEventListener('click', function () {
+            var name    = this.dataset.name;
+            var room    = this.dataset.room;
+            var block   = this.dataset.block;
+            var email   = this.dataset.email;
+            var phone   = this.dataset.phone;
+            var movein  = this.dataset.movein;
+            var bk      = this.dataset.bookings;
+            var status  = this.dataset.status;
 
-    // Tab Switching
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            renderTable(tab.dataset.tab);
+            // Initials
+            var initials = name.split(' ').map(function(w){ return w[0]; }).join('').substring(0,2).toUpperCase();
+
+            document.getElementById('dAvatar').textContent   = initials;
+            document.getElementById('dName').textContent     = name;
+            document.getElementById('dSub').textContent      = 'Resident \u00b7 Flat ' + room;
+            document.getElementById('dRoom').textContent     = room;
+            document.getElementById('dBlock').textContent    = block;
+            document.getElementById('dEmail').textContent    = email;
+            document.getElementById('dPhone').textContent    = phone;
+            document.getElementById('dMovein').textContent   = movein;
+            document.getElementById('dBookings').textContent = bk;
+
+            var badge  = document.getElementById('dBadge');
+            var avatar = document.getElementById('dAvatar');
+            badge.textContent = status;
+
+            if (status === 'INACTIVE') {
+                badge.style.background  = 'rgba(231,76,60,0.1)';
+                badge.style.color       = '#e74c3c';
+                avatar.style.background = 'rgba(231,76,60,0.1)';
+                avatar.style.border     = '2px solid rgba(231,76,60,0.3)';
+                avatar.style.color      = '#e74c3c';
+            } else {
+                badge.style.background  = 'rgba(255,140,0,0.1)';
+                badge.style.color       = 'var(--orange)';
+                avatar.style.background = 'rgba(255,140,0,0.15)';
+                avatar.style.border     = '2px solid rgba(255,140,0,0.4)';
+                avatar.style.color      = 'var(--orange)';
+            }
+
+            // Highlight active card
+            cards.forEach(function(c){ c.classList.remove('card-active'); });
+            this.classList.add('card-active');
+
+            // Open overlay
+            wrap.classList.add('open');
         });
     });
 
-    function renderTable(type) {
-        let html = '';
-        const data = users[type];
+    // Close button
+    closeTab.addEventListener('click', function () {
+        wrap.classList.remove('open');
+        cards.forEach(function(c){ c.classList.remove('card-active'); });
+    });
 
-        if (type === 'residents') {
-            data.forEach(user => {
-                html += `
-                    <tr>
-                        <td class="font-600">${user.name}</td>
-                        <td class="text-light">${user.email}</td>
-                        <td class="text-light">${user.phone}</td>
-                        <td>
-                            <div class="flat-info">
-                                <span class="flat-number">${user.flat}</span>
-                                <span class="block-name">${user.block}</span>
-                            </div>
-                        </td>
-                        <td class="text-light">${user.moveIn}</td>
-                        <td><span class="badge badge-${user.status.toLowerCase()}">${user.status}</span></td>
-                    </tr>
-                `;
-            });
-        } else if (type === 'providers') {
-            // Update table headers dynamically if needed, but for simplicity we'll just show data in the same columns
-            data.forEach(user => {
-                html += `
-                    <tr>
-                        <td class="font-600">${user.name}</td>
-                        <td class="text-light">${user.email}</td>
-                        <td class="text-light">${user.phone}</td>
-                        <td>
-                            <div class="flat-info">
-                                <span class="flat-number">${user.category}</span>
-                                <span class="block-name">Rating: ${user.rating}</span>
-                            </div>
-                        </td>
-                        <td class="text-light">-</td>
-                        <td><span class="badge badge-${user.status.toLowerCase()}">${user.status}</span></td>
-                    </tr>
-                `;
-            });
-        } else if (type === 'admins') {
-            data.forEach(user => {
-                html += `
-                    <tr>
-                        <td class="font-600">${user.name}</td>
-                        <td class="text-light">${user.email}</td>
-                        <td class="text-light">${user.phone}</td>
-                        <td>
-                            <div class="flat-info">
-                                <span class="flat-number">${user.role}</span>
-                                <span class="block-name">L: ${user.lastLogin}</span>
-                            </div>
-                        </td>
-                        <td class="text-light">-</td>
-                        <td><span class="badge badge-${user.status.toLowerCase()}">${user.status}</span></td>
-                    </tr>
-                `;
-            });
-        }
+    // Modal Elements for Messaging
+    var msgModal    = document.getElementById('messageModal');
+    var closeMsg    = document.getElementById('closeMsgModal');
+    var cancelMsg   = document.getElementById('cancelMsgBtn');
+    var sendMsg     = document.getElementById('sendMsgBtn');
+    var targetName  = document.getElementById('msgTargetName');
+    var msgSubject  = document.getElementById('msgSubject');
+    var msgContent  = document.getElementById('msgContent');
+    var currentResidentName = '';
 
-        tableBody.innerHTML = html;
+    function openMessageModal(name) {
+        currentResidentName = name;
+        targetName.textContent = name;
+        msgSubject.value = '';
+        msgContent.value = '';
+        msgModal.classList.add('open');
     }
 
-    // Basic Search Functionality
-    searchInput.addEventListener('input', function () {
-        const query = this.value.toLowerCase();
-        const rows = tableBody.querySelectorAll('tr');
+    function closeMessageModal() {
+        msgModal.classList.remove('open');
+    }
 
-        rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
-            row.style.display = text.includes(query) ? '' : 'none';
+    if(closeMsg) closeMsg.addEventListener('click', closeMessageModal);
+    if(cancelMsg) cancelMsg.addEventListener('click', closeMessageModal);
+
+    if(sendMsg) {
+        sendMsg.addEventListener('click', function() {
+            var subject = msgSubject.value.trim();
+            var content = msgContent.value.trim();
+
+            if(!subject && !content) {
+                // If completely empty, just close (or could show inline error)
+                closeMessageModal();
+                return;
+            }
+
+            // Create notification object compatible with existing system
+            var newNotif = {
+                id: Date.now().toString(),
+                title: subject || 'Message from Admin',
+                message: content || 'You have a new message from Administrator.',
+                audience: 'Residents Only', // Ensures it goes to resident dashboard
+                date: new Date().toISOString(),
+                read: false,
+                iconClass: 'far fa-envelope'
+            };
+
+            // Store in global notifications
+            var allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+            allNotifs.unshift(newNotif);
+            localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
+
+            // Visual feedback - closing cleanly
+            sendMsg.innerHTML = '<i class="fas fa-check"></i> SENT';
+            sendMsg.style.background = '#2ecc71';
+            sendMsg.style.color = '#fff';
+
+            setTimeout(function() {
+                closeMessageModal();
+                setTimeout(function() {
+                    // Reset button
+                    sendMsg.innerHTML = '<i class="fas fa-paper-plane" style="margin-right: 6px;"></i> SEND NOTIFICATION';
+                    sendMsg.style.background = 'var(--orange)';
+                    sendMsg.style.color = '#000';
+                }, 300);
+            }, 700);
+        });
+    }
+
+    // Modal Elements for Removal
+    var rmModal      = document.getElementById('removeConfirmModal');
+    var rmTargetName = document.getElementById('removeTargetName');
+    var cancelRm     = document.getElementById('cancelRemBtn');
+    var confirmRm    = document.getElementById('confirmRemBtn');
+    var targetCardToRemove = null;
+
+    function openRemoveModal(name, cardElement) {
+        targetCardToRemove = cardElement;
+        rmTargetName.textContent = name;
+        rmModal.classList.add('open');
+    }
+
+    function closeRemoveModal() {
+        rmModal.classList.remove('open');
+        targetCardToRemove = null;
+    }
+
+    if(cancelRm) cancelRm.addEventListener('click', closeRemoveModal);
+
+    if(confirmRm) {
+        confirmRm.addEventListener('click', function() {
+            if(targetCardToRemove) {
+                targetCardToRemove.style.display = 'none';
+                targetCardToRemove.dataset.removed = "true";
+            }
+            
+            // Cleanly close out detail panel if active card is deleted
+            wrap.classList.remove('open');
+            cards.forEach(function(c){ c.classList.remove('card-active'); });
+
+            // Visual feedback loop
+            confirmRm.textContent = "REMOVED";
+            confirmRm.style.background = "#2ecc71"; // Success green
+
+            setTimeout(function() {
+                closeRemoveModal();
+                setTimeout(function() {
+                    confirmRm.textContent = "YES, REMOVE";
+                    confirmRm.style.background = "#e74c3c";
+                }, 300);
+            }, 500);
+        });
+    }
+
+    // Action Buttons Logic
+    var detailMsgBtn = document.querySelector('.d-btn-msg');
+    var detailDelBtn = document.querySelector('.d-btn-del');
+
+    if (detailMsgBtn) {
+        detailMsgBtn.addEventListener('click', function() {
+            var name = document.getElementById('dName').textContent;
+            openMessageModal(name);
+        });
+    }
+
+    if (detailDelBtn) {
+        detailDelBtn.addEventListener('click', function() {
+            var name = document.getElementById('dName').textContent;
+            var activeCard = document.querySelector('.resident-card.card-active');
+            openRemoveModal(name, activeCard);
+        });
+    }
+
+    // Direct card action buttons
+    var cardMsgBtns = document.querySelectorAll('.btn-msg');
+    var cardRemBtns = document.querySelectorAll('.btn-rem');
+
+    cardMsgBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var card = this.closest('.resident-card');
+            var name = card.dataset.name;
+            openMessageModal(name);
+        });
+    });
+
+    cardRemBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var card = this.closest('.resident-card');
+            var name = card.dataset.name;
+            openRemoveModal(name, card);
+        });
+    });
+
+    // Search / filter
+    searchInput.addEventListener('input', function () {
+        var term = this.value.toLowerCase();
+        cards.forEach(function (card) {
+            var name  = card.dataset.name.toLowerCase();
+            var room  = card.dataset.room.toLowerCase();
+            var block = card.dataset.block.toLowerCase();
+            
+            // Only toggle display if it wasn't removed 
+            if(card.style.display !== 'none' || card.dataset.removed !== 'true') {
+                 card.style.display = (name.includes(term) || room.includes(term) || block.includes(term)) ? '' : 'none';
+            }
         });
     });
 });
