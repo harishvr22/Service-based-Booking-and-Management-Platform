@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceBook - Admin Console (Providers)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin_dark.css">
+    <link rel="stylesheet" href="../css/admin_providers.css">
+</head>
+
+<body class="admin-dark">
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <h2>ServiceBook</h2>
+                <p>ADMIN CONSOLE</p>
+            </div>
+
+            <div class="admin-menu-section">
+                <p class="admin-menu-title">MANAGE</p>
+                <nav class="admin-nav">
+                    <ul>
+                        <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
+                        <li><a href="users.html"><i class="fas fa-users"></i> RESIDENT</a></li>
+                        <li class="active"><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
+                        <li><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
+                        <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                        <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="admin-profile">
+                <div class="admin-avatar">AR</div>
+                <div class="admin-info">
+                    <div class="name">Alex Reed</div>
+                    <div class="role">SUPER ADMIN</div>
+                </div>
+            </div>
+
+            <div class="admin-logout">
+                <a href="login.html"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <i class="fas fa-columns"></i>
+                    <span>ADMIN CONSOLE</span> / <span class="admin-header-title">Providers</span>
+                </div>
+                <div class="admin-sys-status">
+                    <div class="status-dot"></div> SYSTEM ONLINE
+                </div>
+            </header>
+
+            <div class="admin-body">
+                <!-- Search -->
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="providerSearch" placeholder="Search providers...">
+                </div>
+
+                <!-- Grid -->
+                <div class="providers-grid" id="providersGrid">
+                    <!-- Approved Provider Card -->
+                    <div class="provider-card" data-provider-id="1">
+                        <div class="card-status">APPROVED</div>
+                        <h3 class="provider-name">Mike's Plumbing</h3>
+                        <p class="provider-category">PLUMBING</p>
+                        <p class="provider-email">mike@pro.com</p>
+                        <div class="provider-stats">
+                            <span><b>4.8</b> rating</span>
+                            <span><b>142</b> jobs</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-suspend">SUSPEND PROVIDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Approved Provider Card 2 -->
+                    <div class="provider-card" data-provider-id="2">
+                        <div class="card-status">APPROVED</div>
+                        <h3 class="provider-name">Bright Spark Electric</h3>
+                        <p class="provider-category">ELECTRICAL</p>
+                        <p class="provider-email">spark@pro.com</p>
+                        <div class="provider-stats">
+                            <span><b>4.6</b> rating</span>
+                            <span><b>98</b> jobs</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-suspend">SUSPEND PROVIDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Approved Provider Card 3 -->
+                    <div class="provider-card" data-provider-id="3">
+                        <div class="card-status">APPROVED</div>
+                        <h3 class="provider-name">Crystal Cleaning Co.</h3>
+                        <p class="provider-category">CLEANING</p>
+                        <p class="provider-email">crystal@pro.com</p>
+                        <div class="provider-stats">
+                            <span><b>4.9</b> rating</span>
+                            <span><b>213</b> jobs</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-suspend">SUSPEND PROVIDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Pending Provider Card 1 -->
+                    <div class="provider-card" data-provider-id="4">
+                        <div class="card-status pending">PENDING</div>
+                        <h3 class="provider-name">GreenLeaf Gardens</h3>
+                        <p class="provider-category">LANDSCAPING</p>
+                        <p class="provider-email">green@pro.com</p>
+                        <div class="provider-stats">
+                            <span><b>4.5</b> rating</span>
+                            <span><b>67</b> jobs</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
+                            <button class="btn-reject"><i class="far fa-times-circle"></i> REJECT</button>
+                        </div>
+                    </div>
+
+                    <!-- Pending Provider Card 2 -->
+                    <div class="provider-card" data-provider-id="5">
+                        <div class="card-status pending">PENDING</div>
+                        <h3 class="provider-name">FixIt Handyman</h3>
+                        <p class="provider-category">REPAIRS</p>
+                        <p class="provider-email">fixit@pro.com</p>
+                        <div class="provider-stats">
+                            <span><b>4.2</b> rating</span>
+                            <span><b>31</b> jobs</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
+                            <button class="btn-reject"><i class="far fa-times-circle"></i> REJECT</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detail Side Overlay -->
+    <div class="detail-overlay" id="providerDetail">
+        <div class="close-detail" id="closeDetail">
+            <i class="fas fa-times"></i>
+        </div>
+        
+        <div class="detail-header">
+            <div class="detail-badge" id="detailStatus">APPROVED</div>
+            <h2 class="detail-title" id="detailName">Mike's Plumbing</h2>
+            <p class="detail-subtitle" id="detailCategory">PLUMBING SERVICES</p>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-section">
+                <p class="detail-label">EMAIL ADDRESS</p>
+                <p class="detail-value" id="detailEmail">mike@pro.com</p>
+            </div>
+            <div class="detail-section">
+                <p class="detail-label">PHONE NUMBER</p>
+                <p class="detail-value">+1 (555) 012-3456</p>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-section">
+                <p class="detail-label">JOINED DATE</p>
+                <p class="detail-value">March 12, 2024</p>
+            </div>
+            <div class="detail-section">
+                <p class="detail-label">RATING</p>
+                <p class="detail-value"><i class="fas fa-star" style="color: var(--orange);"></i> 4.8 / 5.0</p>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <p class="detail-label">SERVICE DESCRIPTION</p>
+            <p class="detail-value">Professional plumbing services for residential and commercial properties. Specialized in leak detection, pipe replacement, and fixture installation.</p>
+        </div>
+
+        <div class="detail-section">
+            <p class="detail-label">RECENT JOBS</p>
+            <div class="job-history-list">
+                <div class="job-small-item">
+                    <div class="job-small-info">
+                        <h5>Leak Repair - Apt A-101</h5>
+                        <p>April 20, 2024</p>
+                    </div>
+                    <div class="job-small-status">COMPLETED</div>
+                </div>
+                <div class="job-small-item">
+                    <div class="job-small-info">
+                        <h5>Pipe Fitting - Apt B-205</h5>
+                        <p>April 18, 2024</p>
+                    </div>
+                    <div class="job-small-status">COMPLETED</div>
+                </div>
+                <div class="job-small-item">
+                    <div class="job-small-info">
+                        <h5>Faucet Install - Apt C-302</h5>
+                        <p>April 15, 2024</p>
+                    </div>
+                    <div class="job-small-status">COMPLETED</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-footer">
+            <button class="btn-suspend" style="color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); background: #1a1a1a; padding: 12px; flex: 1; border-radius: 2px; font-weight: 700; cursor: pointer;">SUSPEND ACCOUNT</button>
+            <button class="btn-msg-prov" style="color: var(--orange); border: 1px solid rgba(255,140,0,0.3); background: #1a1a1a; padding: 12px; flex: 1; border-radius: 2px; font-weight: 700; cursor: pointer;"><i class="far fa-envelope"></i> MESSAGE</button>
+        </div>
+    </div>
+
+<!-- ── Message Provider Modal ── -->
+<div class="modal-overlay" id="messageModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="far fa-envelope text-orange"></i> Send Message</h3>
+            <div class="btn-close-modal" id="closeMsgModal"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="modal-body">
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Sending message to <strong id="msgTargetName" style="color: #fff;">Provider</strong></p>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px;">SUBJECT</label>
+                <input type="text" id="msgSubject" placeholder="e.g. Service Request" style="width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; outline: none;">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px;">MESSAGE CONTENT</label>
+                <textarea id="msgContent" rows="5" placeholder="Type your message here..." style="width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; outline: none; resize: vertical;"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer" style="display: flex; gap: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+            <button id="cancelMsgBtn" style="flex: 1; background: transparent; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">CANCEL</button>
+            <button id="sendMsgBtn" style="flex: 1; background: var(--orange); border: none; color: #000; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 700;"><i class="fas fa-paper-plane" style="margin-right: 6px;"></i> SEND NOTIFICATION</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Action Confirmation Modal ── -->
+<div class="modal-overlay" id="actionConfirmModal">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-header" style="justify-content: center; border-bottom: none; margin-bottom: 10px;">
+            <div id="actionIcon" style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+        </div>
+        <div class="modal-body" style="padding-bottom: 10px;">
+            <h3 id="actionTitle" style="color: #fff; margin-bottom: 15px; font-size: 20px;">Confirm Action</h3>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 25px;">
+                Are you sure you want to perform this action on <strong id="actionTargetName" style="color: #fff;">Provider</strong>?
+            </p>
+        </div>
+        <div class="modal-footer" style="display: flex; gap: 12px; border-top: none; justify-content: center;">
+            <button id="cancelActionBtn" style="flex: 1; background: transparent; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">CANCEL</button>
+            <button id="confirmActionBtn" style="flex: 1; border: none; color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 700;">YES</button>
+        </div>
+    </div>
+</div>
+
+
+
+    <script src="../javascript/admin_providers.js"></script>
+</body>
+
+</html>

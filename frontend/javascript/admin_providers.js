@@ -1,210 +1,248 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const providerSearch = document.getElementById('providerSearch');
-    const categorySelect = document.querySelector('.category-select select');
-    const providerGrid = document.querySelector('.provider-grid');
+document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.provider-card');
+            const overlay = document.getElementById('providerDetail');
+            const closeBtn = document.getElementById('closeDetail');
+            const searchInput = document.getElementById('providerSearch');
 
-    // Extract a template from the existing HTML securely before clearing it
-    const existingCards = document.querySelectorAll('.provider-card');
-    let templateCard = null;
-    if (existingCards.length > 0) {
-        templateCard = existingCards[0].cloneNode(true); // Keep one as a template
-    }
+            // Overlay show/hide
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't open if a button was clicked
+                    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+                    
+                    const name = this.querySelector('.provider-name').textContent;
+                    const cat = this.querySelector('.provider-category').textContent;
+                    const email = this.querySelector('.provider-email').textContent;
+                    const status = this.querySelector('.card-status').textContent;
 
-    const API_BASE_URL = 'http://127.0.0.1:5000';
+                    document.getElementById('detailName').textContent = name;
+                    document.getElementById('detailCategory').textContent = cat + ' SERVICES';
+                    document.getElementById('detailEmail').textContent = email;
+                    document.getElementById('detailStatus').textContent = status;
+                    
+                    document.querySelector('.detail-badge').style.background = status === 'PENDING' ? 'rgba(241, 196, 15, 0.1)' : 'rgba(255, 140, 0, 0.1)';
+                    document.querySelector('.detail-badge').style.color = status === 'PENDING' ? '#f1c40f' : 'var(--orange)';
 
-    async function fetchProviders() {
-        if (!templateCard) return; // Cannot render without the template
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/providers`);
-            const data = await response.json();
-            renderProviders(data.providers);
-            updateStats(data.providers);
-        } catch (error) {
-            console.error('Error fetching providers:', error);
-            providerGrid.innerHTML = '<p class="error-msg" style="text-align:center;width:100%;grid-column:1/-1;">Failed to load providers. Please try again later.</p>';
-        }
-    }
-
-    function renderProviders(providers) {
-        // Clear grid completely
-        providerGrid.innerHTML = '';
-        
-        if (!providers || providers.length === 0) {
-            providerGrid.innerHTML = '<p class="no-data" style="text-align:center;width:100%;grid-column:1/-1;">No providers found.</p>';
-            return;
-        }
-
-        providers.forEach((provider) => {
-            // Clone the template card
-            const card = templateCard.cloneNode(true);
-            
-            // Populate basic DB info into the existing structure
-            const nameElement = card.querySelector('h3');
-            if (nameElement) nameElement.textContent = provider.name;
-
-            const phoneIcon = card.querySelector('.fa-phone-alt');
-            if (phoneIcon && phoneIcon.parentNode) {
-                // Keep the icon, update text
-                phoneIcon.parentNode.innerHTML = `<i class="fas fa-phone-alt"></i> ${provider.phone || 'N/A'}`;
-            }
-
-            // Setup Badge Status dynamically
-            const badge = card.querySelector('.badge');
-            let statusText = 'Pending Verification';
-            let badgeClass = 'badge-pending';
-            
-            // Default footer content template based on status
-            const footer = card.querySelector('.provider-footer');
-            footer.innerHTML = ''; // Start fresh
-            footer.className = 'provider-footer';
-
-            if (provider.role === 'Provider') {
-                statusText = 'Pending Verification';
-                badgeClass = 'badge-pending';
-                footer.className = 'provider-footer double';
-                footer.innerHTML = `
-                    <button class="btn-approve" data-id="${provider.id}">
-                        <i class="fas fa-check-circle"></i> Approve
-                    </button>
-                    <button class="btn-reject" data-id="${provider.id}">
-                        <i class="fas fa-times-circle"></i> Reject
-                    </button>
-                `;
-            } else if (provider.role === 'Provider_Approved') {
-                statusText = 'Approved';
-                badgeClass = 'badge-approved';
-                footer.innerHTML = `
-                    <button class="btn-suspend" data-id="${provider.id}">
-                        <i class="fas fa-ban"></i> Suspend
-                    </button>
-                `;
-            } else if (provider.role === 'Provider_Rejected') {
-                statusText = 'Rejected';
-                badgeClass = 'badge'; // Remove specific class
-                badge.style.background = '#fee2e2';
-                badge.style.color = '#ef4444';
-                footer.className = 'provider-footer empty';
-                footer.style.display = 'none';
-            } else if (provider.role === 'Provider_Suspended') {
-                statusText = 'Suspended';
-                badgeClass = 'badge';
-                badge.style.background = '#ffedd5';
-                badge.style.color = '#f97316';
-                footer.innerHTML = `
-                    <button class="btn-approve" data-id="${provider.id}">
-                        <i class="fas fa-check-circle"></i> Re-Approve
-                    </button>
-                `;
-            }
-
-            if (badge) {
-                badge.className = `badge ${badgeClass}`;
-                badge.textContent = statusText;
-            }
-
-            // Note: Specialization, Metrics, and Experience nodes are left EXACTLY as they are in the HTML template unmodified,
-            // satisfying the requirement to not affect the existing file's aesthetic, yet injecting DB exact data.
-
-            providerGrid.appendChild(card);
-        });
-
-        attachActionListeners();
-        filterProviders();
-    }
-
-    function attachActionListeners() {
-        document.querySelectorAll('.btn-approve').forEach(btn => {
-            btn.addEventListener('click', (e) => updateProviderStatus(e.currentTarget.dataset.id, 'approved', e.currentTarget.closest('.provider-card').querySelector('h3').textContent));
-        });
-
-        document.querySelectorAll('.btn-reject').forEach(btn => {
-            btn.addEventListener('click', (e) => updateProviderStatus(e.currentTarget.dataset.id, 'rejected', e.currentTarget.closest('.provider-card').querySelector('h3').textContent));
-        });
-
-        document.querySelectorAll('.btn-suspend').forEach(btn => {
-            btn.addEventListener('click', (e) => updateProviderStatus(e.currentTarget.dataset.id, 'suspended', e.currentTarget.closest('.provider-card').querySelector('h3').textContent));
-        });
-    }
-
-    async function updateProviderStatus(providerId, status, providerName) {
-        if (!confirm(`Are you sure you want to mark ${providerName} as ${status}?`)) return;
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/update-provider-status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    provider_id: providerId,
-                    status: status
-                })
+                    cards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    overlay.classList.add('open');
+                });
             });
-            
-            const data = await response.json();
-            
-            if (data.status === 'updated') {
-                fetchProviders(); 
-            } else {
-                alert(`Error: ${data.message}`);
+
+            if (closeBtn) closeBtn.addEventListener('click', function() {
+                overlay.classList.remove('open');
+                cards.forEach(c => c.classList.remove('active'));
+            });
+
+            // Search filtering
+            if (searchInput) searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase();
+                cards.forEach(card => {
+                    const name = card.querySelector('.provider-name').textContent.toLowerCase();
+                    const cat = card.querySelector('.provider-category').textContent.toLowerCase();
+                    if(card.style.display !== 'none' || card.dataset.removed !== 'true') {
+                        if (name.includes(term) || cat.includes(term)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+
+            // Modal Elements for Messaging
+            var msgModal    = document.getElementById('messageModal');
+            var closeMsg    = document.getElementById('closeMsgModal');
+            var cancelMsg   = document.getElementById('cancelMsgBtn');
+            var sendMsg     = document.getElementById('sendMsgBtn');
+            var targetName  = document.getElementById('msgTargetName');
+            var msgSubject  = document.getElementById('msgSubject');
+            var msgContent  = document.getElementById('msgContent');
+
+            function openMessageModal(name) {
+                targetName.textContent = name;
+                msgSubject.value = '';
+                msgContent.value = '';
+                msgModal.classList.add('open');
             }
-        } catch (error) {
-            console.error(`Error updating provider to ${status}:`, error);
-            alert('Failed to update provider status.');
-        }
-    }
 
-    function updateStats(providers) {
-        let total = providers.length;
-        let pending = 0;
-        let approved = 0;
-        let rejected = 0; 
-
-        providers.forEach(p => {
-            if (p.role === 'Provider') pending++;
-            else if (p.role === 'Provider_Approved') approved++;
-            else if (p.role === 'Provider_Rejected' || p.role === 'Provider_Suspended') rejected++;
-        });
-
-        const statBodies = document.querySelectorAll('.stat-body h3');
-        if (statBodies.length >= 4) {
-            statBodies[0].textContent = total;
-            statBodies[1].textContent = pending;
-            statBodies[2].textContent = approved;
-            statBodies[3].textContent = rejected;
-        }
-    }
-
-    function filterProviders() {
-        const searchTerm = providerSearch.value.toLowerCase();
-        const selectedCategory = categorySelect.value.toLowerCase();
-        const providerCards = document.querySelectorAll('.provider-card');
-
-        providerCards.forEach(card => {
-            const providerName = card.querySelector('h3').textContent.toLowerCase();
-            const specialization = card.querySelector('.specialization p').textContent.toLowerCase();
-            const categoryTag = card.querySelector('.tag').textContent.toLowerCase();
-
-            const matchesSearch = providerName.includes(searchTerm) || specialization.includes(searchTerm);
-            const matchesCategory = selectedCategory === 'all' || categoryTag === selectedCategory;
-
-            if (matchesSearch && matchesCategory) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
+            function closeMessageModal() {
+                msgModal.classList.remove('open');
             }
+
+            if(closeMsg) closeMsg.addEventListener('click', closeMessageModal);
+            if(cancelMsg) cancelMsg.addEventListener('click', closeMessageModal);
+
+            if(sendMsg) {
+                sendMsg.addEventListener('click', function() {
+                    var subject = msgSubject.value.trim();
+                    var content = msgContent.value.trim();
+
+                    if(!subject && !content) {
+                        closeMessageModal();
+                        return;
+                    }
+
+                    // Create notification object compatible with existing system
+                    var newNotif = {
+                        id: Date.now().toString(),
+                        title: subject || 'Message from Admin',
+                        message: content || 'You have a new message from Administrator.',
+                        audience: 'Service Providers', // Goes to provider dashboard
+                        date: new Date().toISOString(),
+                        read: false,
+                        iconClass: 'far fa-envelope'
+                    };
+
+                    var allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+                    allNotifs.unshift(newNotif);
+                    localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
+
+                    sendMsg.innerHTML = '<i class="fas fa-check"></i> SENT';
+                    sendMsg.style.background = '#2ecc71';
+                    sendMsg.style.color = '#fff';
+
+                    setTimeout(function() {
+                        closeMessageModal();
+                        setTimeout(function() {
+                            sendMsg.innerHTML = '<i class="fas fa-paper-plane" style="margin-right: 6px;"></i> SEND NOTIFICATION';
+                            sendMsg.style.background = 'var(--orange)';
+                            sendMsg.style.color = '#000';
+                        }, 300);
+                    }, 700);
+                });
+            }
+
+            // Bind MESSAGE button in Details Overlay
+            const overlayMsgBtn = document.querySelector('.btn-msg-prov');
+            if(overlayMsgBtn) {
+                overlayMsgBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const name = document.getElementById('detailName').textContent;
+                    openMessageModal(name);
+                });
+            }
+
+            // Modal Elements for Action Confirmation (Delete/Approve/Reject)
+            var actionModal      = document.getElementById('actionConfirmModal');
+            var actionTitle      = document.getElementById('actionTitle');
+            var actionTargetName = document.getElementById('actionTargetName');
+            var cancelAction     = document.getElementById('cancelActionBtn');
+            var confirmAction    = document.getElementById('confirmActionBtn');
+            var actionIcon       = document.getElementById('actionIcon');
+            var currentActionData = null; // Stores card reference and action type
+
+            function openActionModal(name, cardElement, actionType) {
+                currentActionData = { card: cardElement, type: actionType };
+                actionTargetName.textContent = name;
+                
+                // Configure modal text/color based on action
+                if(actionType === 'suspend' || actionType === 'reject') {
+                    actionTitle.textContent = (actionType === 'suspend') ? "Suspend Provider?" : "Reject Provider?";
+                    confirmAction.textContent = "YES, " + actionType.toUpperCase();
+                    confirmAction.style.background = "#e74c3c";
+                    actionIcon.style.background = "rgba(231,76,60,0.1)";
+                    actionIcon.style.color = "#e74c3c";
+                    actionIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                } else if(actionType === 'approve') {
+                    actionTitle.textContent = "Approve Provider?";
+                    confirmAction.textContent = "YES, APPROVE";
+                    confirmAction.style.background = "var(--orange)";
+                    actionIcon.style.background = "rgba(255,140,0,0.1)";
+                    actionIcon.style.color = "var(--orange)";
+                    actionIcon.innerHTML = '<i class="far fa-check-circle"></i>';
+                }
+                
+                actionModal.classList.add('open');
+            }
+
+            function closeActionModal() {
+                actionModal.classList.remove('open');
+                currentActionData = null;
+            }
+
+            if(cancelAction) cancelAction.addEventListener('click', closeActionModal);
+
+            if(confirmAction) {
+                confirmAction.addEventListener('click', function() {
+                    if(currentActionData && currentActionData.card) {
+                        const card = currentActionData.card;
+                        const type = currentActionData.type;
+
+                        if(type === 'suspend' || type === 'reject') {
+                            card.style.display = 'none';
+                            card.dataset.removed = "true";
+                        } else if(type === 'approve') {
+                            // Convert PENDING to APPROVED
+                            const badge = card.querySelector('.card-status');
+                            if(badge) {
+                                badge.textContent = 'APPROVED';
+                                badge.classList.remove('pending');
+                            }
+                            // Replace actions wrapper with Suspend button
+                            const actionsGrid = card.querySelector('.card-actions');
+                            if(actionsGrid) {
+                                actionsGrid.innerHTML = '<button class="btn-suspend">SUSPEND PROVIDER</button>';
+                                // Re-bind new suspend button
+                                actionsGrid.querySelector('.btn-suspend').addEventListener('click', bindSuspend);
+                            }
+                        }
+                    }
+                    
+                    // Specific overlay cleanup for suspend event
+                    if (currentActionData && currentActionData.type === 'suspend' && overlay.classList.contains('open')) {
+                         overlay.classList.remove('open');
+                         cards.forEach(c => c.classList.remove('active'));
+                    }
+                    
+                    // Visual feedback loop
+                    confirmAction.textContent = "SUCCESS";
+                    confirmAction.style.background = "#2ecc71"; // Success green
+
+                    setTimeout(function() {
+                        closeActionModal();
+                    }, 500);
+                });
+            }
+
+            // Helper to bind the suspend actions
+            function bindSuspend(e) {
+                e.stopPropagation();
+                var card = e.target.closest('.provider-card');
+                var name = card.querySelector('.provider-name').textContent;
+                openActionModal(name, card, 'suspend');
+            }
+
+            // Bind suspend in regular cases
+            const suspendBtns = document.querySelectorAll('.provider-card .btn-suspend');
+            suspendBtns.forEach(btn => btn.addEventListener('click', bindSuspend));
+
+            // Bind suspend in detail overlay
+            const overlaySuspendBtn = document.querySelector('.btn-suspend');
+            if(overlaySuspendBtn) {
+                overlaySuspendBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const name = document.getElementById('detailName').textContent;
+                    const activeCard = document.querySelector('.provider-card.active');
+                    if(activeCard) openActionModal(name, activeCard, 'suspend');
+                });
+            }
+
+            // Bind Approve / Reject 
+            const approveBtns = document.querySelectorAll('.btn-approve');
+            approveBtns.forEach(btn => btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var card = e.target.closest('.provider-card');
+                var name = card.querySelector('.provider-name').textContent;
+                openActionModal(name, card, 'approve');
+            }));
+
+            const rejectBtns = document.querySelectorAll('.provider-card .btn-reject');
+            rejectBtns.forEach(btn => btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var card = e.target.closest('.provider-card');
+                var name = card.querySelector('.provider-name').textContent;
+                openActionModal(name, card, 'reject');
+            }));
+
         });
-    }
-
-    if (providerSearch) {
-        providerSearch.addEventListener('input', filterProviders);
-    }
-
-    if (categorySelect) {
-        categorySelect.addEventListener('change', filterProviders);
-    }
-
-    // Call fetch immediately
-    fetchProviders();
-});
