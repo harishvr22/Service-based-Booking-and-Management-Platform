@@ -1,5 +1,7 @@
+n
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/admin_dark.css">
 </head>
+
 <body class="admin-dark">
     <div class="admin-wrapper">
         <!-- Sidebar -->
@@ -15,20 +18,21 @@
                 <h2>ServiceBook</h2>
                 <p>ADMIN CONSOLE</p>
             </div>
-            
+
             <div class="admin-menu-section">
                 <p class="admin-menu-title">MANAGE</p>
                 <nav class="admin-nav">
                     <ul>
                         <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
-
+                        <li><a href="users.html"><i class="fas fa-users"></i> RESIDENT</a></li>
+                        <li><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
                         <li class="active"><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
                         <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
                         <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
                     </ul>
                 </nav>
             </div>
-            
+
             <div class="admin-profile">
                 <div class="admin-avatar">AR</div>
                 <div class="admin-info">
@@ -55,22 +59,30 @@
                 <!-- Stats Grid -->
                 <div class="ad-stats-grid">
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="far fa-clock text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-top"><i class="far fa-clock text-orange"
+                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
+                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
                         <div class="ad-stat-val">2</div>
                         <div class="ad-stat-label">PENDING</div>
                     </div>
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="fas fa-bolt text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-top"><i class="fas fa-bolt text-orange"
+                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
+                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
                         <div class="ad-stat-val">1</div>
                         <div class="ad-stat-label">IN PROGRESS</div>
                     </div>
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="far fa-check-circle text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-top"><i class="far fa-check-circle text-orange"
+                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
+                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
                         <div class="ad-stat-val">1</div>
                         <div class="ad-stat-label">COMPLETED</div>
                     </div>
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="far fa-times-circle text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
+                        <div class="ad-stat-top"><i class="far fa-times-circle text-orange"
+                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
+                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
                         <div class="ad-stat-val">1</div>
                         <div class="ad-stat-label">CANCELLED</div>
                     </div>
@@ -133,4 +145,5 @@
         </main>
     </div>
 </body>
+
 </html>
