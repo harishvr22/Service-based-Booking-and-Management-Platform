@@ -1,153 +1,549 @@
-n
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ServiceBook - Admin Console (Monitoring)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/admin_dark.css">
+    <style>
+        .monitor-toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .monitor-search {
+            flex: 1;
+            min-width: 200px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .monitor-search:focus { border-color: var(--orange); }
+        .monitor-filter {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #ccc;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .monitor-filter:focus { border-color: var(--orange); }
+        .btn-refresh {
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #ccc;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-refresh:hover { border-color: var(--orange); color: var(--orange); }
+        .btn-refresh.spinning i { animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .monitor-tabs { margin-bottom: 0; }
+        .monitor-tab {
+            border-radius: 6px 6px 0 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            letter-spacing: 1px;
+        }
+        .monitor-tab.active {
+            border-color: #2a2a2a;
+            background: var(--orange);
+            color: #000;
+        }
+
+        .monitor-item {
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .monitor-item:hover { border-color: rgba(255,140,0,0.4); transform: translateX(2px); }
+
+        .monitor-item-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-action {
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .btn-view { background: rgba(255,140,0,0.1); color: var(--orange); border-color: rgba(255,140,0,0.4); }
+        .btn-view:hover { background: rgba(255,140,0,0.25); }
+        .btn-cancel { background: rgba(231,76,60,0.1); color: #e74c3c; border-color: rgba(231,76,60,0.4); }
+        .btn-cancel:hover { background: rgba(231,76,60,0.25); }
+        .btn-escalate { background: rgba(241,196,15,0.1); color: #f1c40f; border-color: rgba(241,196,15,0.4); }
+        .btn-escalate:hover { background: rgba(241,196,15,0.25); }
+
+        .monitor-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #555;
+        }
+        .monitor-empty i { font-size: 40px; margin-bottom: 12px; display: block; }
+        .monitor-empty p { font-size: 14px; }
+
+        /* Detail Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 32px;
+            width: 500px;
+            max-width: 95vw;
+            position: relative;
+            animation: fadeUp 0.2s ease;
+        }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 20px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .modal-close:hover { color: #fff; }
+        .modal-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .modal-sub { font-size: 13px; color: #888; margin-bottom: 24px; }
+        .modal-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+            font-size: 14px;
+        }
+        .modal-row:last-of-type { border-bottom: none; }
+        .modal-row span:first-child { color: #888; }
+        .modal-row span:last-child { color: #fff; font-weight: 500; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+
+        /* Confirm Modal */
+        .confirm-box {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 32px;
+            width: 380px;
+            max-width: 95vw;
+            text-align: center;
+            animation: fadeUp 0.2s ease;
+        }
+        .confirm-icon { font-size: 36px; margin-bottom: 14px; }
+        .confirm-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .confirm-msg { font-size: 13px; color: #888; margin-bottom: 24px; line-height: 1.6; }
+        .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+        .btn-confirm-cancel {
+            padding: 10px 24px; border-radius: 4px; font-size: 13px; font-weight: 600;
+            background: #222; color: #ccc; border: 1px solid #333; cursor: pointer;
+        }
+        .btn-confirm-ok {
+            padding: 10px 24px; border-radius: 4px; font-size: 13px; font-weight: 600;
+            background: #e74c3c; color: #fff; border: none; cursor: pointer;
+        }
+
+        .toast {
+            position: fixed; bottom: 30px; right: 30px;
+            background: #1a1a1a; border: 1px solid #2a2a2a;
+            color: #fff; padding: 14px 20px; border-radius: 8px;
+            font-size: 13px; z-index: 9999; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            transform: translateY(80px); opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 3px solid #2ecc71; }
+        .toast.warning { border-left: 3px solid #f1c40f; }
+        .toast.error { border-left: 3px solid #e74c3c; }
+
+        .tab-content-area {
+            background: var(--bg-card);
+            border: 1px solid #2a2a2a;
+            border-top: none;
+            border-radius: 0 6px 6px 6px;
+            padding: 20px;
+        }
+        .results-count {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+    </style>
 </head>
-
 <body class="admin-dark">
-    <div class="admin-wrapper">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="admin-brand">
-                <h2>ServiceBook</h2>
-                <p>ADMIN CONSOLE</p>
+<div class="admin-wrapper">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <h2>ServiceBook</h2>
+            <p>ADMIN CONSOLE</p>
+        </div>
+        <div class="admin-menu-section">
+            <p class="admin-menu-title">MANAGE</p>
+            <nav class="admin-nav">
+                <ul>
+                    <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
+                    <li><a href="users.html"><i class="fas fa-users"></i> RESIDENT</a></li>
+                    <li><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
+                    <li class="active"><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
+                    <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                    <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="admin-profile">
+            <div class="admin-avatar">AR</div>
+            <div class="admin-info">
+                <div class="name">Alex Reed</div>
+                <div class="role">SUPER ADMIN</div>
+            </div>
+        </div>
+        <div class="admin-logout">
+            <a href="login.html"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <i class="fas fa-columns"></i>
+                <span>ADMIN CONSOLE</span> / <span class="admin-header-title">Monitoring</span>
+            </div>
+            <div class="admin-sys-status">
+                <div class="status-dot"></div> SYSTEM ONLINE
+            </div>
+        </header>
+
+        <div class="admin-body">
+            <!-- Stats Grid -->
+            <div class="ad-stats-grid">
+                <div class="ad-stat-card">
+                    <div class="ad-stat-top">
+                        <i class="far fa-clock" style="background:rgba(255,140,0,0.1);padding:8px;border-radius:4px;color:var(--orange);"></i>
+                        <span class="ad-stat-trend" style="color:var(--orange);">LIVE</span>
+                    </div>
+                    <div class="ad-stat-val" id="stat-pending">0</div>
+                    <div class="ad-stat-label">PENDING</div>
+                </div>
+                <div class="ad-stat-card">
+                    <div class="ad-stat-top">
+                        <i class="fas fa-bolt" style="background:rgba(255,140,0,0.1);padding:8px;border-radius:4px;color:var(--orange);"></i>
+                        <span class="ad-stat-trend" style="color:var(--orange);">LIVE</span>
+                    </div>
+                    <div class="ad-stat-val" id="stat-inprogress">0</div>
+                    <div class="ad-stat-label">IN PROGRESS</div>
+                </div>
+                <div class="ad-stat-card">
+                    <div class="ad-stat-top">
+                        <i class="far fa-check-circle" style="background:rgba(255,140,0,0.1);padding:8px;border-radius:4px;color:var(--orange);"></i>
+                        <span class="ad-stat-trend" style="color:var(--orange);">LIVE</span>
+                    </div>
+                    <div class="ad-stat-val" id="stat-completed">0</div>
+                    <div class="ad-stat-label">COMPLETED</div>
+                </div>
+                <div class="ad-stat-card">
+                    <div class="ad-stat-top">
+                        <i class="far fa-times-circle" style="background:rgba(255,140,0,0.1);padding:8px;border-radius:4px;color:var(--orange);"></i>
+                        <span class="ad-stat-trend" style="color:var(--orange);">LIVE</span>
+                    </div>
+                    <div class="ad-stat-val" id="stat-cancelled">0</div>
+                    <div class="ad-stat-label">CANCELLED</div>
+                </div>
             </div>
 
-            <div class="admin-menu-section">
-                <p class="admin-menu-title">MANAGE</p>
-                <nav class="admin-nav">
-                    <ul>
-                        <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
-                        <li><a href="users.html"><i class="fas fa-users"></i> RESIDENT</a></li>
-                        <li><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
-                        <li class="active"><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
-                        <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
-                        <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
-                    </ul>
-                </nav>
+            <!-- Toolbar -->
+            <div class="monitor-toolbar">
+                <input id="search-input" class="monitor-search" type="text" placeholder="&#xf002;  Search by service, resident, or provider..." />
+                <select id="filter-status" class="monitor-filter">
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <select id="filter-service" class="monitor-filter">
+                    <option value="">All Services</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Cleaning">Cleaning</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Carpentry">Carpentry</option>
+                </select>
+                <button class="btn-refresh" id="btn-refresh" onclick="handleRefresh()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
             </div>
 
-            <div class="admin-profile">
-                <div class="admin-avatar">AR</div>
-                <div class="admin-info">
-                    <div class="name">Alex Reed</div>
-                    <div class="role">SUPER ADMIN</div>
-                </div>
+            <!-- Tabs -->
+            <div class="monitor-tabs">
+                <button class="monitor-tab active" id="tab-ongoing" onclick="switchTab('ongoing')">ONGOING</button>
+                <button class="monitor-tab" id="tab-completed" onclick="switchTab('completed')">COMPLETED</button>
             </div>
 
-            <div class="admin-logout">
-                <a href="login.html"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+            <!-- Tab Content -->
+            <div class="tab-content-area">
+                <div class="results-count" id="results-count"></div>
+                <div class="monitor-list" id="monitor-list"></div>
             </div>
-        </aside>
+        </div>
+    </main>
+</div>
 
-        <!-- Main Content -->
-        <main class="admin-main">
-            <!-- Header -->
-            <header class="admin-header">
-                <div class="admin-header-left">
-                    <i class="fas fa-columns"></i>
-                    <span>ADMIN CONSOLE</span> / <span class="admin-header-title">Monitoring</span>
-                </div>
-                <div class="admin-sys-status">
-                    <div class="status-dot"></div> SYSTEM ONLINE
-                </div>
-            </header>
-
-            <div class="admin-body">
-                <!-- Stats Grid -->
-                <div class="ad-stats-grid">
-                    <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="far fa-clock text-orange"
-                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
-                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
-                        <div class="ad-stat-val">2</div>
-                        <div class="ad-stat-label">PENDING</div>
-                    </div>
-                    <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="fas fa-bolt text-orange"
-                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
-                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
-                        <div class="ad-stat-val">1</div>
-                        <div class="ad-stat-label">IN PROGRESS</div>
-                    </div>
-                    <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="far fa-check-circle text-orange"
-                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
-                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
-                        <div class="ad-stat-val">1</div>
-                        <div class="ad-stat-label">COMPLETED</div>
-                    </div>
-                    <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="far fa-times-circle text-orange"
-                                style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i>
-                            <span class="ad-stat-trend" style="color: var(--orange);">LIVE</span></div>
-                        <div class="ad-stat-val">1</div>
-                        <div class="ad-stat-label">CANCELLED</div>
-                    </div>
-                </div>
-
-                <!-- Tabs -->
-                <div class="monitor-tabs">
-                    <button class="monitor-tab active">ONGOING</button>
-                    <button class="monitor-tab">COMPLETED</button>
-                </div>
-
-                <!-- Monitor List -->
-                <div class="monitor-list">
-                    <div class="monitor-item">
-                        <div class="monitor-item-left">
-                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
-                            <div class="monitor-details">
-                                <h4>Leak Repair</h4>
-                                <p>Sarah Mitchell &bull; Mike's Plumbing</p>
-                            </div>
-                        </div>
-                        <span class="badge-solid badge-approved" style="font-size: 11px;">APPROVED</span>
-                    </div>
-
-                    <div class="monitor-item">
-                        <div class="monitor-item-left">
-                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
-                            <div class="monitor-details">
-                                <h4>Deep Clean</h4>
-                                <p>James Carter &bull; Crystal Cleaning Co.</p>
-                            </div>
-                        </div>
-                        <span class="badge-solid badge-in-progress" style="font-size: 11px;">IN PROGRESS</span>
-                    </div>
-
-                    <div class="monitor-item">
-                        <div class="monitor-item-left">
-                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
-                            <div class="monitor-details">
-                                <h4>Faucet Install</h4>
-                                <p>Maria Lopez &bull; Mike's Plumbing</p>
-                            </div>
-                        </div>
-                        <span class="badge-solid badge-pending" style="font-size: 11px;">PENDING</span>
-                    </div>
-
-                    <div class="monitor-item">
-                        <div class="monitor-item-left">
-                            <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
-                            <div class="monitor-details">
-                                <h4>Window Wash</h4>
-                                <p>Sarah Mitchell &bull; Crystal Cleaning Co.</p>
-                            </div>
-                        </div>
-                        <span class="badge-solid badge-pending" style="font-size: 11px;">PENDING</span>
-                    </div>
-                </div>
-
-            </div>
-        </main>
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detail-modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
+        <div class="modal-title" id="modal-service-name"></div>
+        <div class="modal-sub" id="modal-booking-id"></div>
+        <div id="modal-rows"></div>
+        <div class="modal-actions" id="modal-action-btns"></div>
     </div>
-</body>
+</div>
 
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirm-modal">
+    <div class="confirm-box">
+        <div class="confirm-icon" id="confirm-icon"></div>
+        <div class="confirm-title" id="confirm-title"></div>
+        <div class="confirm-msg" id="confirm-msg"></div>
+        <div class="confirm-actions">
+            <button class="btn-confirm-cancel" onclick="closeModal('confirm-modal')">Keep It</button>
+            <button class="btn-confirm-ok" id="confirm-ok-btn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle" id="toast-icon"></i>
+    <span id="toast-msg"></span>
+</div>
+
+<script>
+// ── Data Store ────────────────────────────────────────────────────────────────
+let bookings = [
+    { id:'BK-001', service:'Leak Repair', category:'Plumbing', resident:'Sarah Mitchell', provider:"Mike's Plumbing", date:'22 Apr 2026', time:'10:00 AM', address:'Flat 12, Block A', status:'approved', notes:'Urgent pipe burst in kitchen.' },
+    { id:'BK-002', service:'Deep Clean', category:'Cleaning', resident:'James Carter', provider:'Crystal Cleaning Co.', date:'22 Apr 2026', time:'02:00 PM', address:'Unit 5, Block C', status:'in-progress', notes:'Full apartment deep clean.' },
+    { id:'BK-003', service:'Faucet Install', category:'Plumbing', resident:'Maria Lopez', provider:"Mike's Plumbing", date:'23 Apr 2026', time:'09:30 AM', address:'Flat 8, Block B', status:'pending', notes:'Replace kitchen faucet.' },
+    { id:'BK-004', service:'Window Wash', category:'Cleaning', resident:'Sarah Mitchell', provider:'Crystal Cleaning Co.', date:'23 Apr 2026', time:'11:00 AM', address:'Flat 12, Block A', status:'pending', notes:'Exterior window cleaning.' },
+    { id:'BK-005', service:'Light Fixture', category:'Electrical', resident:'Tom Green', provider:'Bright Sparks Ltd', date:'21 Apr 2026', time:'03:00 PM', address:'Flat 2, Block D', status:'completed', notes:'Install ceiling light in bedroom.' },
+    { id:'BK-006', service:'Cabinet Repair', category:'Carpentry', resident:'Anne White', provider:'WoodWorks Co.', date:'20 Apr 2026', time:'01:00 PM', address:'Unit 9, Block E', status:'completed', notes:'Fix broken cabinet hinges.' },
+    { id:'BK-007', service:'Drain Unblock', category:'Plumbing', resident:'David Kim', provider:"Mike's Plumbing", date:'19 Apr 2026', time:'08:00 AM', address:'Flat 6, Block B', status:'cancelled', notes:'Blocked bathroom drain.' },
+];
+
+let activeTab = 'ongoing';
+const ongoingStatuses = ['pending','approved','in-progress'];
+const completedStatuses = ['completed','cancelled'];
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function getFilteredData() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const fs = document.getElementById('filter-status').value;
+    const fc = document.getElementById('filter-service').value;
+    const pool = activeTab === 'ongoing'
+        ? bookings.filter(b => ongoingStatuses.includes(b.status))
+        : bookings.filter(b => completedStatuses.includes(b.status));
+    return pool.filter(b => {
+        const matchQ = !q || b.service.toLowerCase().includes(q) || b.resident.toLowerCase().includes(q) || b.provider.toLowerCase().includes(q);
+        const matchS = !fs || b.status === fs;
+        const matchC = !fc || b.category === fc;
+        return matchQ && matchS && matchC;
+    });
+}
+
+function statusBadge(status) {
+    const map = {
+        'pending':     ['badge-pending','PENDING'],
+        'approved':    ['badge-approved','APPROVED'],
+        'in-progress': ['badge-in-progress','IN PROGRESS'],
+        'completed':   ['badge-completed','COMPLETED'],
+        'cancelled':   ['badge-cancelled','CANCELLED'],
+    };
+    const [cls, label] = map[status] || ['badge-pending', status.toUpperCase()];
+    return `<span class="badge-solid ${cls}" style="font-size:11px;">${label}</span>`;
+}
+
+function actionBtns(b) {
+    let html = `<button class="btn-action btn-view" onclick="event.stopPropagation();openDetail('${b.id}')"><i class="fas fa-eye"></i> View</button>`;
+    if (b.status === 'pending' || b.status === 'approved') {
+        html += `<button class="btn-action btn-cancel" onclick="event.stopPropagation();confirmAction('cancel','${b.id}')"><i class="fas fa-times"></i> Cancel</button>`;
+        html += `<button class="btn-action btn-escalate" onclick="event.stopPropagation();confirmAction('escalate','${b.id}')"><i class="fas fa-arrow-up"></i> Escalate</button>`;
+    }
+    if (b.status === 'in-progress') {
+        html += `<button class="btn-action btn-escalate" onclick="event.stopPropagation();confirmAction('escalate','${b.id}')"><i class="fas fa-flag"></i> Flag</button>`;
+    }
+    return html;
+}
+
+function render() {
+    updateStats();
+    const data = getFilteredData();
+    const list = document.getElementById('monitor-list');
+    const count = document.getElementById('results-count');
+    count.textContent = `Showing ${data.length} result${data.length !== 1 ? 's' : ''}`;
+    if (!data.length) {
+        list.innerHTML = `<div class="monitor-empty"><i class="fas fa-inbox"></i><p>No bookings match your filters.</p></div>`;
+        return;
+    }
+    list.innerHTML = data.map(b => `
+        <div class="monitor-item" onclick="openDetail('${b.id}')">
+            <div class="monitor-item-left">
+                <div class="monitor-icon"><i class="fas fa-bolt"></i></div>
+                <div class="monitor-details">
+                    <h4>${b.service}</h4>
+                    <p>${b.resident} &bull; ${b.provider} &bull; ${b.date}</p>
+                </div>
+            </div>
+            <div class="monitor-item-right">
+                ${statusBadge(b.status)}
+                ${actionBtns(b)}
+            </div>
+        </div>`).join('');
+}
+
+function updateStats() {
+    document.getElementById('stat-pending').textContent    = bookings.filter(b=>b.status==='pending').length;
+    document.getElementById('stat-inprogress').textContent = bookings.filter(b=>b.status==='in-progress').length;
+    document.getElementById('stat-completed').textContent  = bookings.filter(b=>b.status==='completed').length;
+    document.getElementById('stat-cancelled').textContent  = bookings.filter(b=>b.status==='cancelled').length;
+}
+
+// ── Tab Switch ────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+    activeTab = tab;
+    document.getElementById('tab-ongoing').classList.toggle('active', tab==='ongoing');
+    document.getElementById('tab-completed').classList.toggle('active', tab==='completed');
+    // Reset status filter to avoid cross-tab mismatch
+    document.getElementById('filter-status').value = '';
+    render();
+}
+
+// ── Detail Modal ──────────────────────────────────────────────────────────────
+function openDetail(id) {
+    const b = bookings.find(x => x.id === id);
+    if (!b) return;
+    document.getElementById('modal-service-name').textContent = b.service;
+    document.getElementById('modal-booking-id').textContent = `Booking ID: ${b.id}  •  ${b.category}`;
+    document.getElementById('modal-rows').innerHTML = `
+        <div class="modal-row"><span>Resident</span><span>${b.resident}</span></div>
+        <div class="modal-row"><span>Provider</span><span>${b.provider}</span></div>
+        <div class="modal-row"><span>Date & Time</span><span>${b.date} at ${b.time}</span></div>
+        <div class="modal-row"><span>Address</span><span>${b.address}</span></div>
+        <div class="modal-row"><span>Status</span><span>${statusBadge(b.status)}</span></div>
+        <div class="modal-row"><span>Notes</span><span style="color:#aaa;font-style:italic;">${b.notes}</span></div>`;
+    let btns = `<button class="btn-action btn-view" style="padding:8px 18px;" onclick="closeModal('detail-modal')">Close</button>`;
+    if (b.status === 'pending' || b.status === 'approved') {
+        btns += `<button class="btn-action btn-cancel" style="padding:8px 18px;" onclick="closeModal('detail-modal');confirmAction('cancel','${b.id}')">Cancel Booking</button>`;
+        btns += `<button class="btn-action btn-escalate" style="padding:8px 18px;" onclick="closeModal('detail-modal');confirmAction('escalate','${b.id}')">Escalate</button>`;
+    }
+    if (b.status === 'in-progress') {
+        btns += `<button class="btn-action btn-escalate" style="padding:8px 18px;" onclick="closeModal('detail-modal');confirmAction('escalate','${b.id}')">Flag Issue</button>`;
+    }
+    document.getElementById('modal-action-btns').innerHTML = btns;
+    openModal('detail-modal');
+}
+
+// ── Confirm Modal ─────────────────────────────────────────────────────────────
+function confirmAction(action, id) {
+    const b = bookings.find(x => x.id === id);
+    if (!b) return;
+    const isCancel = action === 'cancel';
+    document.getElementById('confirm-icon').innerHTML = isCancel
+        ? '<i class="fas fa-times-circle" style="color:#e74c3c;"></i>'
+        : '<i class="fas fa-exclamation-triangle" style="color:#f1c40f;"></i>';
+    document.getElementById('confirm-title').textContent = isCancel ? 'Cancel Booking?' : 'Escalate Booking?';
+    document.getElementById('confirm-msg').textContent  = isCancel
+        ? `Are you sure you want to cancel "${b.service}" for ${b.resident}? This cannot be undone.`
+        : `Escalate "${b.service}" for ${b.resident} to management for urgent attention?`;
+    document.getElementById('confirm-ok-btn').textContent = isCancel ? 'Yes, Cancel' : 'Yes, Escalate';
+    document.getElementById('confirm-ok-btn').style.background = isCancel ? '#e74c3c' : '#f1c40f';
+    document.getElementById('confirm-ok-btn').style.color = isCancel ? '#fff' : '#000';
+    document.getElementById('confirm-ok-btn').onclick = () => executeAction(action, id);
+    openModal('confirm-modal');
+}
+
+function executeAction(action, id) {
+    closeModal('confirm-modal');
+    const b = bookings.find(x => x.id === id);
+    if (!b) return;
+    if (action === 'cancel') {
+        b.status = 'cancelled';
+        showToast('Booking cancelled successfully.', 'error');
+    } else {
+        showToast(`Booking "${b.service}" flagged for management review.`, 'warning');
+    }
+    render();
+}
+
+// ── Refresh ───────────────────────────────────────────────────────────────────
+function handleRefresh() {
+    const btn = document.getElementById('btn-refresh');
+    btn.classList.add('spinning');
+    setTimeout(() => { btn.classList.remove('spinning'); render(); showToast('Data refreshed.', 'success'); }, 900);
+}
+
+// ── Modals ────────────────────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    const icons = { success:'fa-check-circle', warning:'fa-exclamation-triangle', error:'fa-times-circle' };
+    t.className = `toast ${type}`;
+    document.getElementById('toast-icon').className = `fas ${icons[type] || 'fa-info-circle'}`;
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── Event Listeners ───────────────────────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', render);
+document.getElementById('filter-status').addEventListener('change', render);
+document.getElementById('filter-service').addEventListener('change', render);
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
 </html>
