@@ -6,6 +6,7 @@
     <title>ServiceBook - Admin Console (Complaints)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/admin_dark.css">
+    <link rel="stylesheet" href="../css/admin_complaints.css">
 </head>
 <body class="admin-dark">
     <div class="admin-wrapper">
@@ -25,6 +26,7 @@
                         <li><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
                         <li><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
                         <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                        <li><a href="announcements.html"><i class="fas fa-bullhorn"></i> ANNOUNCEMENTS</a></li>
                         <li class="active"><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
                     </ul>
                 </nav>
@@ -58,48 +60,54 @@
 
             <div class="admin-body">
                 <!-- Complaint Items -->
-                <div class="complaint-list">
+                <div class="complaint-list" id="complaintsContainer">
                     <!-- Complaint 1 -->
-                    <div class="complaint-item">
+                    <div class="complaint-item priority-high">
                         <div class="comp-badges">
                             <span class="comp-id">C-7001</span>
-                            <span class="comp-badge comp-high">HIGH</span>
+                            <span class="comp-badge comp-high">HIGH PRIORITY</span>
                             <span class="comp-badge comp-open">OPEN</span>
                         </div>
                         <h3 class="comp-title">Provider didn't show up</h3>
-                        <p class="comp-meta">From Aisha Khan &bull; 2025-04-15</p>
+                        <p class="comp-meta"><i class="fas fa-user"></i> Aisha Khan &bull; <i class="fas fa-calendar-alt"></i> 2025-04-15</p>
                         <div class="comp-quote">
-                            Booked plumber for 10am, no one came.
+                            "Booked plumber for 10am, no one came. I waited for 2 hours and tried calling multiple times."
                         </div>
-                        <button class="comp-btn"><i class="far fa-check-circle"></i> MARK RESOLVED</button>
+                        <div class="comp-actions">
+                            <button class="comp-btn"><i class="far fa-check-circle"></i> MARK RESOLVED</button>
+                            <button class="comp-btn btn-outline"><i class="fas fa-envelope"></i> CONTACT USER</button>
+                        </div>
                     </div>
 
                     <!-- Complaint 2 -->
-                    <div class="complaint-item">
+                    <div class="complaint-item priority-medium">
                         <div class="comp-badges">
                             <span class="comp-id">C-7002</span>
-                            <span class="comp-badge comp-med">MEDIUM</span>
+                            <span class="comp-badge comp-med">MEDIUM PRIORITY</span>
                             <span class="comp-badge comp-open">OPEN</span>
                         </div>
                         <h3 class="comp-title">Overcharged on invoice</h3>
-                        <p class="comp-meta">From James Carter &bull; 2025-04-14</p>
+                        <p class="comp-meta"><i class="fas fa-user"></i> James Carter &bull; <i class="fas fa-calendar-alt"></i> 2025-04-14</p>
                         <div class="comp-quote">
-                            Final bill differs from quote.
+                            "Final bill differs significantly from the initial quote provided. I was charged extra for materials that weren't used."
                         </div>
-                        <button class="comp-btn"><i class="far fa-check-circle"></i> MARK RESOLVED</button>
+                        <div class="comp-actions">
+                            <button class="comp-btn"><i class="far fa-check-circle"></i> MARK RESOLVED</button>
+                            <button class="comp-btn btn-outline"><i class="fas fa-envelope"></i> CONTACT USER</button>
+                        </div>
                     </div>
 
                     <!-- Complaint 3 -->
-                    <div class="complaint-item" style="opacity: 0.7;">
+                    <div class="complaint-item priority-low" style="opacity: 0.7;">
                         <div class="comp-badges">
                             <span class="comp-id">C-7003</span>
-                            <span class="comp-badge comp-low">LOW</span>
+                            <span class="comp-badge comp-low">LOW PRIORITY</span>
                             <span class="comp-badge comp-res">RESOLVED</span>
                         </div>
                         <h3 class="comp-title">Great service feedback</h3>
-                        <p class="comp-meta">From David Park &bull; 2025-04-10</p>
+                        <p class="comp-meta"><i class="fas fa-user"></i> David Park &bull; <i class="fas fa-calendar-alt"></i> 2025-04-10</p>
                         <div class="comp-quote">
-                            Wanted to thank the team.
+                            "Just wanted to thank the team for the quick resolution of my previous issue. The service was excellent."
                         </div>
                     </div>
                 </div>
@@ -107,5 +115,33 @@
             </div>
         </main>
     </div>
+
+    <!-- ── Message User Modal ── -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="far fa-envelope text-orange"></i> Send Message</h3>
+                <div class="btn-close-modal" id="closeMsgModal"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Sending message to <strong id="msgTargetName" style="color: #fff;">User</strong></p>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px;">SUBJECT</label>
+                    <input type="text" id="msgSubject" placeholder="e.g. Complaint Resolution" style="width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; outline: none;">
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px;">MESSAGE CONTENT</label>
+                    <textarea id="msgContent" rows="5" placeholder="Type your message here..." style="width: 100%; background: #1a1a1a; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; outline: none; resize: vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                <button id="cancelMsgBtn" style="flex: 1; background: transparent; border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">CANCEL</button>
+                <button id="sendMsgBtn" style="flex: 1; background: var(--orange); border: none; color: #000; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 700;"><i class="fas fa-paper-plane" style="margin-right: 6px;"></i> SEND NOTIFICATION</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../javascript/admin_complaints.js"></script>
 </body>
 </html>
