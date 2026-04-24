@@ -98,6 +98,36 @@
     gap: 10px;
 }
 
+.monitor-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.monitor-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 140, 0, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--orange);
+}
+
+.monitor-details h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.monitor-details p {
+    margin: 0;
+    font-size: 12px;
+    color: #888;
+}
+
 /* ── Action Buttons ──────────────────────────────────────────────────────── */
 .btn-action {
     padding: 6px 14px;

@@ -6,6 +6,7 @@
     <title>ServiceBook - Admin Console (Admin Roles)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/admin_dark.css">
+    <link rel="stylesheet" href="../css/admin_roles.css">
 </head>
 <body class="admin-dark">
     <div class="admin-wrapper">
@@ -57,63 +58,77 @@
             </header>
 
             <div class="admin-body">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                    <p style="color: #999; font-size: 14px;">Manage admin access and role permissions</p>
-                    <button class="btn-primary"><i class="fas fa-plus"></i> ADD ADMIN</button>
+                <div class="roles-toolbar">
+                    <p>Manage admin access and role permissions</p>
+                    <button class="btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> ADD ADMIN</button>
                 </div>
 
-                <div class="admin-card-grid">
-                    <!-- Card 1 -->
-                    <div class="admin-item-card">
-                        <div class="admin-item-top">
-                            <div class="admin-avatar" style="border: 1px solid rgba(255,140,0,0.5); background: transparent; color: var(--orange); width: 44px; height: 44px; font-size: 16px;">AR</div>
-                            <div>
-                                <h4 style="color: #fff; font-size: 15px; margin-bottom: 2px;">Alex Reed</h4>
-                                <p style="color: #777; font-size: 13px;">alex@admin.com</p>
-                            </div>
-                        </div>
-                        <div class="admin-item-mid">
-                            <div class="admin-item-badge"><i class="fas fa-user-shield"></i> SUPER ADMIN</div>
-                            <span class="admin-item-time">2 MIN AGO</span>
-                        </div>
-                        <button class="admin-item-btn"><i class="far fa-trash-alt"></i> REVOKE ACCESS</button>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div class="admin-item-card">
-                        <div class="admin-item-top">
-                            <div class="admin-avatar" style="border: 1px solid rgba(255,140,0,0.5); background: transparent; color: var(--orange); width: 44px; height: 44px; font-size: 16px;">PS</div>
-                            <div>
-                                <h4 style="color: #fff; font-size: 15px; margin-bottom: 2px;">Priya Singh</h4>
-                                <p style="color: #777; font-size: 13px;">priya@admin.com</p>
-                            </div>
-                        </div>
-                        <div class="admin-item-mid">
-                            <div class="admin-item-badge"><i class="fas fa-user-cog"></i> MANAGER</div>
-                            <span class="admin-item-time">1 HR AGO</span>
-                        </div>
-                        <button class="admin-item-btn"><i class="far fa-trash-alt"></i> REVOKE ACCESS</button>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="admin-item-card">
-                        <div class="admin-item-top">
-                            <div class="admin-avatar" style="border: 1px solid rgba(255,140,0,0.5); background: transparent; color: var(--orange); width: 44px; height: 44px; font-size: 16px;">TW</div>
-                            <div>
-                                <h4 style="color: #fff; font-size: 15px; margin-bottom: 2px;">Tom Walker</h4>
-                                <p style="color: #777; font-size: 13px;">tom@admin.com</p>
-                            </div>
-                        </div>
-                        <div class="admin-item-mid">
-                            <div class="admin-item-badge"><i class="fas fa-headset"></i> SUPPORT</div>
-                            <span class="admin-item-time">YESTERDAY</span>
-                        </div>
-                        <button class="admin-item-btn"><i class="far fa-trash-alt"></i> REVOKE ACCESS</button>
-                    </div>
+                <div class="admin-card-grid" id="admin-card-grid">
+                    <!-- Cards will be loaded dynamically -->
                 </div>
 
             </div>
         </main>
     </div>
+
+    <!-- Add Admin Modal -->
+    <div class="roles-modal-overlay" id="roles-modal-overlay">
+        <div class="roles-modal-box">
+            <button class="roles-modal-close" onclick="closeAddModal()">&times;</button>
+            <div class="roles-modal-title">Add New Admin</div>
+            <form id="add-admin-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="admin-name" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="admin-email" placeholder="Enter email address" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="admin-password" placeholder="Enter password" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="admin-role" required>
+                        <option value="">Select role</option>
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="support">Support</option>
+                    </select>
+                </div>
+                <div class="roles-modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn-save">Add Admin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="roles-modal-overlay" id="delete-modal-overlay">
+        <div class="roles-modal-box">
+            <button class="roles-modal-close" onclick="closeDeleteModal()">&times;</button>
+            <div class="roles-modal-title">Revoke Admin Access?</div>
+            <p style="color: #888; font-size: 14px; margin-bottom: 20px;">
+                Are you sure you want to revoke access for <strong id="delete-admin-name" style="color: #fff;"></strong>? 
+                This action cannot be undone.
+            </p>
+            <input type="hidden" id="delete-admin-id">
+            <div class="roles-modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn-save" style="background: #e74c3c;" id="confirm-delete-btn">Revoke Access</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="roles-toast" id="roles-toast">
+        <i class="fas fa-check-circle" id="roles-toast-icon"></i>
+        <span id="roles-toast-msg"></span>
+    </div>
+
+    <script src="../javascript/admin_roles.js"></script>
 </body>
 </html>

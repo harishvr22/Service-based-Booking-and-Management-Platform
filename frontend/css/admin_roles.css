@@ -1,0 +1,318 @@
+/* ── Admin Roles Page Styles ─────────────────────────────────────────────── */
+
+.roles-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.roles-toolbar p {
+    color: #999;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Primary Button */
+.btn-primary {
+    background: var(--orange);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.btn-primary:hover {
+    background: #ff9d00;
+    transform: translateY(-1px);
+}
+
+/* Admin Card Grid */
+.admin-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Admin Item Card */
+.admin-item-card {
+    background: var(--bg-card);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+.admin-item-card:hover {
+    border-color: rgba(255, 140, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.admin-item-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.admin-item-top .admin-avatar {
+    border: 1px solid rgba(255, 140, 0, 0.5);
+    background: transparent;
+    color: var(--orange);
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+}
+
+.admin-item-top h4 {
+    color: #fff;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.admin-item-top p {
+    color: #777;
+    font-size: 13px;
+    margin: 0;
+}
+
+.admin-item-mid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #222;
+}
+
+.admin-item-badge {
+    background: rgba(255, 140, 0, 0.1);
+    color: var(--orange);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-item-time {
+    color: #555;
+    font-size: 12px;
+}
+
+.admin-item-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 10px;
+    color: #888;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.admin-item-btn:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* ── Modal Styles ─────────────────────────────────────────────────────────── */
+.roles-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.roles-modal-overlay.open {
+    display: flex;
+}
+
+.roles-modal-box {
+    background: #181818;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 32px;
+    width: 450px;
+    max-width: 95vw;
+    position: relative;
+    animation: fadeUp 0.2s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.roles-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 20px;
+    cursor: pointer;
+}
+.roles-modal-close:hover {
+    color: #fff;
+}
+
+.roles-modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 12px 14px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--orange);
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.roles-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn-cancel {
+    flex: 1;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+    color: #ccc;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-cancel:hover {
+    background: #2a2a2a;
+}
+
+.btn-save {
+    flex: 1;
+    background: var(--orange);
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    color: #000;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-save:hover {
+    background: #ff9d00;
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+.roles-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.roles-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.roles-toast.success {
+    border-left: 3px solid #2ecc71;
+}
+
+.roles-toast.error {
+    border-left: 3px solid #e74c3c;
+}
+
+/* ── Empty State ─────────────────────────────────────────────────────────── */
+.roles-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #555;
+}
+
+.roles-empty i {
+    font-size: 40px;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.roles-empty p {
+    font-size: 14px;
+}
+
+/* ── Loading State ───────────────────────────────────────────────────────── */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #333;
+    border-radius: 50%;
+    border-top-color: var(--orange);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
