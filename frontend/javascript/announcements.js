@@ -1,195 +1,61 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Socket.IO connection
-    const socket = io('http://localhost:5000');
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Announcements JS Initialized');
 
-    socket.on('new_notification', function(data) {
-        console.log('New notification received:', data);
-        // Add to localStorage for display
-        const newNotif = {
-            id: Date.now().toString(),
-            title: data.title,
-            message: data.message,
-            audience: data.audience,
-            date: new Date().toISOString(),
-            read: false,
-            iconClass: 'far fa-bell'
-        };
-        let allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
-        allNotifs.unshift(newNotif);
-        localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
-        
-        // Optionally refresh the page or update UI
-        location.reload(); // Simple way to refresh
+    const audienceButtons = document.querySelectorAll('.audience-btn');
+    const publishBtn = document.getElementById('publishBtn');
+    const announcementList = document.getElementById('announcementList');
+    
+    let selectedAudience = 'All';
+
+    // Audience selection logic
+    audienceButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            audienceButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedAudience = btn.getAttribute('data-audience');
+            console.log('Selected audience:', selectedAudience);
+        });
     });
-    const newAnnouncementBtn = document.getElementById('newAnnouncementBtn');
-    const createAnnouncementFormSection = document.getElementById('createAnnouncementForm');
-    const announcementForm = document.getElementById('announcementForm');
-    const announcementsList = document.querySelector('.announcements-list');
 
-    // Custom Dropdown Logic
-    const dropdownSelect = document.querySelector('.dropdown-select');
-    const dropdownList = document.querySelector('.dropdown-list');
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-    const audienceInput = document.getElementById('audienceInput');
-    const selectValue = document.querySelector('.select-value');
-
-    if (dropdownSelect && dropdownList) {
-        // Toggle Dropdown
-        dropdownSelect.addEventListener('click', function (e) {
-            e.stopPropagation();
-            dropdownList.classList.toggle('show');
-            const icon = dropdownSelect.querySelector('i');
-            if (icon) {
-                if (dropdownList.classList.contains('show')) {
-                    icon.className = 'fas fa-chevron-up';
-                } else {
-                    icon.className = 'fas fa-chevron-down';
-                }
-            }
-        });
-
-        // Select Item
-        dropdownItems.forEach(item => {
-            item.addEventListener('click', function (e) {
-                e.stopPropagation();
-                // Remove selected class from all
-                dropdownItems.forEach(i => {
-                    i.classList.remove('selected');
-                    const icon = i.querySelector('.check-icon');
-                    if (icon) icon.style.opacity = '0';
-                });
-
-                // Add selected class to clicked
-                this.classList.add('selected');
-                const checkIcon = this.querySelector('.check-icon');
-                if (checkIcon) checkIcon.style.opacity = '1';
-
-                // Update Input and Display
-                const value = this.getAttribute('data-value');
-                if (audienceInput) audienceInput.value = value;
-                if (selectValue) selectValue.textContent = value;
-
-                // Close Dropdown
-                dropdownList.classList.remove('show');
-                const icon = dropdownSelect.querySelector('i');
-                if (icon) icon.className = 'fas fa-chevron-down';
-            });
-        });
-
-        // Close when clicking outside
-        document.addEventListener('click', function () {
-            dropdownList.classList.remove('show');
-            const icon = dropdownSelect.querySelector('i');
-            if (icon) icon.className = 'fas fa-chevron-down';
-        });
-    }
-
-    // Toggle Form Visibility with Theme Matching Cancel Button
-    if (newAnnouncementBtn && createAnnouncementFormSection) {
-        newAnnouncementBtn.addEventListener('click', function () {
-            if (createAnnouncementFormSection.style.display === 'none') {
-                createAnnouncementFormSection.style.display = 'block';
-                newAnnouncementBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
-                newAnnouncementBtn.classList.remove('btn-primary');
-                newAnnouncementBtn.classList.add('btn-cancel');
-                // Remove inline styles if any remaining
-                newAnnouncementBtn.style.border = '';
-                newAnnouncementBtn.style.backgroundColor = '';
-                newAnnouncementBtn.style.color = '';
-            } else {
-                createAnnouncementFormSection.style.display = 'none';
-                newAnnouncementBtn.innerHTML = '<i class="fas fa-plus"></i> New Announcement';
-                newAnnouncementBtn.classList.remove('btn-cancel');
-                newAnnouncementBtn.classList.add('btn-primary');
-            }
-        });
-    }
-
-    // Handle Form Submission
-    if (announcementForm) {
-        announcementForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            // Get Input Values
-            const titleInput = announcementForm.querySelector('input[type="text"]');
-            const messageInput = announcementForm.querySelector('textarea');
-            const audience = audienceInput ? audienceInput.value : 'All Users';
-
+    // Publish announcement
+    if (publishBtn) {
+        publishBtn.addEventListener('click', () => {
+            const titleInput = document.getElementById('announcementTitle');
+            const messageInput = document.getElementById('announcementMessage');
+            
             const title = titleInput.value.trim();
             const message = messageInput.value.trim();
 
             if (!title || !message) {
-                alert('Please fill in all fields');
+                showToast('Please fill in all fields.', 'error');
                 return;
             }
 
-            // Create Date String
+            handlePublish(title, message, selectedAudience);
+            
+            // Clear inputs
+            titleInput.value = '';
+            messageInput.value = '';
+        });
+    }
+
+    /**
+     * Handle the publishing of a new announcement
+     */
+    function handlePublish(title, message, audience) {
+        publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PUBLISHING...';
+        publishBtn.disabled = true;
+
+        // Simulate API delay
+        setTimeout(() => {
             const date = new Date();
-            const dateOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-            const dateString = date.toLocaleDateString('en-US', dateOptions);
-
-            // Determine Badge Class based on Audience
-            let badgeClass = 'badge-purple'; // Default (Providers)
-            let badgeStyle = 'background-color: #f3e5f5; color: #9c27b0;';
-            let iconClass = 'fas fa-bullhorn'; // Default
-
-            if (audience === 'Residents Only') {
-                badgeClass = 'badge-green';
-                badgeStyle = 'background-color: #e8f8f5; color: #2ecc71;';
-                iconClass = 'fas fa-home';
-            } else if (audience === 'All Users') {
-                badgeClass = 'badge-blue';
-                badgeStyle = 'background-color: #ebf5fb; color: #3498db;';
-                iconClass = 'fas fa-globe';
-            } else {
-                // Providers Only
-                badgeClass = 'badge-purple';
-                badgeStyle = 'background-color: #f3e5f5; color: #9c27b0;';
-                iconClass = 'fas fa-user-tie';
-            }
-
-            // Create New Announcement Card
-            const newCard = document.createElement('div');
-            newCard.className = 'announcement-card';
-            newCard.style.animation = 'slideDown 0.3s ease-out';
-
-            newCard.innerHTML = `
-                <div class="announcement-header">
-                    <div class="announcement-title">
-                        <i class="${iconClass} text-orange"></i>
-                        <h3>${title}</h3>
-                        <span class="badge ${badgeClass}" style="${badgeStyle}">${audience}</span>
-                    </div>
-                    <button class="btn-icon delete-btn"><i class="fas fa-trash-alt"></i></button>
-                </div>
-                <p class="announcement-text">${message}</p>
-                <span class="announcement-date">${dateString}</span>
-            `;
-
-            // Send to backend
-            fetch('http://localhost:5000/notifications', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: title,
-                    message: message,
-                    audience: audience,
-                    created_by: 1 // Assuming admin id is 1
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Announcement created:', data);
-                // The real-time update will be handled by socket
-            })
-            .catch(error => {
-                console.error('Error creating announcement:', error);
-                alert('Failed to create announcement');
+            const dateString = date.toLocaleDateString('en-US', { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric' 
             });
 
-            // Still save to localStorage for backward compatibility or immediate display
+            // Create notification object for storage
             const newNotif = {
                 id: Date.now().toString(),
                 title: title,
@@ -197,58 +63,172 @@ document.addEventListener('DOMContentLoaded', function () {
                 audience: audience,
                 date: new Date().toISOString(),
                 read: false,
-                iconClass: iconClass
+                iconClass: getAudienceIcon(audience)
             };
-            let allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
-            allNotifs.unshift(newNotif);
-            localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
 
-            // Prepend to List
-            if (announcementsList) {
-                announcementsList.insertBefore(newCard, announcementsList.firstChild);
-            }
+            // Save to localStorage for both admin and target audience
+            saveNotification(newNotif);
 
-            // Reset Form and Toggle Off
-            announcementForm.reset();
-            createAnnouncementFormSection.style.display = 'none';
-            newAnnouncementBtn.innerHTML = '<i class="fas fa-plus"></i> New Announcement';
-            newAnnouncementBtn.classList.remove('btn-cancel');
-            newAnnouncementBtn.classList.add('btn-primary');
+            // Prepend to UI list
+            addAnnouncementToUI(newNotif, dateString);
 
-            // Reset Dropdown
-            if (selectValue) selectValue.textContent = 'All Users';
-            if (audienceInput) audienceInput.value = 'All Users';
-            if (dropdownItems) {
-                dropdownItems.forEach(i => {
-                    i.classList.remove('selected');
-                    const icon = i.querySelector('.check-icon');
-                    if (icon) icon.style.opacity = '0';
-                    if (i.dataset.value === 'All Users') {
-                        i.classList.add('selected');
-                        if (icon) icon.style.opacity = '1';
-                    }
-                });
-            }
-        });
+            // Reset button
+            publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> PUBLISH ANNOUNCEMENT';
+            publishBtn.disabled = false;
+
+            showToast(`Announcement broadcasted to ${audience.toUpperCase()} successfully!`, 'success');
+        }, 1200);
     }
 
-    // Handle Delete functionality using Event Delegation
-    if (announcementsList) {
-        announcementsList.addEventListener('click', function (e) {
-            // Check if clicked element is a delete button or its icon
-            if (e.target.closest('.delete-btn')) {
-                const card = e.target.closest('.announcement-card');
-                if (card) {
-                    if (confirm('Are you sure you want to delete this announcement?')) {
-                        card.style.opacity = '0';
-                        card.style.transform = 'translateY(-10px)';
-                        card.style.transition = 'all 0.3s';
-                        setTimeout(() => {
-                            card.remove();
-                        }, 300);
-                    }
-                }
-            }
-        });
+    /**
+     * Get the correct icon class for the audience
+     */
+    function getAudienceIcon(audience) {
+        switch(audience) {
+            case 'Residents': return 'fas fa-home';
+            case 'Providers': return 'fas fa-wrench';
+            default: return 'fas fa-globe';
+        }
     }
+
+    /**
+     * Save notification to localStorage
+     */
+    function saveNotification(notif) {
+        // Admin's view of sent notifications
+        let adminNotifs = JSON.parse(localStorage.getItem('admin_sent_announcements') || '[]');
+        adminNotifs.unshift(notif);
+        localStorage.setItem('admin_sent_announcements', JSON.stringify(adminNotifs));
+
+        // Shared notification system (e.g. for header bells)
+        let allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+        allNotifs.unshift(notif);
+        localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
+    }
+
+    /**
+     * Add the announcement to the UI list
+     */
+    function addAnnouncementToUI(notif, dateString) {
+        const item = document.createElement('div');
+        item.className = 'announcement-item';
+        item.style.animation = 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        
+        const audClass = getAudienceClass(notif.audience);
+        const audLabel = getAudienceLabel(notif.audience);
+
+        item.innerHTML = `
+            <button class="item-delete" onclick="deleteAnnouncement(this)"><i class="fas fa-trash"></i></button>
+            <div class="item-header">
+                <span class="item-audience ${audClass}">${audLabel}</span>
+                <span class="item-date">${dateString}</span>
+            </div>
+            <h4 class="item-title">${notif.title}</h4>
+            <p class="item-body">${notif.message}</p>
+        `;
+
+        if (announcementList.firstChild) {
+            announcementList.insertBefore(item, announcementList.firstChild);
+        } else {
+            announcementList.appendChild(item);
+        }
+    }
+
+    function getAudienceClass(audience) {
+        switch(audience) {
+            case 'Residents': return 'aud-residents';
+            case 'Providers': return 'aud-providers';
+            default: return 'aud-all';
+        }
+    }
+
+    function getAudienceLabel(audience) {
+        switch(audience) {
+            case 'Residents': return 'RESIDENTS ONLY';
+            case 'Providers': return 'PROVIDERS ONLY';
+            default: return 'ALL USERS';
+        }
+    }
+
+    // Global delete function
+    window.deleteAnnouncement = function(btn) {
+        if (confirm('Are you sure you want to delete this announcement?')) {
+            const item = btn.closest('.announcement-item');
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(-20px)';
+            item.style.transition = 'all 0.3s ease';
+            setTimeout(() => {
+                item.remove();
+                showToast('Announcement removed.', 'info');
+            }, 300);
+        }
+    };
+
+    /**
+     * Toast notification system
+     */
+    function showToast(message, type = 'info') {
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container';
+            toastContainer.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            `;
+            document.body.appendChild(toastContainer);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        const colors = {
+            success: '#2ecc71',
+            error: '#e74c3c',
+            info: '#3498db'
+        };
+
+        toast.style.cssText = `
+            background: ${colors[type] || colors.info};
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        `;
+
+        const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-times-circle' : 'fa-info-circle');
+        toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+        
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease-in forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Add styles for toast animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
 });

@@ -465,62 +465,6 @@ body.admin-dark {
     color: #888;
 }
 
-/* Complaints Specific */
-.complaint-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 24px;
-    margin-bottom: 15px;
-}
-.comp-badges {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-}
-.comp-badge {
-    padding: 3px 8px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    border-radius: 3px;
-}
-.comp-high { background: rgba(231,76,60,0.1); border: 1px solid #e74c3c; color: #e74c3c; }
-.comp-med { background: rgba(241,196,15,0.1); border: 1px solid #f1c40f; color: #f1c40f; }
-.comp-low { background: rgba(136,136,136,0.1); border: 1px solid #888; color: #888; }
-.comp-open { background: rgba(255,140,0,0.1); border: 1px solid var(--orange); color: var(--orange); }
-.comp-res { background: rgba(136,136,136,0.1); border: 1px solid #888; color: #888; }
-.comp-id { color: #888; font-family: monospace; font-size: 11px; margin-right: 10px;}
-
-.comp-title {
-    font-size: 18px;
-    color: #fff;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-.comp-meta {
-    font-size: 13px;
-    color: #888;
-    margin-bottom: 15px;
-}
-.comp-quote {
-    border-left: 2px solid #444;
-    padding-left: 15px;
-    color: #aaa;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-.comp-btn {
-    background: var(--orange);
-    color: #000;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
 /* Sidebar Logout */
 .admin-logout {
     padding: 12px 24px;

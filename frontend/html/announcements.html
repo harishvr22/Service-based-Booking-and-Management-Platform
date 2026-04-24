@@ -1,127 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApartmentCare - Announcements</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
+    <title>ServiceBook - Admin Console (Announcements)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/admin_dashboard.css">
+    <link rel="stylesheet" href="../css/admin_dark.css">
     <link rel="stylesheet" href="../css/announcements.css">
-    <link rel="stylesheet" href="../css/theme.css">
 </head>
-
-<body>
-    <div class="dashboard-container">
+<body class="admin-dark">
+    <div class="admin-wrapper">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="logo-text">
-                    <h2>ApartmentCare</h2>
-                    <span>Admin Panel</span>
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <h2>ServiceBook</h2>
+                <p>ADMIN CONSOLE</p>
+            </div>
+            
+            <div class="admin-menu-section">
+                <p class="admin-menu-title">MANAGE</p>
+                <nav class="admin-nav">
+                    <ul>
+                        <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
+                        <li><a href="users.html"><i class="fas fa-users"></i> RESIDENT</a></li>
+                        <li><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
+                        <li><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
+                        <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                        <li class="active"><a href="announcements.html"><i class="fas fa-bullhorn"></i> ANNOUNCEMENTS</a></li>
+                        <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="admin-avatar">AR</div>
+                <div class="admin-info">
+                    <div class="name">Alex Reed</div>
+                    <div class="role">SUPER ADMIN</div>
                 </div>
             </div>
 
-            <nav class="sidebar-nav">
-                <ul>
-                    <li>
-                        <a href="admin_dashboard.html"><i class="fas fa-chart-bar"></i> Analytics</a>
-                    </li>
-
-                    <li class="active">
-                        <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
-                    </li>
-                    <li>
-                        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <a href="landingpage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <div class="admin-logout">
+                <a href="login.html"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <header class="dashboard-header">
-                <h1>Announcements</h1>
-                <p>Broadcast notices to residents and providers</p>
-                <button class="btn-primary" id="newAnnouncementBtn">
-                    <i class="fas fa-plus"></i> New Announcement
-                </button>
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <i class="fas fa-columns"></i>
+                    <span>ADMIN CONSOLE</span> / <span class="admin-header-title">Announcements</span>
+                </div>
+                <div class="admin-sys-status">
+                    <div class="status-dot"></div> SYSTEM ONLINE
+                </div>
             </header>
 
-            <!-- Create Announcement Form (Hidden by default) -->
-            <section class="create-announcement-section" id="createAnnouncementForm" style="display: none;">
-                <div class="form-card">
-                    <h3>Create Announcement</h3>
-                    <form id="announcementForm">
-                        <div class="form-group">
-                            <input type="text" placeholder="Announcement title" class="form-control">
+            <div class="admin-body">
+                <!-- Announcement Form Container -->
+                <div class="announcement-form-container">
+                    <h3><i class="fas fa-plus-circle"></i> CREATE NEW ANNOUNCEMENT</h3>
+                    
+                    <div class="form-group">
+                        <label>Target Audience</label>
+                        <div class="audience-selector" id="audienceSelector">
+                            <button class="audience-btn active" data-audience="All">
+                                <i class="fas fa-globe"></i> ALL USERS
+                            </button>
+                            <button class="audience-btn" data-audience="Residents">
+                                <i class="fas fa-users"></i> RESIDENTS
+                            </button>
+                            <button class="audience-btn" data-audience="Providers">
+                                <i class="fas fa-wrench"></i> PROVIDERS
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <textarea placeholder="Write your announcement message..." class="form-control"
-                                rows="4"></textarea>
-                        </div>
-                        <div class="form-actions">
-                            <div class="custom-dropdown">
-                                <div class="dropdown-select">
-                                    <span class="select-value">All Users</span>
-                                    <i class="fas fa-chevron-down"></i>
-                                </div>
-                                <div class="dropdown-list">
-                                    <div class="dropdown-item selected" data-value="All Users">
-                                        <i class="fas fa-check check-icon"></i> All Users
-                                    </div>
-                                    <div class="dropdown-item" data-value="Residents Only">
-                                        <i class="fas fa-check check-icon" style="opacity: 0;"></i> Residents Only
-                                    </div>
-                                    <div class="dropdown-item" data-value="Providers Only">
-                                        <i class="fas fa-check check-icon" style="opacity: 0;"></i> Providers Only
-                                    </div>
-                                </div>
-                                <input type="hidden" id="audienceInput" value="All Users">
-                            </div>
-                            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Publish</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Announcements List -->
-            <section class="announcements-list">
-                <!-- Example Announcement Item -->
-                <div class="announcement-card">
-                    <div class="announcement-header">
-                        <div class="announcement-title">
-                            <i class="fas fa-bullhorn text-orange"></i>
-                            <h3>Provider Payment Update</h3>
-                            <span class="badge badge-purple">Providers</span>
-                        </div>
-                        <button class="btn-icon delete-btn"><i class="fas fa-trash-alt"></i></button>
                     </div>
-                    <p class="announcement-text">
-                        Payments for January will be processed by Feb 18.
-                    </p>
-                    <span class="announcement-date">Feb 13, 2026</span>
+
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="announcementTitle" class="form-control" placeholder="Enter announcement title...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Message Content</label>
+                        <textarea id="announcementMessage" class="form-control" rows="4" placeholder="Type your announcement message here..."></textarea>
+                    </div>
+
+                    <button id="publishBtn" class="btn-publish">
+                        <i class="fas fa-paper-plane"></i> PUBLISH ANNOUNCEMENT
+                    </button>
                 </div>
-            </section>
+
+                <!-- Announcements List -->
+                <div class="announcement-list" id="announcementList">
+                    <!-- Announcements will be injected here -->
+                    <div class="announcement-item">
+                        <button class="item-delete"><i class="fas fa-trash"></i></button>
+                        <div class="item-header">
+                            <span class="item-audience aud-all">ALL USERS</span>
+                            <span class="item-date">April 24, 2026</span>
+                        </div>
+                        <h4 class="item-title">System Maintenance Notice</h4>
+                        <p class="item-body">Our system will undergo scheduled maintenance tonight between 2:00 AM and 4:00 AM. Some services may be temporarily unavailable.</p>
+                    </div>
+
+                    <div class="announcement-item">
+                        <button class="item-delete"><i class="fas fa-trash"></i></button>
+                        <div class="item-header">
+                            <span class="item-audience aud-providers">PROVIDERS ONLY</span>
+                            <span class="item-date">April 22, 2026</span>
+                        </div>
+                        <h4 class="item-title">New Service Verification Process</h4>
+                        <p class="item-body">All providers are required to upload their updated insurance documents by the end of this week to maintain their active status.</p>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="../javascript/announcements.js"></script>
-  <script src="../javascript/theme.js"></script>
 </body>
-
 </html>
-
