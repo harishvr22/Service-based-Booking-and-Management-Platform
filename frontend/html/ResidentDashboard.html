@@ -52,7 +52,10 @@
           <span>Overview</span>
         </div>
         <div class="nav-right">
-          <a href="notifications.html" class="nav-icon-btn"><i class="far fa-bell"></i></a>
+          <a href="notifications.html" class="nav-icon-btn" style="position: relative;">
+            <i class="far fa-bell"></i>
+            <span class="badge" style="position: absolute; top: -5px; right: -5px; background: var(--orange, #ff8c00); color: black; border-radius: 50%; padding: 2px 5px; font-size: 10px; font-weight: bold; display: none;">0</span>
+          </a>
           <div class="user-profile">
             <div class="avatar user-initial">A</div>
             <div class="user-details">
@@ -145,7 +148,9 @@
     </main>
   </div>
 
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="../javascript/resident_dashboard.js"></script>
   <script src="../javascript/header.js"></script>
+  <script src="../javascript/notifications.js"></script>
 </body>
 </html>

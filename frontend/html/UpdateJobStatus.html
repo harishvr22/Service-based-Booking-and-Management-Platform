@@ -1,172 +1,336 @@
 ﻿<!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Update Job Status - ApartmentCare</title>
+
     <link rel="stylesheet" href="../css/updatejobstatus.css">
-    <link rel="stylesheet" href="../css/theme.css">
+
 </head>
+
 <body>
+
     <!-- Header -->
+
     <div class="header">
+
         <div class="header-left">
+
             <a href="ProviderDashboard.html" class="back-btn">
+
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
+
                 </svg>
+
             </a>
+
             <div class="header-content">
+
                 <div class="header-icon">
+
                     <svg viewBox="0 0 24 24" fill="currentColor">
+
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+
                         <polyline points="9 22 9 12 15 12 15 22"/>
+
                     </svg>
+
                 </div>
+
                 <div>
+
                     <h2>Update Job Status</h2>
+
                     <p>Change the progress of your active jobs</p>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
+
 
     <!-- Main Content -->
+
     <div class="container">
+
         <div class="content-header">
+
             <h1>Active Jobs</h1>
+
             <p>Update the status of your accepted service jobs.</p>
+
         </div>
+
+
 
         <!-- Active Jobs List -->
+
         <div class="jobs-list">
+
             <!-- Job Card 1 -->
+
             <div class="job-card accepted">
+
                 <div class="job-header">
+
                     <div class="job-info">
+
                         <h3>Plumber</h3>
-                        <p class="resident-info">John Doe Â· Apt A-101</p>
+
+                        <p class="resident-info">John Doe · Apt A-101</p>
+
                     </div>
+
                     <span class="status-badge accepted">Accepted</span>
+
                 </div>
+
                 <div class="job-details">
+
                     <div class="detail-item">
+
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+
                             <line x1="16" y1="2" x2="16" y2="6"></line>
+
                             <line x1="8" y1="2" x2="8" y2="6"></line>
+
                             <line x1="3" y1="10" x2="21" y2="10"></line>
+
                         </svg>
+
                         <span>Feb 12, 2026</span>
+
                     </div>
+
                     <div class="detail-item">
+
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <circle cx="12" cy="12" r="10"></circle>
+
                             <polyline points="12 6 12 12 16 14"></polyline>
+
                         </svg>
+
                         <span>10:00 AM</span>
+
                     </div>
+
                 </div>
+
                 <div class="status-change">
+
                     <div class="dropdown-wrapper">
+
                         <select class="status-dropdown"  >
+
                             <option value="">Change status</option>
+
                             <option value="in-progress">In Progress</option>
+
                             <option value="completed">Completed</option>
+
                         </select>
+
                         <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <polyline points="6 9 12 15 18 9"></polyline>
+
                         </svg>
+
                     </div>
+
                     <button class="btn-update">
+
                         <svg viewBox="0 0 24 24" fill="currentColor">
+
                             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+
                         </svg>
+
                         Update
+
                     </button>
+
                 </div>
+
             </div>
+
+
 
             <!-- Job Card 2 -->
+
             <div class="job-card in-progress">
+
                 <div class="job-header">
+
                     <div class="job-info">
+
                         <h3>Plumber</h3>
-                        <p class="resident-info">Jane Smith Â· Apt B-205</p>
+
+                        <p class="resident-info">Jane Smith · Apt B-205</p>
+
                     </div>
+
                     <span class="status-badge in-progress">In Progress</span>
+
                 </div>
+
                 <div class="job-details">
+
                     <div class="detail-item">
+
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+
                             <line x1="16" y1="2" x2="16" y2="6"></line>
+
                             <line x1="8" y1="2" x2="8" y2="6"></line>
+
                             <line x1="3" y1="10" x2="21" y2="10"></line>
+
                         </svg>
+
                         <span>Feb 11, 2026</span>
+
                     </div>
+
                     <div class="detail-item">
+
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <circle cx="12" cy="12" r="10"></circle>
+
                             <polyline points="12 6 12 12 16 14"></polyline>
+
                         </svg>
+
                         <span>02:00 PM</span>
+
                     </div>
+
                 </div>
+
                 <div class="status-change">
+
                     <div class="dropdown-wrapper">
+
                         <select class="status-dropdown">
+
                             <option value="">Change status</option>
+
                             <option value="completed">Completed</option>
+
                         </select>
+
                         <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <polyline points="6 9 12 15 18 9"></polyline>
+
                         </svg>
+
                     </div>
+
                     <button class="btn-update">
+
                         <svg viewBox="0 0 24 24" fill="currentColor">
+
                             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+
                         </svg>
+
                         Update
+
                     </button>
+
                 </div>
+
             </div>
+
+
 
             <!-- Job Card 3 -->
+
             <div class="job-card completed">
+
                 <div class="job-header">
+
                     <div class="job-info">
+
                         <h3>Carpenter</h3>
-                        <p class="resident-info">Mike Wilson Â· Apt C-310</p>
+
+                        <p class="resident-info">Mike Wilson · Apt C-310</p>
+
                     </div>
+
                     <span class="status-badge completed">Completed</span>
+
                 </div>
+
                 <div class="job-details">
+
                     <div class="detail-item">
+
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+
                             <line x1="16" y1="2" x2="16" y2="6"></line>
+
                             <line x1="8" y1="2" x2="8" y2="6"></line>
+
                             <line x1="3" y1="10" x2="21" y2="10"></line>
+
                         </svg>
+
                         <span>Feb 9, 2026</span>
+
                     </div>
+
                     <div class="detail-item">
+
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
                             <circle cx="12" cy="12" r="10"></circle>
+
                             <polyline points="12 6 12 12 16 14"></polyline>
+
                         </svg>
+
                         <span>09:00 AM</span>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
-    <script src="../javascript/updatejobstatus.js"></script>
-  <script src="../javascript/theme.js"></script>
-</body>
-</html>
 
+
+    <script src="../javascript/updatejobstatus.js"></script>
+
+</body>
+
+</html>
 

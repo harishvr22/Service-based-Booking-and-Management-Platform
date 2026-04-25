@@ -42,3 +42,11 @@ def mark_read(id):
     cursor.execute("UPDATE notifications SET is_read = 1 WHERE id = %s", (id,))
     db.commit()
     return jsonify({"status": "marked_read"})
+
+# Delete notification
+@notifications_bp.route("/notifications/<int:id>", methods=["DELETE"])
+def delete_notification(id):
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM notifications WHERE id = %s", (id,))
+    db.commit()
+    return jsonify({"status": "deleted"})

@@ -1,11 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Announcements JS Initialized');
 
+    const API_BASE = 'http://localhost:5000';
     const audienceButtons = document.querySelectorAll('.audience-btn');
     const publishBtn = document.getElementById('publishBtn');
     const announcementList = document.getElementById('announcementList');
     
     let selectedAudience = 'All';
+
+    // Initial load
+    fetchAnnouncements();
 
     // Audience selection logic
     audienceButtons.forEach(btn => {
@@ -40,70 +44,102 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Handle the publishing of a new announcement
+     * Fetch announcements from backend
      */
-    function handlePublish(title, message, audience) {
-        publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PUBLISHING...';
-        publishBtn.disabled = true;
+    async function fetchAnnouncements() {
+        try {
+            const response = await fetch(`${API_BASE}/notifications`);
+            if (!response.ok) throw new Error('Failed to fetch');
+            const data = await response.json();
+            
+            announcementList.innerHTML = '';
+            if (data.length === 0) {
+                announcementList.innerHTML = '<div class="no-announcements">No announcements found.</div>';
+                return;
+            }
 
-        // Simulate API delay
-        setTimeout(() => {
-            const date = new Date();
+            data.forEach(notif => {
+                const date = new Date(notif.created_at);
+                const dateString = date.toLocaleDateString('en-US', { 
+                    month: 'long', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+                addAnnouncementToUI(notif, dateString);
+            });
+        } catch (error) {
+            console.error('Error fetching announcements:', error);
+            showToast('Failed to load announcements from server.', 'error');
+            // Fallback to localStorage for demo/offline
+            loadFromLocalStorage();
+        }
+    }
+
+    function loadFromLocalStorage() {
+        const adminNotifs = JSON.parse(localStorage.getItem('admin_sent_announcements') || '[]');
+        announcementList.innerHTML = '';
+        adminNotifs.forEach(notif => {
+            const date = new Date(notif.date || notif.created_at);
             const dateString = date.toLocaleDateString('en-US', { 
                 month: 'long', 
                 day: 'numeric', 
                 year: 'numeric' 
             });
-
-            // Create notification object for storage
-            const newNotif = {
-                id: Date.now().toString(),
-                title: title,
-                message: message,
-                audience: audience,
-                date: new Date().toISOString(),
-                read: false,
-                iconClass: getAudienceIcon(audience)
-            };
-
-            // Save to localStorage for both admin and target audience
-            saveNotification(newNotif);
-
-            // Prepend to UI list
-            addAnnouncementToUI(newNotif, dateString);
-
-            // Reset button
-            publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> PUBLISH ANNOUNCEMENT';
-            publishBtn.disabled = false;
-
-            showToast(`Announcement broadcasted to ${audience.toUpperCase()} successfully!`, 'success');
-        }, 1200);
+            addAnnouncementToUI(notif, dateString);
+        });
     }
 
     /**
-     * Get the correct icon class for the audience
+     * Handle the publishing of a new announcement
      */
-    function getAudienceIcon(audience) {
-        switch(audience) {
-            case 'Residents': return 'fas fa-home';
-            case 'Providers': return 'fas fa-wrench';
-            default: return 'fas fa-globe';
+    async function handlePublish(title, message, audience) {
+        publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PUBLISHING...';
+        publishBtn.disabled = true;
+
+        const adminId = localStorage.getItem('userId') || '1';
+        const adminName = localStorage.getItem('userName') || 'Alex Reed';
+
+        const payload = {
+            title: title,
+            message: message,
+            audience: audience,
+            created_by: adminName // Backend expects created_by name or ID? notifications.py uses data["created_by"]
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/notifications`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error('Publish failed');
+
+            showToast(`Announcement broadcasted to ${audience.toUpperCase()} successfully!`, 'success');
+            fetchAnnouncements(); // Refresh list
+
+        } catch (error) {
+            console.error('Error publishing:', error);
+            showToast('Failed to publish announcement to server.', 'error');
+            
+            // Fallback: save to localStorage if backend fails
+            const newNotif = {
+                id: Date.now(),
+                ...payload,
+                created_at: new Date().toISOString()
+            };
+            saveToLocalStorage(newNotif);
+            addAnnouncementToUI(newNotif, new Date().toLocaleDateString());
+        } finally {
+            publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> PUBLISH ANNOUNCEMENT';
+            publishBtn.disabled = false;
         }
     }
 
-    /**
-     * Save notification to localStorage
-     */
-    function saveNotification(notif) {
-        // Admin's view of sent notifications
+    function saveToLocalStorage(notif) {
         let adminNotifs = JSON.parse(localStorage.getItem('admin_sent_announcements') || '[]');
         adminNotifs.unshift(notif);
         localStorage.setItem('admin_sent_announcements', JSON.stringify(adminNotifs));
-
-        // Shared notification system (e.g. for header bells)
-        let allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
-        allNotifs.unshift(notif);
-        localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
     }
 
     /**
@@ -112,13 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function addAnnouncementToUI(notif, dateString) {
         const item = document.createElement('div');
         item.className = 'announcement-item';
-        item.style.animation = 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        item.setAttribute('data-id', notif.id);
         
         const audClass = getAudienceClass(notif.audience);
         const audLabel = getAudienceLabel(notif.audience);
 
         item.innerHTML = `
-            <button class="item-delete" onclick="deleteAnnouncement(this)"><i class="fas fa-trash"></i></button>
+            <button class="item-delete" onclick="deleteAnnouncement(this, ${notif.id})"><i class="fas fa-trash"></i></button>
             <div class="item-header">
                 <span class="item-audience ${audClass}">${audLabel}</span>
                 <span class="item-date">${dateString}</span>
@@ -127,11 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="item-body">${notif.message}</p>
         `;
 
-        if (announcementList.firstChild) {
-            announcementList.insertBefore(item, announcementList.firstChild);
-        } else {
-            announcementList.appendChild(item);
-        }
+        announcementList.appendChild(item);
     }
 
     function getAudienceClass(audience) {
@@ -151,18 +183,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Global delete function
-    window.deleteAnnouncement = function(btn) {
-        if (confirm('Are you sure you want to delete this announcement?')) {
-            const item = btn.closest('.announcement-item');
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(-20px)';
-            item.style.transition = 'all 0.3s ease';
-            setTimeout(() => {
-                item.remove();
-                showToast('Announcement removed.', 'info');
-            }, 300);
+    window.deleteAnnouncement = async function(btn, id) {
+        if (!confirm('Are you sure you want to delete this announcement?')) return;
+
+        const item = btn.closest('.announcement-item');
+        
+        try {
+            const response = await fetch(`${API_BASE}/notifications/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(-20px)';
+                item.style.transition = 'all 0.3s ease';
+                setTimeout(() => {
+                    item.remove();
+                    showToast('Announcement removed from server.', 'info');
+                }, 300);
+            } else {
+                throw new Error('Delete failed');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            // Fallback for localStorage items or failed server delete
+            item.remove();
+            removeFromLocalStorage(id);
+            showToast('Announcement removed locally.', 'info');
         }
     };
+
+    function removeFromLocalStorage(id) {
+        let adminNotifs = JSON.parse(localStorage.getItem('admin_sent_announcements') || '[]');
+        adminNotifs = adminNotifs.filter(n => n.id != id);
+        localStorage.setItem('admin_sent_announcements', JSON.stringify(adminNotifs));
+    }
 
     /**
      * Toast notification system
@@ -228,6 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
         @keyframes slideOut {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
+        }
+        .no-announcements {
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
         }
     `;
     document.head.appendChild(style);

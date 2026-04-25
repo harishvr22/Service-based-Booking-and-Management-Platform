@@ -74,10 +74,13 @@ function closeMessageModal() {
 /**
  * Handle sending a message
  */
-function handleSendMessage() {
+async function handleSendMessage() {
+    const API_BASE = 'http://localhost:5000';
     const sendBtn = document.getElementById('sendMsgBtn');
-    const subject = document.getElementById('msgSubject').value.trim();
-    const content = document.getElementById('msgContent').value.trim();
+    const subjectInput = document.getElementById('msgSubject');
+    const contentInput = document.getElementById('msgContent');
+    const subject = subjectInput.value.trim();
+    const content = contentInput.value.trim();
     const targetName = document.getElementById('msgTargetName').textContent;
 
     if (!subject || !content) {
@@ -88,9 +91,29 @@ function handleSendMessage() {
     sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
     sendBtn.disabled = true;
 
-    // Simulate API call
-    setTimeout(() => {
-        // Create notification for the user
+    try {
+        const response = await fetch(`${API_BASE}/notifications`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: subject,
+                message: content,
+                audience: 'Residents', // Targeted at residents
+                created_by: 'Admin'
+            })
+        });
+
+        if (!response.ok) throw new Error('Send failed');
+
+        showToast(`Message sent to ${targetName} successfully!`, 'success');
+        closeMessageModal();
+        subjectInput.value = '';
+        contentInput.value = '';
+    } catch (error) {
+        console.error('Error sending message:', error);
+        showToast('Failed to send message to server.', 'error');
+        
+        // Fallback to localStorage
         const newNotif = {
             id: Date.now().toString(),
             title: subject,
@@ -100,19 +123,13 @@ function handleSendMessage() {
             read: false,
             iconClass: 'far fa-envelope'
         };
-
         const allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
         allNotifs.unshift(newNotif);
         localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
-
-        showToast(`Message sent to ${targetName} successfully!`, 'success');
-        
-        // Reset button
+    } finally {
         sendBtn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right: 6px;"></i> SEND NOTIFICATION';
         sendBtn.disabled = false;
-        
-        closeMessageModal();
-    }, 1200);
+    }
 }
 
 /**
