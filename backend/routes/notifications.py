@@ -26,7 +26,7 @@ def create_notification():
         data["title"],
         data["message"],
         data["audience"],
-        data["created_by"]
+        int(data.get("created_by", 1))  # default to admin ID 1
     ))
     db.commit()
     
