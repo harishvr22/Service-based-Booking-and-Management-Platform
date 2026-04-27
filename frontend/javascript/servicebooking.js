@@ -184,12 +184,58 @@ function confirmBooking() {
       timestamp: new Date().toISOString()
     };
 
-    // Store booking in localStorage (you can send to server here)
-    let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-    bookings.push(bookingData);
-    localStorage.setItem('bookings', JSON.stringify(bookings));
-    
-    console.log('Booking confirmed:', bookingData);
+    // Send booking to backend
+    const userId = localStorage.getItem('userId') || '1';
+    const payload = {
+      resident_id: userId,
+      service_id: currentService.id,
+      apartment_id: apartmentId.toUpperCase(),
+      mobile_number: cleanMobileNumber,
+      problem_description: problemDescription,
+      time_duration: timeDuration,
+      preferred_date: preferredDate,
+      preferred_time: preferredTime,
+      additional_notes: additionalNotes
+    };
+
+    fetch('http://localhost:5000/book-service', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Booking confirmed:', data);
+      
+      // Also store in localStorage as backup
+      let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      bookings.push({...bookingData, ...data});
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+      
+      // Trigger refresh of bookings page if it's open
+      if (window.location.pathname.includes('mybookings.html')) {
+        // Reload the page to show new booking
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    })
+    .catch(error => {
+      console.error('Error submitting booking:', error);
+      // Fallback to localStorage only
+      let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      bookings.push(bookingData);
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+      
+      // Trigger refresh of bookings page if it's open
+      if (window.location.pathname.includes('mybookings.html')) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    });
     
     // Show success message
     const successMessage = `Booking confirmed for ${currentService.name}!<br><br>
@@ -198,9 +244,10 @@ function confirmBooking() {
       <strong>Time:</strong> ${preferredTime}<br>
       <strong>Apartment:</strong> ${apartmentId}<br>
       <strong>Contact:</strong> ${mobileNumber}<br><br>
-      We'll contact you soon to confirm your booking.`;
+      We'll contact you soon to confirm your booking.<br><br>
+      <a href="mybookings.html" style="color: var(--orange); text-decoration: none; font-weight: 600;">View My Bookings →</a>`;
     
-    showNotification(successMessage, 'success', 6000);
+    showNotification(successMessage, 'success', 8000);
     
     // Close modal
     closeBookingModal();

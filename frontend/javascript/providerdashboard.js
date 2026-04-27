@@ -40,10 +40,10 @@ document.querySelectorAll('.action-card:not(.action-link)').forEach(card => {
         const title = this.querySelector('h4').textContent;
         
         if (title === 'Update Job Status') {
-            alert('Navigating to Update Job Status...');
+            showNotification('Navigating to Update Job Status...', 'info');
             // window.location.href = 'update-job-status.html';
         } else if (title === 'Job History') {
-            alert('Navigating to Job History...');
+            showNotification('Navigating to Job History...', 'info');
             // window.location.href = 'job-history.html';
         }
     });

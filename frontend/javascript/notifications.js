@@ -1,133 +1,387 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Socket.IO connection
-    const socket = io('http://localhost:5000');
-
     const notifList = document.querySelector('.notification-list');
     const markAllBtn = document.querySelector('.mark-read-btn');
-    
+
     // Determine the audience based on the page context
     const isProvider = document.title.includes('Provider') || window.location.href.includes('Provider');
     const audienceTag = isProvider ? 'Providers' : 'Residents';
     const allowedAudiences = ['All', audienceTag];
 
-    console.log('Audience context:', audienceTag);
+    // Storage key for read-state persistence
+    const readKey = `read_notifs_${audienceTag}`;
 
-    // Initial load from backend
-    fetchNotifications();
+    // Track which IDs have been marked read this session / locally
+    let localReadIds = JSON.parse(localStorage.getItem(readKey) || '[]');
 
-    socket.on('new_notification', function(data) {
-        console.log('New notification received via socket:', data);
-        if (allowedAudiences.includes(data.audience)) {
-            // Refresh list
-            fetchNotifications();
-            // Optional: show a browser notification or toast
-            if (window.Notification && Notification.permission === "granted") {
-                new Notification(data.title, { body: data.message });
-            }
-        }
-    });
+    // Current notification data
+    let currentNotifs = [];
 
-    async function fetchNotifications() {
-        try {
-            const response = await fetch('http://localhost:5000/notifications');
-            if (!response.ok) throw new Error('Failed to fetch');
-            const allNotifs = await response.json();
-            
-            // Filter by audience
-            const relevantNotifs = allNotifs.filter(n => allowedAudiences.includes(n.audience));
-            renderNotifications(relevantNotifs);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-            // Fallback to localStorage if server is down
-            const localNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
-            const relevant = localNotifs.filter(n => allowedAudiences.includes(n.audience));
-            renderNotifications(relevant);
-        }
+    // Show loading state
+    if (notifList) {
+        notifList.innerHTML = `
+            <div class="notification-item" style="justify-content:center; cursor:default;">
+                <div class="spinner" style="width:24px;height:24px;border-width:2px;margin-right:12px;"></div>
+                <span style="color:var(--text-muted); font-size:14px;">Loading notifications...</span>
+            </div>
+        `;
     }
 
-    function renderNotifications(notifs) {
+    // Try Socket.IO only if available
+    try {
+        const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'], timeout: 3000 });
+        socket.on('new_notification', function(data) {
+            if (allowedAudiences.includes(data.audience)) {
+                fetchNotifications();
+            }
+        });
+        socket.on('connect_error', () => { /* silently ignore socket errors */ });
+    } catch (_) { /* Socket.IO not available, ignore */ }
+
+    // Initial load
+    fetchNotifications();
+
+    async function fetchNotifications() {
+        let notifs = [];
+        let source = 'backend';
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const response = await fetch('http://localhost:5000/notifications', { signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error('Failed to fetch');
+            const allNotifs = await response.json();
+            notifs = allNotifs.filter(n => allowedAudiences.includes(n.audience));
+            // Save to localStorage for offline fallback
+            localStorage.setItem('cached_notifs_' + audienceTag, JSON.stringify(notifs));
+        } catch (error) {
+            console.warn('Backend fetch failed, using fallback:', error.message || error);
+            source = 'fallback';
+            // Try cached backend data first
+            const cached = JSON.parse(localStorage.getItem('cached_notifs_' + audienceTag) || '[]');
+            if (cached.length > 0) {
+                notifs = cached.filter(n => allowedAudiences.includes(n.audience));
+            }
+            // Also merge any admin-created localStorage notifs
+            const adminNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+            const localRelevant = adminNotifs.filter(n => allowedAudiences.includes(n.audience));
+            if (localRelevant.length > 0) {
+                notifs = notifs.length > 0 ? notifs : localRelevant;
+            }
+        }
+
+        currentNotifs = notifs;
+        renderNotifications(notifs, source);
+    }
+
+    function renderNotifications(notifs, source) {
         if (!notifList) return;
         notifList.innerHTML = '';
-        
+
+        if (!notifs || notifs.length === 0) {
+            notifList.innerHTML = `
+                <div class="notification-item" style="justify-content:center; flex-direction:column; gap:8px; cursor:default;">
+                    <div style="font-size:32px;">📭</div>
+                    <p style="color:var(--text-muted); font-size:14px;">
+                        ${source === 'fallback' ? 'Unable to load notifications. Showing cached data.' : 'No notifications yet.'}
+                    </p>
+                </div>
+            `;
+            updateBadges(0);
+            return;
+        }
+
         let unreadCount = 0;
-        
+
         notifs.forEach(notif => {
-            const isRead = notif.is_read || notif.read;
+            const id = notif.id || notif._id || notif.notification_id;
+            // Mark read if backend says read OR if user clicked it locally
+            const backendRead = notif.is_read || notif.read;
+            const locallyRead = id && localReadIds.includes(id);
+            const isRead = backendRead || locallyRead;
             if (!isRead) unreadCount++;
-            
+
             const item = document.createElement('div');
             item.className = `notification-item ${isRead ? '' : 'unread'}`;
+            item.style.cursor = isRead ? 'default' : 'pointer';
             const bgClass = isRead ? 'gray-bg' : 'orange-bg';
-            
+
             let timeStr = 'Just now';
-            const createdDate = notif.created_at || notif.date;
-            if(createdDate) {
+            const createdDate = notif.created_at || notif.date || notif.timestamp;
+            if (createdDate) {
                 const diffMs = Date.now() - new Date(createdDate).getTime();
                 const diffMins = Math.floor(diffMs / 60000);
-                if (diffMins < 60) timeStr = `${diffMins || 1}m ago`;
-                else if (diffMins < 1440) timeStr = `${Math.floor(diffMins/60)}h ago`;
-                else timeStr = `${Math.floor(diffMins/1440)}d ago`;
+                if (diffMins < 1) timeStr = 'Just now';
+                else if (diffMins < 60) timeStr = `${diffMins}m ago`;
+                else if (diffMins < 1440) timeStr = `${Math.floor(diffMins / 60)}h ago`;
+                else timeStr = `${Math.floor(diffMins / 1440)}d ago`;
             }
 
             item.innerHTML = `
-              <div class="notif-icon-wrapper ${bgClass}">
-                <i class="${notif.iconClass || 'far fa-bell'}"></i>
-              </div>
-              <div class="notif-content">
-                <h4>${notif.title}</h4>
-                <p>${notif.message}</p>
-              </div>
-              <div class="notif-meta">
-                <span class="notif-time">${timeStr}</span>
-                ${!isRead ? '<span class="unread-dot"></span>' : ''}
-              </div>
+                <div class="notif-icon-wrapper ${bgClass}">
+                    <i class="${notif.iconClass || 'far fa-bell'}"></i>
+                </div>
+                <div class="notif-content">
+                    <h4>${notif.title || 'Notification'}</h4>
+                    <p>${notif.message || ''}</p>
+                </div>
+                <div class="notif-meta">
+                    <span class="notif-time">${timeStr}</span>
+                    ${!isRead ? '<span class="unread-dot"></span>' : ''}
+                </div>
             `;
-            
+
+            // Click to mark as read
+            if (!isRead) {
+                item.addEventListener('click', () => markOneRead(item, id, notif));
+            }
+
             notifList.appendChild(item);
         });
 
         updateBadges(unreadCount);
     }
 
-    function updateBadges(count) {
-        const badges = document.querySelectorAll('.badge:not(.badge-purple):not(.badge-green):not(.badge-blue)');
-        badges.forEach(b => {
-             if (count > 0) {
-                 b.textContent = count; 
-                 b.style.display = 'inline-block';
-             } else {
-                 b.style.display = 'none';
-             }
-        });
+    function markOneRead(itemEl, id, notif) {
+        // Visual update immediately
+        itemEl.classList.remove('unread');
+        itemEl.style.cursor = 'default';
+        const dot = itemEl.querySelector('.unread-dot');
+        if (dot) dot.remove();
+        const iconBg = itemEl.querySelector('.notif-icon-wrapper');
+        if (iconBg) {
+            iconBg.classList.remove('orange-bg');
+            iconBg.classList.add('gray-bg');
+        }
+
+        // Persist locally
+        if (id && !localReadIds.includes(id)) {
+            localReadIds.push(id);
+            localStorage.setItem(readKey, JSON.stringify(localReadIds));
+        }
+
+        // Try backend call (fire-and-forget)
+        if (id) {
+            fetch(`http://localhost:5000/notifications/${id}/read`, { method: 'POST' })
+                .catch(() => { /* Backend may not have this endpoint; local state already updated */ });
+        }
+
+        // Recalculate count and update all badges
+        recalcAndUpdateBadges();
     }
 
-    if (markAllBtn) {
-        markAllBtn.addEventListener('click', async () => {
-            // In a real app, we'd call an API to mark all as read
-            // For now, let's just update the UI and localStorage
-            try {
-                // Mock API call for each unread one (or a bulk one if it existed)
-                // Since we only have /notifications/<id>/read, we'd need to loop
-                // But let's just refresh the UI for now
-                showToast('All notifications marked as read', 'success');
-                // We'll just assume they're all read locally for the session
-                document.querySelectorAll('.notification-item.unread').forEach(item => {
-                    item.classList.remove('unread');
-                    const dot = item.querySelector('.unread-dot');
-                    if(dot) dot.remove();
-                    const iconBg = item.querySelector('.notif-icon-wrapper');
-                    if(iconBg) {
-                        iconBg.classList.remove('orange-bg');
-                        iconBg.classList.add('gray-bg');
-                    }
-                });
-                updateBadges(0);
-            } catch (e) {
-                console.error(e);
+    function recalcAndUpdateBadges() {
+        let unreadCount = 0;
+        currentNotifs.forEach(notif => {
+            const id = notif.id || notif._id || notif.notification_id;
+            const backendRead = notif.is_read || notif.read;
+            const locallyRead = id && localReadIds.includes(id);
+            if (!backendRead && !locallyRead) unreadCount++;
+        });
+        updateBadges(unreadCount);
+    }
+
+    function updateBadges(count) {
+        // Update notification count in localStorage for cross-page sync
+        localStorage.setItem('unread_notif_count_' + audienceTag, String(count));
+
+        // Update all bell badges on this page
+        const badges = document.querySelectorAll('.badge');
+        badges.forEach(b => {
+            if (count > 0) {
+                b.textContent = count;
+                b.style.display = 'inline-block';
+            } else {
+                b.style.display = 'none';
             }
         });
     }
+
+    // Clear All button
+    const clearAllBtn = document.querySelector('.clear-notif-btn');
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', () => {
+            showConfirmDialog(
+                'Clear All Notifications',
+                'Are you sure you want to delete all notifications? This action cannot be undone.',
+                () => {
+                    // Try to delete from backend
+                    const deletePromises = currentNotifs.map(notif => {
+                        const id = notif.id || notif._id || notif.notification_id;
+                        if (id) {
+                            return fetch(`http://localhost:5000/notifications/${id}`, { method: 'DELETE' }).catch(() => {});
+                        }
+                        return Promise.resolve();
+                    });
+
+                    Promise.all(deletePromises).then(() => {
+                        // Clear UI
+                        currentNotifs = [];
+                        renderNotifications([], 'backend');
+                        localReadIds = [];
+                        localStorage.setItem(readKey, JSON.stringify([]));
+                        showToast('All notifications cleared', 'success');
+                    });
+                }
+            );
+        });
+    }
+
+    // Mark All as Read button
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', () => {
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+                item.style.cursor = 'default';
+                const dot = item.querySelector('.unread-dot');
+                if (dot) dot.remove();
+                const iconBg = item.querySelector('.notif-icon-wrapper');
+                if (iconBg) {
+                    iconBg.classList.remove('orange-bg');
+                    iconBg.classList.add('gray-bg');
+                }
+            });
+
+            // Mark all current IDs as read
+            currentNotifs.forEach(notif => {
+                const id = notif.id || notif._id || notif.notification_id;
+                if (id && !localReadIds.includes(id)) localReadIds.push(id);
+            });
+            localStorage.setItem(readKey, JSON.stringify(localReadIds));
+
+            updateBadges(0);
+            showToast('All notifications marked as read', 'success');
+        });
+    }
 });
+
+// Cross-page badge sync: update bell badge on every page load
+(function syncBadgeOnLoad() {
+    const isProvider = document.title.includes('Provider') || window.location.href.includes('Provider');
+    const audienceTag = isProvider ? 'Providers' : 'Residents';
+    const countStr = localStorage.getItem('unread_notif_count_' + audienceTag);
+    const count = countStr ? parseInt(countStr, 10) : 0;
+
+    const badges = document.querySelectorAll('.badge');
+    badges.forEach(b => {
+        if (count > 0) {
+            b.textContent = count;
+            b.style.display = 'inline-block';
+        } else {
+            b.style.display = 'none';
+        }
+    });
+})();
+
+// Themed confirm dialog
+function showConfirmDialog(title, message, onConfirm) {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s ease-out;
+    `;
+
+    // Create modal box
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: var(--bg-card, #1c1c1c);
+        border: 1px solid var(--border-color, #2a2a2a);
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease-out;
+    `;
+
+    modal.innerHTML = `
+        <h3 style="color: var(--text-main, #fff); margin: 0 0 12px; font-size: 18px; font-weight: 600;">${title}</h3>
+        <p style="color: var(--text-muted, #9e9e9e); margin: 0 0 24px; line-height: 1.5;">${message}</p>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button class="btn-cancel" style="
+                background: transparent;
+                border: 1px solid var(--border-color, #2a2a2a);
+                color: var(--text-muted, #9e9e9e);
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            ">Cancel</button>
+            <button class="btn-confirm" style="
+                background: #e74c3c;
+                border: none;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            ">Delete All</button>
+        </div>
+    `;
+
+    // Add hover effects
+    const cancelBtn = modal.querySelector('.btn-cancel');
+    const confirmBtn = modal.querySelector('.btn-confirm');
+    cancelBtn.onmouseover = () => { cancelBtn.style.background = 'rgba(255,255,255,0.05)'; };
+    cancelBtn.onmouseout = () => { cancelBtn.style.background = 'transparent'; };
+    confirmBtn.onmouseover = () => { confirmBtn.style.background = '#c0392b'; };
+    confirmBtn.onmouseout = () => { confirmBtn.style.background = '#e74c3c'; };
+
+    // Event handlers
+    cancelBtn.onclick = () => closeModal();
+    confirmBtn.onclick = () => {
+        closeModal();
+        onConfirm();
+    };
+    overlay.onclick = (e) => {
+        if (e.target === overlay) closeModal();
+    };
+
+    function closeModal() {
+        overlay.style.animation = 'fadeOut 0.2s ease-in';
+        modal.style.animation = 'slideDown 0.2s ease-in';
+        setTimeout(() => overlay.remove(), 200);
+    }
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+}
+
+// Add animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideDown {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(20px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
 
 // Helper for toast if not defined
 function showToast(message, type = 'info') {

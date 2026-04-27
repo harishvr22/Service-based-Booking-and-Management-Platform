@@ -33,55 +33,79 @@ const MOCK_BOOKINGS = [
 ];
 
 function loadBookings() {
+  console.log('Loading bookings...');
   fetch('http://localhost:5000/bookings')
-    .then(response => response.json())
+    .then(response => {
+      console.log('Bookings response status:', response.status);
+      return response.json();
+    })
     .then(bookings => {
-      return fetch('http://localhost:5000/services')
-        .then(response => response.json())
-        .then(services => {
-          const serviceMap = {};
-          services.forEach(service => {
-            const serviceName = service.service_name || service.name || 'Unknown Service';
-            serviceMap[service.id] = serviceName;
-          });
-          
-          if (!bookings || bookings.length === 0) {
-            globalBookings = MOCK_BOOKINGS;
-            globalServiceMap = null;
-          } else {
-            globalBookings = bookings;
-            globalServiceMap = serviceMap;
-          }
-          renderBookingsList(globalBookings, globalServiceMap);
-        });
+      console.log('Bookings received:', bookings);
+      
+      // Backend now returns service_name directly, no need to fetch services
+      globalBookings = bookings;
+      globalServiceMap = null;
+      renderBookingsList(globalBookings, globalServiceMap);
+      hideLoadingSpinner();
     })
     .catch(error => {
       console.error('Error loading bookings:', error);
-      const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-      if (!bookings || bookings.length === 0) {
-        globalBookings = MOCK_BOOKINGS;
+      // Fallback to cache or mock data
+      const cached = localStorage.getItem('cachedBookings');
+      if (cached) {
+        globalBookings = JSON.parse(cached);
       } else {
-        globalBookings = bookings;
+        globalBookings = MOCK_BOOKINGS;
       }
       globalServiceMap = null;
       renderBookingsList(globalBookings, globalServiceMap);
+      hideLoadingSpinner();
     });
 }
 
 function renderBookingsList(bookings, serviceMap) {
   const bookingsList = document.getElementById('bookingsList');
   const emptyState = document.getElementById('emptyState');
+  const currentFilter = document.querySelector('.filter-tab.active')?.dataset.filter || 'all';
+  
+  console.log('renderBookingsList called with:', bookings);
+  console.log('Current filter:', currentFilter);
 
   if (!bookings || bookings.length === 0) {
     bookingsList.style.display = 'none';
     emptyState.style.display = 'block';
-  } else {
-    bookingsList.style.display = 'flex';
-    bookingsList.style.flexDirection = 'column';
-    emptyState.style.display = 'none';
-    
-    bookingsList.innerHTML = bookings.map((booking, index) => {
-      const sName = (serviceMap ? (serviceMap[booking.service_id] || serviceMap[booking.serviceId]) : (booking.service || booking.serviceName)) || booking.serviceName || 'Unknown Service';
+    hideLoadingSpinner();
+    return;
+  }
+
+  // Filter bookings based on current filter
+  const filteredBookings = bookings.filter(booking => {
+    const status = normalizeStatus(booking.status);
+    return currentFilter === 'all' || status === currentFilter;
+  });
+  
+  console.log('Filtered bookings:', filteredBookings);
+
+  if (filteredBookings.length === 0) {
+    bookingsList.style.display = 'none';
+    emptyState.style.display = 'block';
+    emptyState.innerHTML = `
+      <div class="empty-state">
+        <i class="far fa-calendar-times" style="font-size: 48px; color: #666; margin-bottom: 16px;"></i>
+        <p style="color: #999; font-size: 16px;">No ${currentFilter} bookings found</p>
+      </div>
+    `;
+    hideLoadingSpinner();
+    return;
+  }
+
+  bookingsList.style.display = 'flex';
+  bookingsList.style.flexDirection = 'column';
+  emptyState.style.display = 'none';
+  
+  bookingsList.innerHTML = filteredBookings.map((booking, index) => {
+    // Use service_name from backend if available, otherwise fallback
+    const sName = booking.service_name || booking.serviceName || 'Unknown Service';
       const statusRaw = booking.status || 'unknown';
       const bStatus = statusRaw.charAt(0).toUpperCase() + statusRaw.slice(1);
       const imgPath = getServiceImage(sName);
@@ -135,16 +159,22 @@ function setupFilters() {
       tabs.forEach(t => t.classList.remove('active'));
       const btn = e.target;
       btn.classList.add('active');
-      const filterValue = btn.textContent.trim().toLowerCase();
       
-      if (filterValue === 'all') {
-        renderBookingsList(globalBookings, globalServiceMap);
-      } else {
-        const filtered = globalBookings.filter(b => (b.status || '').toLowerCase() === filterValue);
-        renderBookingsList(filtered, globalServiceMap);
-      }
+      // Re-render with current bookings (filtering happens inside renderBookingsList)
+      renderBookingsList(globalBookings, globalServiceMap);
     });
   });
+}
+
+function normalizeStatus(status) {
+  if (!status) return 'unknown';
+  const s = status.toLowerCase();
+  if (s.includes('approv') || s.includes('accept')) return 'approved';
+  if (s.includes('pend')) return 'pending';
+  if (s.includes('complet')) return 'completed';
+  if (s.includes('in progress') || s.includes('progress')) return 'in progress';
+  if (s.includes('cancel')) return 'cancelled';
+  return status;
 }
 
 function clearHistory() {
@@ -152,7 +182,7 @@ function clearHistory() {
   
   if (confirmDelete) {
     localStorage.removeItem('bookings');
-    alert('Your booking history has been cleared.');
+    showNotification('Your booking history has been cleared.', 'success');
     location.reload(); 
   }
 }

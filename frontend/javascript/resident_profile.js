@@ -73,16 +73,16 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             if (data.message === 'Account deleted successfully') {
-                alert('Account deleted successfully. You will be redirected to the login page.');
+                showNotification('Account deleted successfully. You will be redirected to the login page.', 'success');
                 localStorage.clear();
                 window.location.href = 'login.html';
             } else {
-                alert('Error: ' + (data.error || 'Failed to delete account'));
+                showNotification('Error: ' + (data.error || 'Failed to delete account'), 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while deleting the account. Please try again.');
+            showNotification('An error occurred while deleting the account. Please try again.', 'error');
         });
     });
 
@@ -123,7 +123,14 @@ document.addEventListener('DOMContentLoaded', function () {
         cancelBtn.style.display = 'none';
         inputs.forEach(input => input.readOnly = true);
 
-        alert('Profile updated successfully!');
+        // Show themed notification
+        showNotification('Profile updated successfully!', 'success');
+
+        // Trigger avatar update across all pages by dispatching a storage event
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'userName',
+            newValue: updatedData.name
+        }));
     }
 
     // Initial load from localStorage if available
@@ -148,3 +155,92 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadFromStorage();
 });
+
+function showNotification(message, type = 'info', duration = 3000) {
+    // Remove any existing notifications
+    const existing = document.querySelector('.notification-popup');
+    if (existing) {
+        existing.remove();
+    }
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification-popup notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#2ecc71' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        min-width: 300px;
+        max-width: 400px;
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+    // Add CSS animation
+    if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            .notification-popup {
+                font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+            }
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .notification-content i {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+            .notification-content span {
+                flex: 1;
+                font-weight: 500;
+            }
+            .notification-close {
+                background: none;
+                border: none;
+                color: white;
+                cursor: pointer;
+                padding: 2px;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+            .notification-close:hover {
+                background: rgba(255,255,255,0.2);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Auto remove after duration
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, duration);
+}
