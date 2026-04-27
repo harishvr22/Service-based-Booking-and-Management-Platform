@@ -2,118 +2,275 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Book Service</title>
+  <title>Browse Services - ServiceBook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../css/servicebooking.css" />
-  <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="../css/theme.css">
 </head>
-<body>
+<body class="dark-theme">
 
-  <!-- Header -->
-  <header class="navbar">
-    <div class="left">
-      <a href="#" class="back" onclick="goBack(event)">â†</a>
-      <div class="logo">
-        <div class="logo-icon">ðŸ¢</div>
-        <div>
-          <h3>Book Service</h3>
-          <p>Schedule a service appointment</p>
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h2 style="color: var(--orange);">ServiceBook</h2>
+        <p style="font-size: 10px; letter-spacing: 2px; color: #a0a0a0; margin-top: -5px; font-weight: 600;">RESIDENT PORTAL</p>
+      </div>
+      <div class="menu-section">
+        <p class="menu-title">MENU</p>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="ResidentDashboard.html"><i class="fas fa-th-large"></i> Overview</a>
+            </li>
+            <li class="active">
+              <a href="servicebooking.html"><i class="fas fa-wrench"></i> Services</a>
+            </li>
+            <li>
+              <a href="mybookings.html"><i class="far fa-calendar-alt"></i> Bookings</a>
+            </li>
+            <li>
+              <a href="notifications.html"><i class="far fa-bell"></i> Notifications</a>
+            </li>
+            <li>
+              <a href="ResidentProfile.html"><i class="far fa-user"></i> Profile</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class="logout-section">
+        <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Navbar -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <i class="fas fa-wrench" style="color: #888;"></i>
+          <span><span style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px;">RESIDENT</span> &nbsp;/&nbsp; Services</span>
         </div>
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="user-name welcome">Welcome, Guest</div>
-      <a href="#" class="logout logout-btn">Logout</a>
-    </div>
-  </header>
-
-  <!-- Main -->
-  <main class="container">
-    <div class="card">
-
-      <!-- Selected Service Display -->
-      <div class="section service-display">
-        <label><i data-lucide="wrench"></i> Selected Service</label>
-        <div class="selected-service" id="selectedService">Loading...</div>
-      </div>
-
-      <!-- Apartment ID -->
-      <div class="section">
-        <label><i data-lucide="home"></i> Apartment ID</label>
-        <input type="text" placeholder="Enter your apartment ID" />
-      </div>
-
-      <!-- Contact Number -->
-      <div class="section">
-        <label><i data-lucide="phone"></i> Contact Number</label>
-        <input type="tel" placeholder="Enter your contact number" />
-      </div>
-
-      <!-- Calendar -->
-      <div class="section">
-        <label><i data-lucide="calendar"></i> Select Date</label>
-
-        <div class="calendar">
-          <div class="cal-header">
-            <button>â€¹</button>
-            <span>February 2026</span>
-            <button>â€º</button>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+          <!-- Custom Status Pill -->
+          <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; color: #2ecc71; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <div style="width: 6px; height: 6px; background: #2ecc71; border-radius: 50%;"></div>
+            Online
           </div>
-
-          <div class="days">
-            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span>
-            <span>Th</span><span>Fr</span><span>Sa</span>
-          </div>
-
-          <div class="dates">
-            <span></span><span></span><span></span><span></span>
-            <span></span><span></span><span class="selected">7</span>
-
-            <span>8</span><span>9</span><span>10</span><span>11</span>
-            <span>12</span><span>13</span><span>14</span>
-
-            <span>15</span><span>16</span><span>17</span><span>18</span>
-            <span>19</span><span>20</span><span>21</span>
-
-            <span>22</span><span>23</span><span>24</span><span>25</span>
-            <span>26</span><span>27</span><span>28</span>
+          <a href="notifications.html" class="nav-icon-btn" style="position: relative;">
+            <i class="far fa-bell"></i>
+            <span class="badge" style="position: absolute; top: 0px; right: 0px; background: var(--orange, #ff8c00); color: black; border-radius: 50%; padding: 2px 5px; font-size: 10px; font-weight: bold; display: none;">0</span>
+          </a>
+          <div class="user-profile">
+            <div class="avatar" style="background: var(--orange); color: black; font-weight: bold; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;">A</div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <!-- Time -->
-      <div class="section">
-        <label><i data-lucide="clock"></i> Select Time</label>
+      <!-- Services Content -->
+      <div class="services-content">
+        <h1 class="page-title">Browse services</h1>
+        <p class="page-subtitle">Book trusted professionals for all your home service needs</p>
+        
+        <div class="services-grid">
+          <!-- Electrical Repair -->
+          <div class="service-card">
+            <div class="service-image">
+              <img src="../assets/electrical.png" alt="Electrical Repair">
+            </div>
+            <div class="service-info">
+              <h3>Electrical Repair</h3>
+              <p>Expert electrical services including wiring, fixture installation, circuit repairs, and safety inspections by licensed electricians.</p>
+              <div class="service-footer">
+                <span class="service-price">$60-150</span>
+                <button class="book-now-btn" onclick="bookService('electrical')">
+                  BOOK NOW
+                </button>
+              </div>
+            </div>
+          </div>
 
-        <div class="time-grid">
-          <button class="time active">09:00 AM</button>
-          <button class="time">10:00 AM</button>
-          <button class="time">11:00 AM</button>
-          <button class="time">12:00 PM</button>
-          <button class="time">01:00 PM</button>
-          <button class="time">02:00 PM</button>
-          <button class="time">03:00 PM</button>
-          <button class="time">04:00 PM</button>
-          <button class="time">05:00 PM</button>
+          <!-- Plumbing -->
+          <div class="service-card">
+            <div class="service-image">
+              <img src="../assets/plumber.png" alt="Plumbing">
+            </div>
+            <div class="service-info">
+              <h3>Plumbing</h3>
+              <p>Professional plumbing services for pipe repairs, installations, leak detection, drain cleaning, and emergency plumbing issues.</p>
+              <div class="service-footer">
+                <span class="service-price">$50-120</span>
+                <button class="book-now-btn" onclick="bookService('plumbing')">
+                  BOOK NOW
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deep Cleaning -->
+          <div class="service-card">
+            <div class="service-image">
+              <img src="../assets/cleaning.png" alt="Deep Cleaning">
+            </div>
+            <div class="service-info">
+              <h3>Deep Cleaning</h3>
+              <p>Thorough cleaning services including deep house cleaning, carpet cleaning, window washing, and post-renovation cleanup.</p>
+              <div class="service-footer">
+                <span class="service-price">$40-80</span>
+                <button class="book-now-btn" onclick="bookService('cleaning')">
+                  BOOK NOW
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AC Service -->
+          <div class="service-card">
+            <div class="service-image">
+              <img src="../assets/ac service.png" alt="AC Service">
+            </div>
+            <div class="service-info">
+              <h3>AC Service</h3>
+              <p>Complete air conditioning services including installation, repair, maintenance, and cleaning for all AC types and brands.</p>
+              <div class="service-footer">
+                <span class="service-price">$70-200</span>
+                <button class="book-now-btn" onclick="bookService('ac')">
+                  BOOK NOW
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carpentry -->
+          <div class="service-card">
+            <div class="service-image">
+              <img src="../assets/carpentering.png" alt="Carpentry">
+            </div>
+            <div class="service-info">
+              <h3>Carpentry</h3>
+              <p>Custom carpentry services including furniture repair, installation, woodwork, cabinets, and custom-built solutions.</p>
+              <div class="service-footer">
+                <span class="service-price">$45-150</span>
+                <button class="book-now-btn" onclick="bookService('carpentry')">
+                  BOOK NOW
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Painting -->
+          <div class="service-card">
+            <div class="service-image">
+              <img src="../assets/painting.png" alt="Painting">
+            </div>
+            <div class="service-info">
+              <h3>Painting</h3>
+              <p>Professional painting services for interior and exterior walls, furniture, and decorative painting with quality materials.</p>
+              <div class="service-footer">
+                <span class="service-price">$55-180</span>
+                <button class="book-now-btn" onclick="bookService('painting')">
+                  BOOK NOW
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </main>
+  </div>
 
-      <!-- Problem Summary -->
-      <div class="section">
-        <label><i data-lucide="message-square"></i> Problem Summary</label>
-        <textarea placeholder="Describe the problem or issue you need help with..."></textarea>
+  <!-- Booking Modal -->
+  <div id="bookingModal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Book Service</h3>
+        <button class="modal-close" onclick="closeBookingModal()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
+      
+      <div class="modal-body">
+        <!-- Service Info -->
+        <div class="selected-service-info">
+          <img id="modalServiceImage" src="" alt="">
+          <div>
+            <h4 id="modalServiceName">-</h4>
+            <p id="modalServiceDesc">-</p>
+          </div>
+        </div>
 
-      <!-- Submit -->
-      <button class="submit">Submit Booking</button>
+        <!-- Booking Form -->
+        <form id="bookingForm">
+          <!-- Apartment ID -->
+          <div class="form-group">
+            <label><i class="fas fa-home"></i> Apartment ID</label>
+            <input type="text" id="apartmentId" placeholder="Enter your apartment ID" required>
+          </div>
 
+          <!-- Mobile Number -->
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Mobile Number</label>
+            <input type="tel" id="mobileNumber" placeholder="Enter your mobile number" required>
+          </div>
+
+          <!-- Problem Description -->
+          <div class="form-group">
+            <label><i class="fas fa-comment"></i> Problem Description</label>
+            <textarea id="problemDescription" placeholder="Describe the problem or issue you need help with..." rows="3" required></textarea>
+          </div>
+
+          <!-- Available Time Duration -->
+          <div class="form-group">
+            <label><i class="fas fa-clock"></i> Available Time Duration</label>
+            <select id="timeDuration" required>
+              <option value="">Select duration</option>
+              <option value="1-2 hours">1-2 hours</option>
+              <option value="2-3 hours">2-3 hours</option>
+              <option value="3-4 hours">3-4 hours</option>
+              <option value="4+ hours">4+ hours</option>
+              <option value="Flexible">Flexible</option>
+            </select>
+          </div>
+
+          <!-- Preferred Date -->
+          <div class="form-group">
+            <label><i class="fas fa-calendar"></i> Select Date</label>
+            <input type="date" id="preferredDate" required>
+          </div>
+
+          <!-- Preferred Time -->
+          <div class="form-group">
+            <label><i class="fas fa-clock"></i> Select Time</label>
+            <select id="preferredTime" required>
+              <option value="">Pick a time slot</option>
+              <option value="09:00">09:00 AM</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="12:00">12:00 PM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="15:00">03:00 PM</option>
+              <option value="16:00">04:00 PM</option>
+              <option value="17:00">05:00 PM</option>
+            </select>
+          </div>
+
+          <!-- Additional Notes -->
+          <div class="form-group">
+            <label><i class="fas fa-sticky-note"></i> Notes (Optional)</label>
+            <textarea id="additionalNotes" placeholder="Anything we should know?" rows="2"></textarea>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="closeBookingModal()">Cancel</button>
+        <button type="button" class="btn-confirm" onclick="confirmBooking()">Confirm Booking</button>
+      </div>
     </div>
-  </main>
+  </div>
 
-    
-  <script src="../javascript/servicebook.js"></script>
-  <script src="../javascript/header.js"></script>
-  <script src="../javascript/theme.js"></script>
+  <script src="../javascript/servicebooking.js"></script>
 </body>
 </html>
 
