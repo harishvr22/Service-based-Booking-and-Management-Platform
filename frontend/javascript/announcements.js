@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title: title,
             message: message,
             audience: audience,
-            created_by: adminName // Backend expects created_by name or ID? notifications.py uses data["created_by"]
+            created_by: parseInt(adminId) || 1  // Send integer ID
         };
 
         try {

@@ -25,12 +25,8 @@ function getServiceImage(serviceName) {
   return '../assets/apartment.jpg'; 
 }
 
-const MOCK_BOOKINGS = [
-  { id: 1, serviceName: 'Plumbing', status: 'approved', date: 'Apr 19, 2026 - 11:00 AM' },
-  { id: 2, serviceName: 'Electrical Repair', status: 'pending', date: 'Apr 22, 2026 - 03:00 PM' },
-  { id: 3, serviceName: 'Deep Cleaning', status: 'completed', date: 'Apr 14, 2026 - 09:00 AM' },
-  { id: 4, serviceName: 'AC Service', status: 'completed', date: 'Apr 7, 2026 - 01:00 PM' }
-];
+// Removed MOCK_BOOKINGS for real DB integration
+
 
 function loadBookings() {
   console.log('Loading bookings...');
@@ -46,20 +42,11 @@ function loadBookings() {
       globalBookings = bookings;
       globalServiceMap = null;
       renderBookingsList(globalBookings, globalServiceMap);
-      hideLoadingSpinner();
     })
     .catch(error => {
       console.error('Error loading bookings:', error);
-      // Fallback to cache or mock data
-      const cached = localStorage.getItem('cachedBookings');
-      if (cached) {
-        globalBookings = JSON.parse(cached);
-      } else {
-        globalBookings = MOCK_BOOKINGS;
-      }
-      globalServiceMap = null;
+      globalBookings = [];
       renderBookingsList(globalBookings, globalServiceMap);
-      hideLoadingSpinner();
     });
 }
 
@@ -74,7 +61,6 @@ function renderBookingsList(bookings, serviceMap) {
   if (!bookings || bookings.length === 0) {
     bookingsList.style.display = 'none';
     emptyState.style.display = 'block';
-    hideLoadingSpinner();
     return;
   }
 
@@ -95,7 +81,6 @@ function renderBookingsList(bookings, serviceMap) {
         <p style="color: #999; font-size: 16px;">No ${currentFilter} bookings found</p>
       </div>
     `;
-    hideLoadingSpinner();
     return;
   }
 
@@ -110,18 +95,16 @@ function renderBookingsList(bookings, serviceMap) {
       const bStatus = statusRaw.charAt(0).toUpperCase() + statusRaw.slice(1);
       const imgPath = getServiceImage(sName);
       
-      const dateStr = booking.date && booking.time ? `${booking.date} - ${booking.time}` : (booking.date || `Apr ${10 + index}, 2026 - 11:00 AM`);
+      const dateStr = booking.date && booking.time ? `${booking.date} - ${booking.time}` : (booking.date || 'Date TBD');
       
       let reviewSection = '';
-      if (bStatus.toLowerCase() === 'completed') {
-        if (sName.toLowerCase().includes('ac ')) {
-           reviewSection = `
-             <div class="booking-rating">
-               <span class="stars">★★★★★</span>
-               "Quick and professional. Highly recommend!"
-             </div>
-           `;
-        }
+      if (bStatus.toLowerCase() === 'completed' && booking.review) {
+         reviewSection = `
+           <div class="booking-rating">
+             <span class="stars">★★★★★</span>
+             "${booking.review}"
+           </div>
+         `;
       }
       
       let actionsHTML = `
@@ -130,10 +113,7 @@ function renderBookingsList(bookings, serviceMap) {
           ${bStatus}
         </div>
       `;
-      
-      if (bStatus.toLowerCase() === 'completed' && sName.toLowerCase().includes('clean')) {
-         actionsHTML += `<button class="btn-review">LEAVE REVIEW</button>`;
-      }
+
 
       return `
         <div class="list-item">
@@ -149,7 +129,6 @@ function renderBookingsList(bookings, serviceMap) {
         </div>
       `;
     }).join('');
-  }
 }
 
 function setupFilters() {

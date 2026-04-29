@@ -1,78 +1,140 @@
 /**
- * Provider Profile – Interactions
+ * Provider Profile – Dynamic Interactions
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const saveBtn = document.querySelector('.btn-save-changes');
-    const nameInput = document.querySelector('input[type="text"]');
-    const profileNameEl = document.querySelector('.profile-left-panel h2');
-    const avatarEl = document.querySelector('.profile-avatar-large');
-
-    if (saveBtn) {
-        saveBtn.addEventListener('click', () => {
-            const btn = saveBtn;
-            const originalText = btn.textContent;
-            
-            // Visual feedback on save
-            btn.textContent = 'Saving...';
-            btn.style.opacity = '0.7';
-            btn.disabled = true;
-
-            // Get new name (first text input is the name field)
-            const newName = nameInput ? nameInput.value.trim() : 'Provider';
-            
-            // Save to localStorage
-            localStorage.setItem('providerName', newName);
-
-            // Update UI
-            if (profileNameEl) profileNameEl.textContent = newName;
-            
-            // Update avatar initials
-            if (avatarEl) {
-                const names = newName.split(' ');
-                const initials = names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                avatarEl.textContent = initials;
-            }
-
-            // Trigger avatar update across all pages
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'providerName',
-                newValue: newName
-            }));
-
-            setTimeout(() => {
-                btn.textContent = 'Saved!';
-                btn.style.background = '#2ecc71';
-                btn.style.color = '#000';
-                
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = 'var(--orange)';
-                    btn.style.opacity = '1';
-                    btn.disabled = false;
-                }, 2000);
-            }, 800);
-        });
+    const userId = localStorage.getItem('userId') || '7'; // Fallback to test user ID 7
+    if (!localStorage.getItem('userId')) {
+        console.warn('No userId found in localStorage, using test user ID 7');
     }
 
-    // Load from localStorage on page load
-    const savedName = localStorage.getItem('providerName');
-    if (savedName) {
-        if (nameInput) nameInput.value = savedName;
-        if (profileNameEl) profileNameEl.textContent = savedName;
-        if (avatarEl) {
-            const names = savedName.split(' ');
-            const initials = names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
-            avatarEl.textContent = initials;
-        }
-    }
+    fetchProfile(userId);
+    setupSaveButton(userId);
 });
 
-// Helper toast function
-function showToast(message, type = 'info') {
-    if (typeof window.showToast === 'function') {
-        window.showToast(message, type);
-    } else {
-        console.log(`Toast [${type}]: ${message}`);
+async function fetchProfile(userId) {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/profile/${userId}`);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            const user = result.user;
+
+            // Update Left Panel
+            if (document.getElementById('profileNameLarge')) document.getElementById('profileNameLarge').textContent = user.name;
+            if (document.getElementById('profileRoleLarge')) document.getElementById('profileRoleLarge').textContent = user.role || 'Provider';
+            if (document.getElementById('profileEmailLarge')) document.getElementById('profileEmailLarge').textContent = user.email;
+
+            // Update Form
+            if (document.getElementById('editFullName')) document.getElementById('editFullName').value = user.name;
+            if (document.getElementById('editEmail')) document.getElementById('editEmail').value = user.email;
+            if (document.getElementById('editPhone')) document.getElementById('editPhone').value = user.phone || '';
+            if (document.getElementById('editRole')) document.getElementById('editRole').value = user.role || 'Electrician';
+            if (document.getElementById('editAvailability')) document.getElementById('editAvailability').value = user.availability || 'Mon-Sat • 9 AM - 7 PM';
+            if (document.getElementById('editSkills')) document.getElementById('editSkills').value = user.skills || 'General Service';
+            if (document.getElementById('editBio')) document.getElementById('editBio').value = user.bio || 'Certified service provider.';
+
+            // Sync avatar initials
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            const avatarEl = document.getElementById('profileAvatarLarge');
+            if (avatarEl) avatarEl.textContent = initials;
+
+            // Sync localStorage
+            localStorage.setItem('providerRole', user.role || 'Provider');
+
+            // Fetch job stats for "JOBS DONE"
+            fetchJobStats(userId);
+        }
+    } catch (error) {
+        console.error('Error fetching profile:', error);
     }
+}
+
+async function fetchJobStats(userId) {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/bookings');
+        const bookings = await response.json();
+        if (!Array.isArray(bookings)) throw new Error('Invalid data format');
+
+        // Filter bookings for this specific provider and completed status
+        const completed = bookings.filter(b =>
+            b.provider_id == userId && b.status === 'completed'
+        ).length;
+
+        if (document.getElementById('jobsDoneCount')) {
+            document.getElementById('jobsDoneCount').textContent = completed;
+        }
+    } catch (error) {
+        console.error('Error fetching job stats:', error);
+    }
+}
+
+function setupSaveButton(userId) {
+    const saveBtn = document.querySelector('.btn-save-changes');
+    if (!saveBtn) return;
+
+    saveBtn.addEventListener('click', async () => {
+        const name = document.getElementById('editFullName').value.trim();
+        const email = document.getElementById('editEmail').value.trim();
+        const phone = document.getElementById('editPhone').value.trim();
+        const role = document.getElementById('editRole').value;
+        const availability = document.getElementById('editAvailability').value.trim();
+        const skills = document.getElementById('editSkills').value.trim();
+        const bio = document.getElementById('editBio').value.trim();
+
+        saveBtn.textContent = 'Saving...';
+        saveBtn.disabled = true;
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/update-profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    name,
+                    email,
+                    phone,
+                    role,
+                    availability,
+                    skills,
+                    bio
+                })
+            });
+
+            const result = await response.json();
+            if (result.status === 'updated') {
+                // Update localStorage to sync with header.js
+                localStorage.setItem('providerName', name);
+                localStorage.setItem('userName', name);
+                localStorage.setItem('providerRole', role);
+
+                // Show success
+                saveBtn.textContent = 'Saved!';
+                saveBtn.style.background = '#2ecc71';
+                saveBtn.style.color = '#000';
+
+                // Trigger sync across tabs
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'providerName',
+                    newValue: name
+                }));
+
+                // Refresh UI
+                fetchProfile(userId);
+
+                setTimeout(() => {
+                    saveBtn.textContent = 'Save Changes';
+                    saveBtn.style.background = 'var(--orange)';
+                    saveBtn.disabled = false;
+                }, 2000);
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            saveBtn.textContent = 'Error!';
+            setTimeout(() => {
+                saveBtn.textContent = 'Save Changes';
+                saveBtn.disabled = false;
+            }, 2000);
+        }
+    });
 }

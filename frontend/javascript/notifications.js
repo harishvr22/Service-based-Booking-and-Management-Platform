@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Try Socket.IO only if available
     try {
         const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'], timeout: 3000 });
-        socket.on('new_notification', function(data) {
+        socket.on('new_notification', function (data) {
             if (allowedAudiences.includes(data.audience)) {
                 fetchNotifications();
             }
@@ -80,11 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!notifs || notifs.length === 0) {
             notifList.innerHTML = `
-                <div class="notification-item" style="justify-content:center; flex-direction:column; gap:8px; cursor:default;">
-                    <div style="font-size:32px;">📭</div>
-                    <p style="color:var(--text-muted); font-size:14px;">
-                        ${source === 'fallback' ? 'Unable to load notifications. Showing cached data.' : 'No notifications yet.'}
-                    </p>
+                <div class="notification-item" style="justify-content:center; flex-direction:column; gap:12px; cursor:default; padding: 40px 0;">
+                    <p style="color:var(--text-muted); font-size:16px; font-weight: 500;">No notifications yet.</p>
                 </div>
             `;
             updateBadges(0);
@@ -209,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const deletePromises = currentNotifs.map(notif => {
                         const id = notif.id || notif._id || notif.notification_id;
                         if (id) {
-                            return fetch(`http://localhost:5000/notifications/${id}`, { method: 'DELETE' }).catch(() => {});
+                            return fetch(`http://localhost:5000/notifications/${id}`, { method: 'DELETE' }).catch(() => { });
                         }
                         return Promise.resolve();
                     });

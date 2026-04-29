@@ -1,50 +1,137 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Admin Complaints JS Initialized');
     
-    // Initialize event listeners for complaint actions
-    initComplaintActions();
+    const API_BASE_URL = 'http://127.0.0.1:5000';
+    let complaintsData = [];
     
-    // Load complaints (could be from localStorage or API)
+    // Load complaints from API
+    async function loadComplaints() {
+        const container = document.getElementById('complaintsContainer');
+        
+        // Show loading state
+        if (container) {
+            container.innerHTML = '<p class="loading-state" style="text-align:center;width:100%;color:#888;padding:20px;">Loading complaints...</p>';
+        }
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/complaints`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            complaintsData = data.complaints || [];
+            
+            renderComplaints();
+        } catch (error) {
+            console.error('Error loading complaints:', error);
+            
+            // Don't show error notification for development, just log it
+            if (error.message.includes('Failed to fetch')) {
+                console.log('API endpoint not available yet - showing empty state');
+            } else {
+                showToast('Failed to load complaints', 'error');
+            }
+            
+            complaintsData = [];
+            renderComplaints(); // Show empty state
+        }
+    }
+    
+    // Render complaints dynamically
+    function renderComplaints() {
+        const container = document.getElementById('complaintsContainer');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (complaintsData.length === 0) {
+            container.innerHTML = '<p class="no-data" style="text-align:center;width:100%;color:#888;padding:40px;">No complaints found. Check your database connection.</p>';
+            return;
+        }
+
+        complaintsData.forEach(complaint => {
+            const complaintElement = createComplaintElement(complaint);
+            container.appendChild(complaintElement);
+        });
+
+        // Initialize event listeners after rendering
+        initComplaintActions();
+    }
+    
+    // Create complaint element
+    function createComplaintElement(complaint) {
+        const div = document.createElement('div');
+        div.className = `complaint-item priority-${complaint.priority || 'medium'}`;
+        div.dataset.complaintId = complaint.id;
+
+        const priorityClass = `comp-${complaint.priority || 'med'}`;
+        const statusClass = complaint.status === 'resolved' ? 'comp-res' : 'comp-open';
+        const opacity = complaint.status === 'resolved' ? '0.7' : '1';
+
+        div.innerHTML = `
+            <div class="comp-badges">
+                <span class="comp-id">${complaint.id || 'C-7000'}</span>
+                <span class="comp-badge ${priorityClass}">${(complaint.priority || 'MEDIUM').toUpperCase()} PRIORITY</span>
+                <span class="comp-badge ${statusClass}">${complaint.status ? complaint.status.toUpperCase() : 'OPEN'}</span>
+            </div>
+            <h3 class="comp-title">${complaint.title || 'No Title'}</h3>
+            <p class="comp-meta"><i class="fas fa-user"></i> ${complaint.user_name || 'Unknown User'} &bull; <i class="fas fa-calendar-alt"></i> ${complaint.date || 'No Date'}</p>
+            <div class="comp-quote">"${complaint.description || 'No description provided.'}"</div>
+            <div class="comp-actions">
+                ${complaint.status === 'resolved' ? 
+                    `<span style="color: #888; font-size: 12px;">RESOLVED</span>` :
+                    `<button class="comp-btn"><i class="far fa-check-circle"></i> MARK RESOLVED</button>
+                     <button class="comp-btn btn-outline"><i class="fas fa-envelope"></i> CONTACT USER</button>`
+                }
+            </div>
+        `;
+
+        div.style.opacity = opacity;
+        return div;
+    }
+    
+    // Initialize event listeners for complaint actions
+    function initComplaintActions() {
+        const resolveButtons = document.querySelectorAll('.comp-btn:not(.btn-outline)');
+        
+        resolveButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const complaintItem = e.target.closest('.complaint-item');
+                const complaintId = complaintItem.dataset.complaintId;
+                
+                handleResolveComplaint(complaintId, complaintItem);
+            });
+        });
+
+        const contactButtons = document.querySelectorAll('.comp-btn.btn-outline');
+        contactButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const complaintItem = e.target.closest('.complaint-item');
+                const userName = complaintItem.querySelector('.comp-meta').textContent.split('•')[0].trim();
+                
+                openMessageModal(userName);
+            });
+        });
+
+        // Modal close events
+        const closeBtn = document.getElementById('closeMsgModal');
+        const cancelBtn = document.getElementById('cancelMsgBtn');
+        if (closeBtn) closeBtn.addEventListener('click', closeMessageModal);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeMessageModal);
+
+        // Send message logic
+        const sendBtn = document.getElementById('sendMsgBtn');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', handleSendMessage);
+        }
+    }
+    
+    // Load complaints on page load
     loadComplaints();
 });
 
-/**
- * Initialize event listeners for existing complaint items
- */
-function initComplaintActions() {
-    const resolveButtons = document.querySelectorAll('.comp-btn:not(.btn-outline)');
-    
-    resolveButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const complaintItem = e.target.closest('.complaint-item');
-            const complaintId = complaintItem.querySelector('.comp-id').textContent;
-            
-            handleResolveComplaint(complaintId, complaintItem);
-        });
-    });
-
-    const contactButtons = document.querySelectorAll('.comp-btn.btn-outline');
-    contactButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const complaintItem = e.target.closest('.complaint-item');
-            const userName = complaintItem.querySelector('.comp-meta').textContent.split('•')[0].trim();
-            
-            openMessageModal(userName);
-        });
-    });
-
-    // Modal close events
-    const closeBtn = document.getElementById('closeMsgModal');
-    const cancelBtn = document.getElementById('cancelMsgBtn');
-    if (closeBtn) closeBtn.addEventListener('click', closeMessageModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeMessageModal);
-
-    // Send message logic
-    const sendBtn = document.getElementById('sendMsgBtn');
-    if (sendBtn) {
-        sendBtn.addEventListener('click', handleSendMessage);
-    }
-}
 
 /**
  * Open the message modal

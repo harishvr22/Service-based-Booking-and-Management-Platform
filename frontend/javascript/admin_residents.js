@@ -3,25 +3,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const blockFilter = document.getElementById('blockFilter');
     const residentsGrid = document.getElementById('residentsGrid');
 
-    const existingCards = document.querySelectorAll('.resident-card');
-    let templateCard = null;
-    if (existingCards.length > 0) {
-        templateCard = existingCards[0].cloneNode(true);
-    }
-
+    
     const API_BASE_URL = 'http://127.0.0.1:5000';
 
     async function fetchResidents() {
-        if (!templateCard) return;
+        // Show loading state
+        if (residentsGrid) {
+            residentsGrid.innerHTML = '<p class="loading-state" style="text-align:center;width:100%;grid-column:1/-1;color:#888;">Loading residents...</p>';
+        }
 
         try {
             const response = await fetch(`${API_BASE_URL}/residents`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
             renderResidents(data.residents);
             updateStats(data.residents);
         } catch (error) {
             console.error('Error fetching residents:', error);
-            residentsGrid.innerHTML = '<p class="error-msg" style="text-align:center;width:100%;grid-column:1/-1;">Failed to load residents. Please try again later.</p>';
+            
+            // Don't show error notification for development, just log it
+            if (error.message.includes('Failed to fetch')) {
+                console.log('API endpoint not available yet - showing empty state');
+            } else {
+                residentsGrid.innerHTML = '<p class="error-msg" style="text-align:center;width:100%;grid-column:1/-1;">Failed to load residents. Please try again later.</p>';
+            }
+            
+            renderResidents([]); // Show empty state
         }
     }
 
@@ -29,72 +40,58 @@ document.addEventListener('DOMContentLoaded', () => {
         residentsGrid.innerHTML = '';
 
         if (!residents || residents.length === 0) {
-            residentsGrid.innerHTML = '<p class="no-data" style="text-align:center;width:100%;grid-column:1/-1;">No residents found.</p>';
+            residentsGrid.innerHTML = '<p class="no-data" style="text-align:center;width:100%;grid-column:1/-1;">No residents found. Add residents through the admin panel or check your database connection.</p>';
             return;
         }
 
         residents.forEach(resident => {
-            const card = templateCard.cloneNode(true);
-
-            // Populate DB info
-            const nameEl = card.querySelector('.name');
-            if (nameEl) nameEl.textContent = resident.name;
-
-            const emailEl = card.querySelector('.email');
-            if (emailEl) emailEl.innerHTML = `<i class="fas fa-envelope"></i> ${resident.email}`;
-
-            const phoneEl = card.querySelector('.phone');
-            if (phoneEl) phoneEl.innerHTML = `<i class="fas fa-phone-alt"></i> ${resident.phone || 'N/A'}`;
-
-            // E.g. "Flat A-101"
-            const labelEl = card.querySelector('.label');
-            if (labelEl) labelEl.textContent = `Flat ${resident.apartment_id || 'N/A'}`;
-            card.dataset.block = resident.apartment_id ? resident.apartment_id.split('-')[0].toLowerCase() : 'all';
-
-            const badge = card.querySelector('.badge');
-            let statusText = 'Active';
-            let badgeClass = 'badge-active';
-            
-            // Reusables
-            let btnContainer = card.querySelector('.btn-suspend')?.parentElement;
-            if (!btnContainer) {
-                btnContainer = card.querySelector('.btn-activate')?.parentElement;
-            }
-            if(!btnContainer) {
-                // If the generic button container isn't found, try to find the action div
-                btnContainer = card.querySelector('.card-actions') || card.querySelector('.actions'); 
-            }
-            
-            if (btnContainer) {
-                if (resident.role === 'Resident') {
-                    statusText = 'Active';
-                    badgeClass = 'badge-active';
-                    btnContainer.innerHTML = `
-                        <button class="btn-suspend" data-id="${resident.id}">
-                            <i class="fas fa-ban"></i> Suspend
-                        </button>
-                    `;
-                } else if (resident.role === 'Resident_Suspended') {
-                    statusText = 'Suspended';
-                    badgeClass = 'badge-inactive';
-                    btnContainer.innerHTML = `
-                        <button class="btn-activate" data-id="${resident.id}">
-                            <i class="fas fa-check-circle"></i> Activate
-                        </button>
-                    `;
-                }
-            }
-
-            if(badge) {
-                badge.className = `badge ${badgeClass}`;
-                badge.textContent = statusText;
-            }
-
+            const card = createResidentCard(resident);
             residentsGrid.appendChild(card);
         });
 
         attachActionListeners();
         filterResidents();
+    }
+
+    // Create resident card element
+    function createResidentCard(resident) {
+        const card = document.createElement('div');
+        card.className = 'resident-card';
+        card.dataset.id = resident.id;
+
+        const isActive = resident.role === 'Resident';
+        const statusText = isActive ? 'ACTIVE' : 'SUSPENDED';
+        const statusClass = isActive ? '' : 'inactive';
+        const avatarClass = isActive ? 'res-avatar' : 'res-avatar inactive-av';
+
+        const initials = resident.name ? resident.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'NA';
+        const apartment = resident.apartment_id || 'N/A';
+        const block = apartment !== 'N/A' ? apartment.split('-')[0] + ' Block' : 'N/A';
+        const moveInDate = resident.move_in_date || 'N/A';
+        const bookingCount = resident.booking_count || 0;
+
+        card.innerHTML = `
+            <div class="card-status ${statusClass}">${statusText}</div>
+            <div class="res-avatar-row">
+                <div class="${avatarClass}">${initials}</div>
+                <div>
+                    <div class="res-name">${resident.name || 'N/A'}</div>
+                    <div class="res-flat">Flat ${apartment} &middot; ${block}</div>
+                </div>
+            </div>
+            <p class="res-email"><i class="far fa-envelope"></i> ${resident.email || 'N/A'}</p>
+            <p class="res-phone"><i class="fas fa-phone-alt"></i> ${resident.phone || 'N/A'}</p>
+            <div class="res-stats">
+                <span>Moved in: <b>${moveInDate}</b></span>
+                <span><b>${bookingCount}</b> bookings</span>
+            </div>
+            <div class="card-actions">
+                <button class="btn-msg" onclick="event.stopPropagation(); openMessageModal('${resident.name}', '${resident.id}')"><i class="far fa-envelope"></i> MESSAGE</button>
+                <button class="btn-rem" onclick="event.stopPropagation(); confirmRemoveResident('${resident.name}', '${resident.id}')">REMOVE</button>
+            </div>
+        `;
+
+        return card;
     }
 
     function attachActionListeners() {
@@ -127,11 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'updated') {
                 fetchResidents(); 
             } else {
-                alert(`Error: ${data.message}`);
+                showNotification(`Error: ${data.message}`, 'error');
             }
         } catch (error) {
             console.error(`Error updating resident to ${status}:`, error);
-            alert('Failed to update resident status.');
+            showNotification('Failed to update resident status.', 'error');
         }
     }
 
@@ -180,6 +177,49 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    // Modal functions
+    function openMessageModal(residentName, residentId) {
+        const modal = document.getElementById('messageModal');
+        const targetName = document.getElementById('msgTargetName');
+        
+        if (targetName) targetName.textContent = residentName;
+        
+        // Clear form
+        document.getElementById('msgSubject').value = '';
+        document.getElementById('msgContent').value = '';
+        
+        // Show modal
+        modal.style.display = 'flex';
+    }
+
+    function confirmRemoveResident(residentName, residentId) {
+        const modal = document.getElementById('removeConfirmModal');
+        const targetName = document.getElementById('removeTargetName');
+        
+        if (targetName) targetName.textContent = residentName;
+        
+        // Show modal
+        modal.style.display = 'flex';
+    }
+
+    // Close modal functions
+    function closeMessageModal() {
+        document.getElementById('messageModal').style.display = 'none';
+    }
+
+    function closeRemoveModal() {
+        document.getElementById('removeConfirmModal').style.display = 'none';
+    }
+
+    // Add event listeners for modal close buttons
+    const closeMsgBtn = document.getElementById('closeMsgModal');
+    const cancelMsgBtn = document.getElementById('cancelMsgBtn');
+    const closeRemBtn = document.getElementById('cancelRemBtn');
+    
+    if (closeMsgBtn) closeMsgBtn.addEventListener('click', closeMessageModal);
+    if (cancelMsgBtn) cancelMsgBtn.addEventListener('click', closeMessageModal);
+    if (closeRemBtn) closeRemBtn.addEventListener('click', closeRemoveModal);
 
     if(searchInput) {
         searchInput.addEventListener('input', filterResidents);

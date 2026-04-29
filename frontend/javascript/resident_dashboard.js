@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const userId = localStorage.getItem('userId') || '1';
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    console.error('No userId found. User might not be logged in.');
+    return;
+  }
   
   // Fetch dashboard data from backend
   Promise.all([

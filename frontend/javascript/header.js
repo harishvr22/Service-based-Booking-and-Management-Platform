@@ -3,69 +3,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtns = document.querySelectorAll('.logout-btn');
   const avatars = document.querySelectorAll('.avatar');
 
-  const isProviderPage = window.location.href.includes('Provider') || document.title.includes('Provider');
+  const providerPages = ['ProviderDashboard', 'ServiceRequests', 'JobHistory', 'ProviderProfile', 'provider_notifications'];
+  const isProviderPage = providerPages.some(p => window.location.href.includes(p)) || document.title.includes('Provider');
+  
   const userName = localStorage.getItem('userName');
   const providerName = localStorage.getItem('providerName');
-  const displayName = isProviderPage ? (providerName || 'Provider') : (userName || 'Guest');
+  
+  // Use providerName if available, else fallback to userName, then defaults
+  const displayName = isProviderPage ? (providerName || userName || 'Provider') : (userName || 'Guest');
 
   // Update text names
-  nameEls.forEach(el => {
-    // If element has class 'welcome' show "Welcome, Name"
-    if (el.classList.contains('welcome')) {
-      el.textContent = `Welcome, ${displayName}`;
-    } else {
-      el.textContent = displayName;
-    }
-  });
+  const updateUI = (name) => {
+    nameEls.forEach(el => {
+      if (el.classList.contains('welcome')) {
+        el.textContent = `Welcome, ${name}`;
+      } else {
+        el.textContent = name;
+      }
+    });
 
-  // Update avatar initials
-  avatars.forEach(avatar => {
-    const names = displayName.split(' ');
-    const initials = names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    avatar.textContent = initials;
-  });
+    const dashWelcome = document.getElementById('providerName');
+    if (dashWelcome) dashWelcome.textContent = 'Hi, ' + name + '.';
+
+    const dashRole = document.getElementById('providerRole');
+    if (dashRole) {
+      const savedRole = localStorage.getItem('providerRole') || 'Provider';
+      dashRole.innerHTML = `<i class="fas fa-tools"></i> ${savedRole}`;
+    }
+
+    avatars.forEach(avatar => {
+      const names = name.split(' ');
+      const initials = names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
+      avatar.textContent = initials;
+    });
+  };
+
+  updateUI(displayName);
 
   logoutBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userEmail');
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('userId');
+      localStorage.clear();
       window.location.href = 'landingpage.html';
     });
   });
 
   // Listen for storage changes to update avatar/name in real-time across tabs
   window.addEventListener('storage', (e) => {
-    const isProviderPage = window.location.href.includes('Provider') || document.title.includes('Provider');
+    const isProvider = providerPages.some(p => window.location.href.includes(p)) || document.title.includes('Provider');
     
-    if (e.key === 'userName' && !isProviderPage) {
-      const newName = e.newValue || 'Guest';
-      // Update text names
-      nameEls.forEach(el => {
-        if (el.classList.contains('welcome')) {
-          el.textContent = `Welcome, ${newName}`;
-        } else {
-          el.textContent = newName;
-        }
-      });
-      // Update avatar initials only on resident pages
-      avatars.forEach(avatar => {
-        const names = newName.split(' ');
-        const initials = names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
-        avatar.textContent = initials;
-      });
+    if (e.key === 'userName' && !isProvider) {
+      updateUI(e.newValue || 'Guest');
     }
-    if (e.key === 'providerName' && isProviderPage) {
-      const newName = e.newValue || 'Provider';
-      // Update avatar initials only on provider pages
-      avatars.forEach(avatar => {
-        const names = newName.split(' ');
-        const initials = names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
-        avatar.textContent = initials;
-      });
+    if (e.key === 'providerName' && isProvider) {
+      updateUI(e.newValue || 'Provider');
     }
   });
 });

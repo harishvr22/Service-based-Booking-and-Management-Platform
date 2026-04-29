@@ -52,13 +52,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Delete Account Handler
-    document.getElementById('deleteAccountBtn').addEventListener('click', function () {
-        const confirmDelete = confirm('Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.');
-        if (!confirmDelete) return;
+    // Delete Account Handler (Using Custom Modal)
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const deletePasswordInput = document.getElementById('deletePassword');
 
-        const password = prompt('Please enter your password to confirm account deletion:');
-        if (!password) return;
+    deleteAccountBtn.addEventListener('click', function () {
+        deleteModal.classList.add('active');
+        deletePasswordInput.value = '';
+        deletePasswordInput.focus();
+    });
+
+    cancelDeleteBtn.addEventListener('click', function () {
+        deleteModal.classList.remove('active');
+    });
+
+    // Close modal when clicking outside
+    deleteModal.addEventListener('click', function (e) {
+        if (e.target === deleteModal) {
+            deleteModal.classList.remove('active');
+        }
+    });
+
+    confirmDeleteBtn.addEventListener('click', function () {
+        const password = deletePasswordInput.value;
+        if (!password) {
+            showNotification('Please enter your password to confirm.', 'error');
+            return;
+        }
+
+        // Disable button while processing
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
         fetch('http://localhost:5000/delete-account', {
             method: 'DELETE',
@@ -72,17 +99,23 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.message === 'Account deleted successfully') {
+            if (data.status === 'success' || data.message === 'Account deleted successfully') {
                 showNotification('Account deleted successfully. You will be redirected to the login page.', 'success');
                 localStorage.clear();
-                window.location.href = 'login.html';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
             } else {
-                showNotification('Error: ' + (data.error || 'Failed to delete account'), 'error');
+                showNotification('Error: ' + (data.message || data.error || 'Failed to delete account'), 'error');
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.textContent = 'Confirm Deletion';
             }
         })
         .catch(error => {
             console.error('Error:', error);
             showNotification('An error occurred while deleting the account. Please try again.', 'error');
+            confirmDeleteBtn.disabled = false;
+            confirmDeleteBtn.textContent = 'Confirm Deletion';
         });
     });
 
@@ -133,7 +166,47 @@ document.addEventListener('DOMContentLoaded', function () {
         }));
     }
 
-    // Initial load from localStorage if available
+    // Initial load from backend if available
+    async function loadFromBackend() {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/profile/${userId}`);
+                const result = await response.json();
+                if (result.status === 'success') {
+                    const user = result.user;
+                    
+                    let flat = user.apartment_id || 'Not set';
+                    let block = 'Not set';
+                    if (flat.includes('|')) {
+                        [block, flat] = flat.split('|');
+                    }
+                    
+                    document.getElementById('profileName').textContent = user.name || 'Not set';
+                    document.getElementById('profileEmail').textContent = user.email || 'Not set';
+                    document.getElementById('dispName').value = user.name || 'Not set';
+                    document.getElementById('dispEmail').value = user.email || 'Not set';
+                    document.getElementById('dispPhone').value = user.phone || 'Not set';
+                    document.getElementById('dispFlat').value = flat;
+                    document.getElementById('dispBlock').value = block;
+                    document.getElementById('dispMoveIn').value = user.availability || 'Not set';
+                    document.getElementById('dispEmergencyName').value = user.skills || 'Not set';
+                    document.getElementById('dispEmergencyPhone').value = user.bio || 'Not set';
+                    
+                    const names = (user.name || 'U').split(' ');
+                    const initials = names.map(n => n[0]).join('').toUpperCase().substring(0,2);
+                    document.getElementById('avatarInitials').textContent = initials;
+                }
+            } catch (error) {
+                console.error("Error fetching profile from backend:", error);
+                loadFromStorage();
+            }
+        } else {
+            loadFromStorage();
+        }
+    }
+
+    // Fallback logic
     function loadFromStorage() {
         if (localStorage.getItem('userEmail')) {
             document.getElementById('profileName').textContent = localStorage.getItem('userName') || user.name;
@@ -153,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    loadFromStorage();
+    loadFromBackend();
 });
 
 function showNotification(message, type = 'info', duration = 3000) {

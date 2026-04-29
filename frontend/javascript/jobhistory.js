@@ -1,84 +1,95 @@
 /**
  * JobHistory – Provider Dashboard
- * Displays a complete archive of completed jobs and ratings.
+ * Fetches completed jobs from the backend.
  */
 
-// ── Hardcoded History Data from Screenshot ────────────────────────
-
-const HISTORY_DATA = [
-  {
-    id: 'REQ-1001',
-    title: 'Electrical — Fan Installation',
-    resident: 'Aarav Sharma',
-    date: 'Apr 20, 2026',
-    rating: 0, // 0 stars filled
-    status: 'Completed'
-  },
-  {
-    id: 'REQ-0988',
-    title: 'AC Service — Deep Clean',
-    resident: 'Rohan Kapoor',
-    date: 'Apr 18, 2026',
-    rating: 0,
-    status: 'Completed'
-  },
-  {
-    id: 'REQ-0995',
-    title: 'Cleaning — Deep Cleaning',
-    resident: 'Neha Singh',
-    date: 'Apr 14, 2026',
-    rating: 5,
-    status: 'Completed'
-  },
-  {
-    id: 'REQ-0990',
-    title: 'Maintenance — Door Repair',
-    resident: 'Vikram Joshi',
-    date: 'Apr 09, 2026',
-    rating: 4,
-    status: 'Completed'
-  }
-];
-
 document.addEventListener('DOMContentLoaded', () => {
-    const listEl = document.getElementById('history-list');
-    
-    if (!listEl) return;
+    fetchHistory();
+    setupSearch();
+});
 
-    if (HISTORY_DATA.length === 0) {
-        listEl.innerHTML = `
-            <div style="padding: 40px; text-align: center; color: #555;">
-                <p>No completed jobs found.</p>
+let historyData = [];
+
+async function fetchHistory() {
+    const list = document.getElementById('history-list');
+    list.innerHTML = '<div style="text-align:center; padding: 40px; color: #888;">Fetching history...</div>';
+    
+    try {
+        const response = await fetch('http://127.0.0.1:5000/bookings');
+        if (!response.ok) throw new Error('Server error');
+        const data = await response.json();
+        
+        if (!Array.isArray(data)) {
+            historyData = [];
+        } else {
+            // Filter for completed jobs
+            historyData = data.filter(req => req.status === 'completed').map(req => ({
+                id: req.id.toString(),
+                title: req.service_name || 'Service Request',
+                status: req.status,
+                name: `Resident #${req.resident_id}`,
+                contact: req.mobile_number || 'No contact provided',
+                block: req.apartment_id || 'N/A',
+                problem: req.problem_description || 'No description provided',
+                date: req.preferred_date || 'N/A'
+            }));
+        }
+        renderHistory(historyData);
+    } catch (error) {
+        console.error('Error fetching history:', error);
+        historyData = [];
+        renderHistory([]); // Show empty state on error
+    }
+}
+
+function renderHistory(items) {
+    const list = document.getElementById('history-list');
+    list.innerHTML = '';
+
+    if (items.length === 0) {
+        list.innerHTML = `
+            <div class="sr-empty">
+                <i class="fas fa-history"></i>
+                <p>No job history found.</p>
             </div>`;
         return;
     }
 
-    listEl.innerHTML = HISTORY_DATA.map(job => {
-        // Render 5 stars based on rating
-        let starsHtml = '';
-        for (let i = 1; i <= 5; i++) {
-            if (i <= job.rating) {
-                starsHtml += `<i class="fas fa-star hist-star filled"></i>`;
-            } else {
-                starsHtml += `<i class="far fa-star hist-star"></i>`;
-            }
-        }
+    items.forEach(req => {
+        const card = document.createElement('div');
+        card.className = 'sr-card';
+        card.style.borderLeft = '4px solid #2ecc71'; // Green for completed
 
-        return `
-            <div class="history-row">
-                <div class="hist-job-col">
-                    <span class="hist-job-title">${job.title}</span>
-                    <span class="hist-job-id">${job.id}</span>
+        card.innerHTML = `
+            <div class="sr-card-left">
+                <div class="sr-card-meta">
+                    <span class="sr-card-id">#${req.id}</span>
+                    <span class="sr-badge completed">Completed</span>
+                    <span style="color: #666; font-size: 12px; margin-left: 10px;">${req.date}</span>
                 </div>
-                <div class="hist-resident-col">${job.resident}</div>
-                <div class="hist-date-col">${job.date}</div>
-                <div class="hist-rating-col">
-                    ${starsHtml}
+                <div class="sr-card-title">${req.title}</div>
+                <div class="sr-card-info">
+                    <div class="sr-card-info-item"><i class="far fa-user"></i> ${req.name}</div>
+                    <div class="sr-card-info-item"><i class="fas fa-map-marker-alt"></i> ${req.block}</div>
+                    <div class="sr-card-info-item"><i class="fas fa-exclamation-circle"></i> ${req.problem}</div>
                 </div>
-                <div class="hist-status-col">
-                    <span class="hist-status-badge">${job.status}</span>
-                </div>
-            </div>
-        `;
-    }).join('');
-});
+            </div>`;
+        list.appendChild(card);
+    });
+}
+
+function setupSearch() {
+    const searchInput = document.getElementById('sr-search');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = historyData.filter(req => 
+            req.title.toLowerCase().includes(query) || 
+            req.name.toLowerCase().includes(query) || 
+            req.id.includes(query) ||
+            req.block.toLowerCase().includes(query)
+        );
+        renderHistory(filtered);
+    });
+}

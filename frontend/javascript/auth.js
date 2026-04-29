@@ -10,7 +10,7 @@ if (loginForm) {
     console.log("Login:", email, password);
 
     // Connect to Flask API
-    fetch('http://localhost:5000/login', {
+    fetch('http://127.0.0.1:5000/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,49 +20,58 @@ if (loginForm) {
         password: password
       })
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Login response:', data);
-      if (data.status === 'success') {
-        localStorage.setItem('userEmail', email);
-        const role = data.role ? String(data.role).trim() : 'admin';
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('isLoggedIn', 'true');
-        // Store the actual name from backend response
-        localStorage.setItem('userName', data.name);
-        localStorage.setItem('userId', data.id);
-        alert("Login successful");
-
-        const normalizedRole = role.toLowerCase();
-        console.log('Normalized role:', normalizedRole);
-        if (normalizedRole.includes('resident')) {
-          window.location.href = "ResidentDashboard.html";
-        } else if (normalizedRole.includes('provider')) {
-          window.location.href = "ProviderDashboard.html";
-        } else if (normalizedRole.includes('admin')) {
-          window.location.href = "admin_dashboard.html";
+      .then(response => response.json())
+      .then(data => {
+        console.log('Login response:', data);
+        if (data.status === 'success') {
+          localStorage.setItem('userEmail', email);
+          const role = data.user && data.user.role ? String(data.user.role).trim() : 'admin';
+          localStorage.setItem('userRole', role);
+          localStorage.setItem('isLoggedIn', 'true');
+          // Store the actual name from backend response
+          localStorage.setItem('userName', data.user.name);
+          localStorage.setItem('userId', data.user.id);
+          showConfirmDialog("Login Successful", "Login successful! You will be redirected to your dashboard.", () => {
+            const normalizedRole = role.toLowerCase();
+            console.log('Normalized role:', normalizedRole);
+            if (normalizedRole.includes('resident')) {
+              window.location.href = "ResidentDashboard.html";
+            } else if (normalizedRole.includes('provider')) {
+              window.location.href = "ProviderDashboard.html";
+            } else if (normalizedRole.includes('admin')) {
+              window.location.href = "admin_dashboard.html";
+            } else {
+              window.location.href = "admin_dashboard.html";
+            }
+          }, "Continue", "OK");
         } else {
-          window.location.href = "admin_dashboard.html";
+          console.error('Login failed:', data);
+          showConfirmDialog("Login Failed", "Invalid credentials. Please check your email and password.", () => { }, "OK", "OK");
         }
-      } else {
-        console.error('Login failed:', data);
-        alert("Invalid credentials. Please check your email and password.");
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert("Login failed. Please check if the server is running.");
-    });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showConfirmDialog("Login Failed", "Login failed. Please check if the server is running.", () => { }, "OK", "OK");
+      });
   });
 }
 
 // SIGNUP MULTI-STEP LOGIC
 let currentStep = 1;
+let step1Data = {};
 
 function nextStep() {
   if (validateStep(currentStep)) {
     if (currentStep === 1) {
-      const role = document.querySelector('input[name="role"]:checked').value;
+      // Store step 1 data before moving to step 2
+      step1Data = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        role: document.querySelector('input[name="role"]:checked').value
+      };
+
+      const role = step1Data.role;
       const resFields = document.getElementById('residentFields');
       const provFields = document.getElementById('providerFields');
       const s2Title = document.getElementById('step2Title');
@@ -121,7 +130,7 @@ function validateStep(step) {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     if (!name || !email || !password) {
-      alert("Please fill in all account details.");
+      showConfirmDialog("Validation Error", "Please fill in all account details.", () => { }, "OK", "OK");
       return false;
     }
   }
@@ -133,46 +142,288 @@ if (signupForm) {
   signupForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const role = document.querySelector('input[name="role"]:checked').value;
+    // Use stored step 1 data
     const data = {
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      password: document.getElementById("password").value,
-      role: role,
-      apartment_id: 1  // Assuming default apartment
+      name: step1Data.name,
+      email: step1Data.email,
+      password: step1Data.password,
+      role: step1Data.role,
+      apartment_id: "A-101"  // Default apartment
     };
 
-    if (role === 'Resident') {
+    if (step1Data.role === 'Resident') {
       data.phone = document.getElementById("phone").value;
+      const flat = document.getElementById("flatNumber")?.value || "";
+      const block = document.getElementById("block")?.value || "";
+      data.apartment_id = block ? `${block}|${flat}` : flat || "A-101";
+      const moveInDate = document.getElementById("moveInDate")?.value || "";
+      data.availability = moveInDate; // Store moveInDate in availability field
     } else {
       data.phone = document.getElementById("providerPhone").value;
+      const serviceCategory = document.getElementById("serviceCategory")?.value || '';
+      const specialization = document.getElementById("specialization")?.value || '';
+      data.skills = serviceCategory + (specialization ? ' - ' + specialization : '');
+
+      const experience = document.getElementById("experience")?.value || '';
+      data.bio = experience ? `Experience: ${experience}` : 'Certified Service Provider';
+
+      const serviceArea = document.getElementById("serviceArea")?.value || '';
+      data.availability = serviceArea ? `${serviceArea} Wing` : 'General Availability';
     }
 
+    console.log("step1Data:", step1Data);
     console.log("Signup Complete:", data);
 
+    // Validate required fields
+    if (!step1Data.name || !step1Data.email || !step1Data.password) {
+      showConfirmDialog("Validation Error", "Please complete step 1 first.", () => { }, "OK", "OK");
+      return;
+    }
+
+    if (!data.name || !data.email || !data.password) {
+      showConfirmDialog("Validation Error", "Missing required fields.", () => { }, "OK", "OK");
+      return;
+    }
+
     // Connect to Flask API
-    fetch('http://localhost:5000/signup', {
+    console.log('Sending data to backend:', JSON.stringify(data, null, 2));
+
+    fetch('http://127.0.0.1:5000/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data)
     })
-    .then(response => response.json())
-    .then(result => {
-      if (result.status === 'registered') {
-        alert("Signup successful");
-        window.location.href = "login.html";
-      } else {
-        alert("Signup failed. Please try again.");
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert("Signup failed. Please try again.");
-    });
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'success') {
+          showConfirmDialog("Signup Successful", "Signup successful! You will be redirected to the login page.", () => {
+            window.location.href = "login.html";
+          }, "Continue", "OK");
+        } else {
+          showConfirmDialog("Signup Failed", "Signup failed. Please try again.", () => { }, "OK", "OK");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        console.error('Error response:', error.response);
+        if (error.response) {
+          error.response.json().then(errData => {
+            console.error('Error data:', errData);
+            showConfirmDialog("Signup Failed", errData.message || "Signup failed. Please try again.", () => { }, "OK", "OK");
+          });
+        } else {
+          showConfirmDialog("Signup Failed", "Network error. Please check your connection.", () => { }, "OK", "OK");
+        }
+      });
   });
 }
+
+function showNotification(message, type = 'info', duration = 3000) {
+  // Remove any existing notifications
+  const existing = document.querySelector('.notification-popup');
+  if (existing) {
+    existing.remove();
+  }
+
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = `notification-popup notification-${type}`;
+  notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+  // Add styles
+  notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#2ecc71' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        min-width: 300px;
+        max-width: 400px;
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+  // Add CSS animation
+  if (!document.querySelector('#notification-styles')) {
+    const style = document.createElement('style');
+    style.id = 'notification-styles';
+    style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            .notification-popup {
+                font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+            }
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .notification-content i {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+            .notification-content span {
+                flex: 1;
+                font-weight: 500;
+            }
+            .notification-close {
+                background: none;
+                border: none;
+                color: white;
+                cursor: pointer;
+                padding: 2px;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+            .notification-close:hover {
+                background: rgba(255,255,255,0.2);
+            }
+        `;
+    document.head.appendChild(style);
+  }
+
+  // Add to page
+  document.body.appendChild(notification);
+
+  // Auto remove after duration
+  setTimeout(() => {
+    if (notification.parentElement) {
+      notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+      setTimeout(() => notification.remove(), 300);
+    }
+  }, duration);
+}
+
+// Themed confirm dialog
+function showConfirmDialog(title, message, onConfirm, confirmText = 'OK', cancelText = 'Cancel', confirmColor = 'var(--primary-color, #ff8c00)') {
+  // Create modal overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s ease-out;
+    `;
+
+  // Create modal box
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+        background: var(--surface, #0f0f0f);
+        border: 1px solid var(--border, #2a2a2a);
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        animation: slideUp 0.3s ease-out;
+    `;
+
+  // Only show cancel button if it's different from confirmText
+  const showCancel = cancelText && cancelText !== confirmText;
+
+  modal.innerHTML = `
+        <h3 style="color: var(--text-color, #f4f4f4); margin: 0 0 12px; font-size: 18px; font-weight: 600;">${title}</h3>
+        <p style="color: var(--text-light, #c6c6c6); margin: 0 0 24px; line-height: 1.5;">${message}</p>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            ${showCancel ? `<button class="btn-cancel" style="
+                background: transparent;
+                border: 1px solid var(--border, #2a2a2a);
+                color: var(--text-light, #c6c6c6);
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            ">${cancelText}</button>` : ''}
+            <button class="btn-confirm" style="
+                background: ${confirmColor};
+                border: none;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            ">${confirmText}</button>
+        </div>
+    `;
+
+  // Add hover effects
+  const cancelBtn = modal.querySelector('.btn-cancel');
+  const confirmBtn = modal.querySelector('.btn-confirm');
+
+  if (cancelBtn) {
+    cancelBtn.onmouseover = () => { cancelBtn.style.background = 'rgba(255,255,255,0.05)'; };
+    cancelBtn.onmouseout = () => { cancelBtn.style.background = 'transparent'; };
+    cancelBtn.onclick = () => closeModal();
+  }
+
+  confirmBtn.onmouseover = () => { confirmBtn.style.filter = 'brightness(1.1)'; };
+  confirmBtn.onmouseout = () => { confirmBtn.style.filter = 'none'; };
+  confirmBtn.onclick = () => {
+    closeModal();
+    if (onConfirm) onConfirm();
+  };
+
+  overlay.onclick = (e) => {
+    if (e.target === overlay) closeModal();
+  };
+
+  function closeModal() {
+    overlay.style.animation = 'fadeOut 0.2s ease-in';
+    modal.style.animation = 'slideDown 0.2s ease-in';
+    setTimeout(() => overlay.remove(), 200);
+  }
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+// Add animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideDown {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(20px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
 
 // Toggle password visibility for inputs with an eye icon
 function togglePass(id, el) {

@@ -1,106 +1,170 @@
+// Load provider data from localStorage and backend
+document.addEventListener('DOMContentLoaded', function () {
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+
+    if (!userId) {
+        // Fallback for testing or redirect
+        console.log('No userId found in localStorage');
+        // window.location.href = 'login.html';
+    }
+
+    // Update welcome name
+    const displayName = localStorage.getItem('providerName') || localStorage.getItem('userName') || 'Provider';
+    const nameEl = document.getElementById('providerName');
+    if (nameEl) nameEl.textContent = 'Hi, ' + displayName + '.';
+
+    // Basic dashboard data fetching
+    if (userId) fetchProfile(userId);
+    fetchDashboardStats();
+    fetchPendingRequests();
+    fetchRecentHistory();
+});
+
+async function fetchProfile(userId) {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/profile/${userId}`);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            const user = result.user;
+            
+            // Update Dashboard Welcome Name
+            const nameEl = document.getElementById('providerName');
+            if (nameEl) nameEl.textContent = 'Hi, ' + user.name + '.';
+
+            // Update Role
+            const roleEl = document.getElementById('providerRole');
+            if (roleEl) {
+                roleEl.innerHTML = `<i class="fas fa-tools"></i> ${user.role || 'Provider'}`;
+            }
+
+            // Sync with localStorage for header.js
+            localStorage.setItem('providerName', user.name);
+        }
+    } catch (error) {
+        console.error('Error fetching dashboard profile:', error);
+    }
+}
+
+async function fetchDashboardStats() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/bookings');
+        if (!response.ok) throw new Error('Server error');
+        const bookings = await response.json();
+
+        if (!Array.isArray(bookings)) return;
+
+        const pending = bookings.filter(b => b.status === 'pending').length;
+        const inProgress = bookings.filter(b => b.status === 'accepted' || b.status === 'in-progress').length;
+        const completed = bookings.filter(b => b.status === 'completed').length;
+
+        const ratedBookings = bookings.filter(b => b.rating);
+        const avgRating = ratedBookings.length ? (ratedBookings.reduce((sum, b) => sum + b.rating, 0) / ratedBookings.length).toFixed(1) : '0.0';
+
+        // Update Stats Cards
+        if (document.getElementById('newRequestsCount')) document.getElementById('newRequestsCount').textContent = pending;
+        if (document.getElementById('inProgressCount')) document.getElementById('inProgressCount').textContent = inProgress;
+        if (document.getElementById('completedCount')) document.getElementById('completedCount').textContent = completed;
+        if (document.getElementById('avgRating')) document.getElementById('avgRating').textContent = avgRating;
+
+        // Update Performance Section
+        if (document.getElementById('jobsCompleted')) document.getElementById('jobsCompleted').textContent = completed;
+        
+        // Calculate dynamic acceptance rate
+        const total = bookings.length;
+        const accepted = bookings.filter(b => b.status !== 'pending' && b.status !== 'rejected' && b.status !== 'cancelled').length;
+        const rate = total > 0 ? Math.round((accepted / total) * 100) : 100;
+        
+        if (document.getElementById('acceptanceRate')) document.getElementById('acceptanceRate').textContent = rate + '%';
+        if (document.getElementById('avgResponse')) document.getElementById('avgResponse').textContent = 'Live';
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+    }
+}
+
+async function fetchPendingRequests() {
+    const list = document.getElementById('pendingRequestsList');
+    if (!list) return;
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/bookings');
+        if (!response.ok) throw new Error('Server error');
+        const bookings = await response.json();
+
+        if (!Array.isArray(bookings)) throw new Error('Invalid data format');
+
+        const pendingBookings = bookings.filter(b => b.status === 'pending').slice(0, 3);
+
+        if (pendingBookings.length === 0) {
+            list.innerHTML = '<p style="color: #888; font-size: 14px; text-align: center; padding: 20px;">No pending requests.</p>';
+            return;
+        }
+
+        list.innerHTML = '';
+        pendingBookings.forEach(req => {
+            const item = document.createElement('div');
+            item.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #222;';
+            item.innerHTML = `
+                <div>
+                    <h4 style="color: white; font-size: 15px; margin-bottom: 4px;">${req.service_name || 'Service Request'}</h4>
+                    <p style="color: #888; font-size: 12px;"><i class="far fa-user"></i> Resident #${req.resident_id} &nbsp;•&nbsp; <i class="fas fa-map-marker-alt"></i> ${req.apartment_id || 'N/A'}</p>
+                </div>
+                <a href="ServiceRequests.html" style="background: rgba(255,140,0,0.1); color: var(--orange); border: 1px solid rgba(255,140,0,0.3); padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; text-decoration: none;">Review</a>
+            `;
+            list.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error fetching pending requests:', error);
+        list.innerHTML = '<p style="color: #666; font-size: 14px; text-align: center; padding: 20px;">No pending requests.</p>';
+    }
+}
+
+async function fetchRecentHistory() {
+    const list = document.getElementById('recentHistoryList');
+    if (!list) return;
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/bookings');
+        if (!response.ok) throw new Error('Server error');
+        const bookings = await response.json();
+
+        if (!Array.isArray(bookings)) throw new Error('Invalid data format');
+
+        const completedBookings = bookings.filter(b => b.status === 'completed').slice(0, 3);
+
+        if (completedBookings.length === 0) {
+            list.innerHTML = '<p style="color: #888; font-size: 14px; text-align: center; padding: 20px;">No recent history.</p>';
+            return;
+        }
+
+        list.innerHTML = '';
+        completedBookings.forEach(req => {
+            const item = document.createElement('div');
+            item.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #222;';
+            item.innerHTML = `
+                <div>
+                    <h4 style="color: white; font-size: 15px; margin-bottom: 4px;">${req.service_name || 'Service Request'}</h4>
+                    <p style="color: #888; font-size: 12px;"><i class="fas fa-check-circle" style="color: #2ecc71;"></i> Completed &nbsp;•&nbsp; ${req.preferred_date || 'N/A'}</p>
+                </div>
+                <a href="JobHistory.html" style="color: #888; font-size: 18px;"><i class="fas fa-chevron-right"></i></a>
+            `;
+            list.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error fetching history:', error);
+        list.innerHTML = '<p style="color: #666; font-size: 14px; text-align: center; padding: 20px;">No recent history.</p>';
+    }
+}
+
 // Logout functionality
 const logoutBtn = document.querySelector('.logout-btn');
-if (logoutBtn && logoutBtn.tagName === 'BUTTON') {
-    logoutBtn.addEventListener('click', function() {
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', function (e) {
+        e.preventDefault();
         if (confirm('Are you sure you want to logout?')) {
-            window.location.href = 'login.html';
+            localStorage.clear();
+            window.location.href = 'landingpage.html';
         }
     });
 }
-
-// Toggle switch functionality
-const statusToggle = document.getElementById('status-toggle');
-const statusText = document.querySelector('.status-text');
-const btnOffline = document.querySelector('.btn-offline');
-const activeStatus = document.querySelector('.active-status');
-
-statusToggle.addEventListener('change', function() {
-    if (this.checked) {
-        statusText.textContent = 'Available';
-        btnOffline.textContent = 'Go Offline';
-        activeStatus.textContent = 'Active';
-        activeStatus.style.background = '#4CAF50';
-    } else {
-        statusText.textContent = 'Offline';
-        btnOffline.textContent = 'Go Online';
-        activeStatus.textContent = 'Inactive';
-        activeStatus.style.background = '#999';
-    }
-});
-
-// Go offline/online button
-btnOffline.addEventListener('click', function() {
-    statusToggle.checked = !statusToggle.checked;
-    statusToggle.dispatchEvent(new Event('change'));
-});
-
-// Action card click handlers (for non-link cards)
-document.querySelectorAll('.action-card:not(.action-link)').forEach(card => {
-    card.addEventListener('click', function() {
-        const title = this.querySelector('h4').textContent;
-        
-        if (title === 'Update Job Status') {
-            showNotification('Navigating to Update Job Status...', 'info');
-            // window.location.href = 'update-job-status.html';
-        } else if (title === 'Job History') {
-            showNotification('Navigating to Job History...', 'info');
-            // window.location.href = 'job-history.html';
-        }
-    });
-});
-
-// Load provider data from localStorage (if available)
-document.addEventListener('DOMContentLoaded', function() {
-    const providerData = localStorage.getItem('providerData');
-    
-    if (providerData) {
-        try {
-            const data = JSON.parse(providerData);
-            updateDashboardData(data);
-        } catch (error) {
-            console.log('No provider data found in localStorage');
-        }
-    }
-});
-
-// Function to update dashboard with data
-function updateDashboardData(data) {
-    // Update old block and new block
-    if (data.name) {
-        let oldName = document.querySelector('.provider-details h2');
-        if (oldName) oldName.textContent = data.name;
-        
-        let newTitle = document.querySelector('.welcome-section h1');
-        if (newTitle) newTitle.textContent = 'Hi, ' + data.name + '.';
-    }
-    
-    if (data.role) {
-        const roleElement = document.querySelector('.provider-role');
-        if (roleElement) {
-            roleElement.innerHTML = `<svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 12a9 9 0 1 0 18 0A9 9 0 0 0 3 12Z"></path>
-                                <path d="M12 6v6l4 2"></path>
-                            </svg>${data.role}<span class="rating">⭐ ${data.rating || '4.8'}</span>`;
-        }
-    }
-    
-    // Stats mapping modified to fit the new UI grid
-    // New UI grid: [0]=NEW REQUESTS (Pending), [1]=IN PROGRESS (inProgress), [2]=COMPLETED (completed), [3]=AVG. RATING
-    // The old grid expected [0]=totalJobs, [1]=pending, [2]=inProgress, [3]=completed
-    const isNewUi = !!document.querySelector('.welcome-section h1');
-    const statCards = document.querySelectorAll('.stat-card');
-    
-    if (isNewUi) {
-        if (data.pending !== undefined && statCards[0]) statCards[0].querySelector('h3').textContent = data.pending;
-        if (data.inProgress !== undefined && statCards[1]) statCards[1].querySelector('h3').textContent = data.inProgress;
-        if (data.completed !== undefined && statCards[2]) statCards[2].querySelector('h3').textContent = data.completed;
-        if (data.rating !== undefined && statCards[3]) statCards[3].querySelector('h3').textContent = data.rating;
-    } else {
-        if (data.totalJobs !== undefined && statCards[0]) statCards[0].querySelector('h3').textContent = data.totalJobs;
-        if (data.pending !== undefined && statCards[1]) statCards[1].querySelector('h3').textContent = data.pending;
-        if (data.inProgress !== undefined && statCards[2]) statCards[2].querySelector('h3').textContent = data.inProgress;
-        if (data.completed !== undefined && statCards[3]) statCards[3].querySelector('h3').textContent = data.completed;
-    }
-}
-
-console.log('Provider Dashboard loaded successfully with professional icons and toggle switch');

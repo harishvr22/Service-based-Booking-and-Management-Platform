@@ -1,248 +1,426 @@
-document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.provider-card');
-            const overlay = document.getElementById('providerDetail');
-            const closeBtn = document.getElementById('closeDetail');
-            const searchInput = document.getElementById('providerSearch');
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('providerSearch');
+    const providersGrid = document.getElementById('providersGrid');
+    const detailOverlay = document.getElementById('providerDetail');
+    const closeDetail = document.getElementById('closeDetail');
+    const messageModal = document.getElementById('messageModal');
+    const actionConfirmModal = document.getElementById('actionConfirmModal');
 
-            // Overlay show/hide
-            cards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    // Don't open if a button was clicked
-                    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-                    
-                    const name = this.querySelector('.provider-name').textContent;
-                    const cat = this.querySelector('.provider-category').textContent;
-                    const email = this.querySelector('.provider-email').textContent;
-                    const status = this.querySelector('.card-status').textContent;
+    const API_BASE_URL = 'http://127.0.0.1:5000';
 
-                    document.getElementById('detailName').textContent = name;
-                    document.getElementById('detailCategory').textContent = cat + ' SERVICES';
-                    document.getElementById('detailEmail').textContent = email;
-                    document.getElementById('detailStatus').textContent = status;
-                    
-                    document.querySelector('.detail-badge').style.background = status === 'PENDING' ? 'rgba(241, 196, 15, 0.1)' : 'rgba(255, 140, 0, 0.1)';
-                    document.querySelector('.detail-badge').style.color = status === 'PENDING' ? '#f1c40f' : 'var(--orange)';
+    let providersData = {};
 
-                    cards.forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                    overlay.classList.add('open');
-                });
-            });
+    // Render provider cards from API data
+    function renderProviderCards() {
+        const providersGrid = document.getElementById('providersGrid');
+        if (!providersGrid) return;
 
-            if (closeBtn) closeBtn.addEventListener('click', function() {
-                overlay.classList.remove('open');
-                cards.forEach(c => c.classList.remove('active'));
-            });
+        providersGrid.innerHTML = '';
 
-            // Search filtering
-            if (searchInput) searchInput.addEventListener('input', function() {
-                const term = this.value.toLowerCase();
-                cards.forEach(card => {
-                    const name = card.querySelector('.provider-name').textContent.toLowerCase();
-                    const cat = card.querySelector('.provider-category').textContent.toLowerCase();
-                    if(card.style.display !== 'none' || card.dataset.removed !== 'true') {
-                        if (name.includes(term) || cat.includes(term)) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    }
-                });
-            });
+        if (Object.keys(providersData).length === 0) {
+            providersGrid.innerHTML = '<p class="no-data" style="text-align:center;width:100%;grid-column:1/-1;color:#888;">No providers found. Add providers through the admin panel or check your database connection.</p>';
+            return;
+        }
 
-            // Modal Elements for Messaging
-            var msgModal    = document.getElementById('messageModal');
-            var closeMsg    = document.getElementById('closeMsgModal');
-            var cancelMsg   = document.getElementById('cancelMsgBtn');
-            var sendMsg     = document.getElementById('sendMsgBtn');
-            var targetName  = document.getElementById('msgTargetName');
-            var msgSubject  = document.getElementById('msgSubject');
-            var msgContent  = document.getElementById('msgContent');
-
-            function openMessageModal(name) {
-                targetName.textContent = name;
-                msgSubject.value = '';
-                msgContent.value = '';
-                msgModal.classList.add('open');
-            }
-
-            function closeMessageModal() {
-                msgModal.classList.remove('open');
-            }
-
-            if(closeMsg) closeMsg.addEventListener('click', closeMessageModal);
-            if(cancelMsg) cancelMsg.addEventListener('click', closeMessageModal);
-
-            if(sendMsg) {
-                sendMsg.addEventListener('click', function() {
-                    var subject = msgSubject.value.trim();
-                    var content = msgContent.value.trim();
-
-                    if(!subject && !content) {
-                        closeMessageModal();
-                        return;
-                    }
-
-                    // Create notification object compatible with existing system
-                    var newNotif = {
-                        id: Date.now().toString(),
-                        title: subject || 'Message from Admin',
-                        message: content || 'You have a new message from Administrator.',
-                        audience: 'Service Providers', // Goes to provider dashboard
-                        date: new Date().toISOString(),
-                        read: false,
-                        iconClass: 'far fa-envelope'
-                    };
-
-                    var allNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
-                    allNotifs.unshift(newNotif);
-                    localStorage.setItem('admin_notifications', JSON.stringify(allNotifs));
-
-                    sendMsg.innerHTML = '<i class="fas fa-check"></i> SENT';
-                    sendMsg.style.background = '#2ecc71';
-                    sendMsg.style.color = '#fff';
-
-                    setTimeout(function() {
-                        closeMessageModal();
-                        setTimeout(function() {
-                            sendMsg.innerHTML = '<i class="fas fa-paper-plane" style="margin-right: 6px;"></i> SEND NOTIFICATION';
-                            sendMsg.style.background = 'var(--orange)';
-                            sendMsg.style.color = '#000';
-                        }, 300);
-                    }, 700);
-                });
-            }
-
-            // Bind MESSAGE button in Details Overlay
-            const overlayMsgBtn = document.querySelector('.btn-msg-prov');
-            if(overlayMsgBtn) {
-                overlayMsgBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const name = document.getElementById('detailName').textContent;
-                    openMessageModal(name);
-                });
-            }
-
-            // Modal Elements for Action Confirmation (Delete/Approve/Reject)
-            var actionModal      = document.getElementById('actionConfirmModal');
-            var actionTitle      = document.getElementById('actionTitle');
-            var actionTargetName = document.getElementById('actionTargetName');
-            var cancelAction     = document.getElementById('cancelActionBtn');
-            var confirmAction    = document.getElementById('confirmActionBtn');
-            var actionIcon       = document.getElementById('actionIcon');
-            var currentActionData = null; // Stores card reference and action type
-
-            function openActionModal(name, cardElement, actionType) {
-                currentActionData = { card: cardElement, type: actionType };
-                actionTargetName.textContent = name;
-                
-                // Configure modal text/color based on action
-                if(actionType === 'suspend' || actionType === 'reject') {
-                    actionTitle.textContent = (actionType === 'suspend') ? "Suspend Provider?" : "Reject Provider?";
-                    confirmAction.textContent = "YES, " + actionType.toUpperCase();
-                    confirmAction.style.background = "#e74c3c";
-                    actionIcon.style.background = "rgba(231,76,60,0.1)";
-                    actionIcon.style.color = "#e74c3c";
-                    actionIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-                } else if(actionType === 'approve') {
-                    actionTitle.textContent = "Approve Provider?";
-                    confirmAction.textContent = "YES, APPROVE";
-                    confirmAction.style.background = "var(--orange)";
-                    actionIcon.style.background = "rgba(255,140,0,0.1)";
-                    actionIcon.style.color = "var(--orange)";
-                    actionIcon.innerHTML = '<i class="far fa-check-circle"></i>';
-                }
-                
-                actionModal.classList.add('open');
-            }
-
-            function closeActionModal() {
-                actionModal.classList.remove('open');
-                currentActionData = null;
-            }
-
-            if(cancelAction) cancelAction.addEventListener('click', closeActionModal);
-
-            if(confirmAction) {
-                confirmAction.addEventListener('click', function() {
-                    if(currentActionData && currentActionData.card) {
-                        const card = currentActionData.card;
-                        const type = currentActionData.type;
-
-                        if(type === 'suspend' || type === 'reject') {
-                            card.style.display = 'none';
-                            card.dataset.removed = "true";
-                        } else if(type === 'approve') {
-                            // Convert PENDING to APPROVED
-                            const badge = card.querySelector('.card-status');
-                            if(badge) {
-                                badge.textContent = 'APPROVED';
-                                badge.classList.remove('pending');
-                            }
-                            // Replace actions wrapper with Suspend button
-                            const actionsGrid = card.querySelector('.card-actions');
-                            if(actionsGrid) {
-                                actionsGrid.innerHTML = '<button class="btn-suspend">SUSPEND PROVIDER</button>';
-                                // Re-bind new suspend button
-                                actionsGrid.querySelector('.btn-suspend').addEventListener('click', bindSuspend);
-                            }
-                        }
-                    }
-                    
-                    // Specific overlay cleanup for suspend event
-                    if (currentActionData && currentActionData.type === 'suspend' && overlay.classList.contains('open')) {
-                         overlay.classList.remove('open');
-                         cards.forEach(c => c.classList.remove('active'));
-                    }
-                    
-                    // Visual feedback loop
-                    confirmAction.textContent = "SUCCESS";
-                    confirmAction.style.background = "#2ecc71"; // Success green
-
-                    setTimeout(function() {
-                        closeActionModal();
-                    }, 500);
-                });
-            }
-
-            // Helper to bind the suspend actions
-            function bindSuspend(e) {
-                e.stopPropagation();
-                var card = e.target.closest('.provider-card');
-                var name = card.querySelector('.provider-name').textContent;
-                openActionModal(name, card, 'suspend');
-            }
-
-            // Bind suspend in regular cases
-            const suspendBtns = document.querySelectorAll('.provider-card .btn-suspend');
-            suspendBtns.forEach(btn => btn.addEventListener('click', bindSuspend));
-
-            // Bind suspend in detail overlay
-            const overlaySuspendBtn = document.querySelector('.btn-suspend');
-            if(overlaySuspendBtn) {
-                overlaySuspendBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const name = document.getElementById('detailName').textContent;
-                    const activeCard = document.querySelector('.provider-card.active');
-                    if(activeCard) openActionModal(name, activeCard, 'suspend');
-                });
-            }
-
-            // Bind Approve / Reject 
-            const approveBtns = document.querySelectorAll('.btn-approve');
-            approveBtns.forEach(btn => btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                var card = e.target.closest('.provider-card');
-                var name = card.querySelector('.provider-name').textContent;
-                openActionModal(name, card, 'approve');
-            }));
-
-            const rejectBtns = document.querySelectorAll('.provider-card .btn-reject');
-            rejectBtns.forEach(btn => btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                var card = e.target.closest('.provider-card');
-                var name = card.querySelector('.provider-name').textContent;
-                openActionModal(name, card, 'reject');
-            }));
-
+        Object.values(providersData).forEach(provider => {
+            const card = createProviderCard(provider);
+            providersGrid.appendChild(card);
         });
+
+        // Re-attach event listeners after creating cards
+        attachCardEventListeners();
+    }
+
+    // Create provider card element
+    function createProviderCard(provider) {
+        const card = document.createElement('div');
+        card.className = 'provider-card';
+        card.dataset.providerId = provider.id;
+
+        const statusClass = provider.status === 'PENDING' ? 'pending' : '';
+        const actionButtons = provider.status === 'PENDING' ? 
+            `<button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
+             <button class="btn-reject"><i class="far fa-times-circle"></i> REJECT</button>` :
+            `<button class="btn-suspend">SUSPEND PROVIDER</button>`;
+
+        card.innerHTML = `
+            <div class="card-status ${statusClass}">${provider.status}</div>
+            <h3 class="provider-name">${provider.name}</h3>
+            <p class="provider-category">${provider.category}</p>
+            <p class="provider-email">${provider.email}</p>
+            <div class="provider-stats">
+                <span><b>${provider.rating || '0.0'}</b> rating</span>
+                <span><b>${provider.totalJobs || 0}</b> jobs</span>
+            </div>
+            <div class="card-actions">
+                ${actionButtons}
+            </div>
+        `;
+
+        return card;
+    }
+
+    // Initialize event listeners
+    function initializeEventListeners() {
+        // Close detail overlay
+        if (closeDetail) {
+            closeDetail.addEventListener('click', closeProviderDetail);
+        }
+
+        // Search functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', filterProviders);
+        }
+
+        // Modal controls
+        setupModalControls();
+    }
+
+    // Attach event listeners to provider cards
+    function attachCardEventListeners() {
+        // Provider card click events
+        document.querySelectorAll('.provider-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't open detail if clicking on action buttons
+                if (e.target.closest('.card-actions')) return;
+                
+                const providerId = card.dataset.providerId;
+                openProviderDetail(providerId);
+            });
+        });
+
+        // Action button events
+        attachActionListeners();
+    }
+
+    // Open provider detail view
+    function openProviderDetail(providerId) {
+        const provider = providersData[providerId];
+        if (!provider) return;
+
+        // Populate detail overlay with provider data
+        document.getElementById('detailStatus').textContent = provider.status;
+        document.getElementById('detailStatus').className = provider.status === 'PENDING' ? 'detail-badge pending' : 'detail-badge';
+        document.getElementById('detailName').textContent = provider.name;
+        document.getElementById('detailCategory').textContent = provider.category;
+        document.getElementById('detailEmail').textContent = provider.email;
+        
+        // Update phone (assuming it's always the second detail-value)
+        const phoneElements = document.querySelectorAll('.detail-value');
+        if (phoneElements[1]) phoneElements[1].textContent = provider.phone;
+        
+        // Update joined date and rating
+        const detailSections = document.querySelectorAll('.detail-section');
+        detailSections.forEach(section => {
+            const label = section.querySelector('.detail-label');
+            const value = section.querySelector('.detail-value');
+            
+            if (label && value) {
+                if (label.textContent === 'JOINED DATE') {
+                    value.textContent = provider.joinedDate;
+                } else if (label.textContent === 'RATING') {
+                    value.innerHTML = `<i class="fas fa-star" style="color: var(--orange);"></i> ${provider.rating} / 5.0`;
+                } else if (label.textContent === 'SERVICE DESCRIPTION') {
+                    value.textContent = provider.description;
+                }
+            }
+        });
+
+        // Update recent jobs
+        const jobHistoryList = document.querySelector('.job-history-list');
+        if (jobHistoryList) {
+            jobHistoryList.innerHTML = provider.recentJobs.map(job => `
+                <div class="job-small-item">
+                    <div class="job-small-info">
+                        <h5>${job.title}</h5>
+                        <p>${job.date}</p>
+                    </div>
+                    <div class="job-small-status">${job.status}</div>
+                </div>
+            `).join('');
+        }
+
+        // Update footer buttons
+        const suspendBtn = document.querySelector('.detail-footer .btn-suspend');
+        const messageBtn = document.querySelector('.detail-footer .btn-msg-prov');
+        
+        if (suspendBtn) {
+            suspendBtn.textContent = provider.status === 'APPROVED' ? 'SUSPEND ACCOUNT' : 'APPROVE ACCOUNT';
+            suspendBtn.onclick = () => showActionConfirmation(provider.id, provider.status === 'APPROVED' ? 'suspend' : 'approve');
+        }
+        
+        if (messageBtn) {
+            messageBtn.onclick = () => openMessageModal(provider.name);
+        }
+
+        // Show overlay
+        detailOverlay.classList.add('open');
+        
+        // Add active class to card
+        document.querySelectorAll('.provider-card').forEach(card => card.classList.remove('active'));
+        document.querySelector(`[data-provider-id="${providerId}"]`).classList.add('active');
+    }
+
+    // Close provider detail view
+    function closeProviderDetail() {
+        detailOverlay.classList.remove('open');
+        document.querySelectorAll('.provider-card').forEach(card => card.classList.remove('active'));
+    }
+
+    // Filter providers based on search
+    function filterProviders() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const providerCards = document.querySelectorAll('.provider-card');
+
+        providerCards.forEach(card => {
+            const name = card.querySelector('.provider-name').textContent.toLowerCase();
+            const email = card.querySelector('.provider-email').textContent.toLowerCase();
+            const category = card.querySelector('.provider-category').textContent.toLowerCase();
+
+            const matchesSearch = name.includes(searchTerm) || 
+                                email.includes(searchTerm) || 
+                                category.includes(searchTerm);
+
+            card.style.display = matchesSearch ? 'block' : 'none';
+        });
+    }
+
+    // Attach action listeners to buttons
+    function attachActionListeners() {
+        // Suspend buttons
+        document.querySelectorAll('.btn-suspend').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = e.target.closest('.provider-card');
+                const providerId = card.dataset.providerId;
+                const providerName = card.querySelector('.provider-name').textContent;
+                showActionConfirmation(providerId, 'suspend', providerName);
+            });
+        });
+
+        // Approve buttons
+        document.querySelectorAll('.btn-approve').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = e.target.closest('.provider-card');
+                const providerId = card.dataset.providerId;
+                const providerName = card.querySelector('.provider-name').textContent;
+                showActionConfirmation(providerId, 'approve', providerName);
+            });
+        });
+
+        // Reject buttons
+        document.querySelectorAll('.btn-reject').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = e.target.closest('.provider-card');
+                const providerId = card.dataset.providerId;
+                const providerName = card.querySelector('.provider-name').textContent;
+                showActionConfirmation(providerId, 'reject', providerName);
+            });
+        });
+    }
+
+    // Setup modal controls
+    function setupModalControls() {
+        // Message modal controls
+        const closeMsgModal = document.getElementById('closeMsgModal');
+        const cancelMsgBtn = document.getElementById('cancelMsgBtn');
+        const sendMsgBtn = document.getElementById('sendMsgBtn');
+
+        if (closeMsgModal) closeMsgModal.addEventListener('click', () => closeModal(messageModal));
+        if (cancelMsgBtn) cancelMsgBtn.addEventListener('click', () => closeModal(messageModal));
+        if (sendMsgBtn) sendMsgBtn.addEventListener('click', sendMessage);
+
+        // Action confirmation modal controls
+        const cancelActionBtn = document.getElementById('cancelActionBtn');
+        const confirmActionBtn = document.getElementById('confirmActionBtn');
+
+        if (cancelActionBtn) cancelActionBtn.addEventListener('click', () => closeModal(actionConfirmModal));
+        if (confirmActionBtn) confirmActionBtn.addEventListener('click', executeConfirmedAction);
+    }
+
+    // Open message modal
+    function openMessageModal(providerName) {
+        document.getElementById('msgTargetName').textContent = providerName;
+        document.getElementById('msgSubject').value = '';
+        document.getElementById('msgContent').value = '';
+        openModal(messageModal);
+    }
+
+    // Show action confirmation modal
+    function showActionConfirmation(providerId, action, providerName) {
+        const modal = actionConfirmModal;
+        const icon = document.getElementById('actionIcon');
+        const title = document.getElementById('actionTitle');
+        const targetName = document.getElementById('actionTargetName');
+        const confirmBtn = document.getElementById('confirmActionBtn');
+
+        // Set modal content based on action
+        if (action === 'suspend') {
+            icon.innerHTML = '<i class="fas fa-ban" style="color: #e74c3c;"></i>';
+            icon.style.background = 'rgba(231, 76, 60, 0.1)';
+            icon.style.border = '1px solid rgba(231, 76, 60, 0.3)';
+            title.textContent = 'Suspend Provider';
+            confirmBtn.textContent = 'SUSPEND';
+            confirmBtn.style.background = '#e74c3c';
+            confirmBtn.style.color = '#fff';
+        } else if (action === 'approve') {
+            icon.innerHTML = '<i class="fas fa-check-circle" style="color: var(--orange);"></i>';
+            icon.style.background = 'rgba(255, 140, 0, 0.1)';
+            icon.style.border = '1px solid rgba(255, 140, 0, 0.3)';
+            title.textContent = 'Approve Provider';
+            confirmBtn.textContent = 'APPROVE';
+            confirmBtn.style.background = 'var(--orange)';
+            confirmBtn.style.color = '#000';
+        } else if (action === 'reject') {
+            icon.innerHTML = '<i class="fas fa-times-circle" style="color: #e74c3c;"></i>';
+            icon.style.background = 'rgba(231, 76, 60, 0.1)';
+            icon.style.border = '1px solid rgba(231, 76, 60, 0.3)';
+            title.textContent = 'Reject Provider';
+            confirmBtn.textContent = 'REJECT';
+            confirmBtn.style.background = '#e74c3c';
+            confirmBtn.style.color = '#fff';
+        }
+
+        targetName.textContent = providerName;
+        confirmBtn.dataset.action = action;
+        confirmBtn.dataset.providerId = providerId;
+
+        openModal(modal);
+    }
+
+    // Execute confirmed action
+    function executeConfirmedAction(e) {
+        const action = e.target.dataset.action;
+        const providerId = e.target.dataset.providerId;
+        
+        // Here you would make API calls to update provider status
+        console.log(`Executing ${action} on provider ${providerId}`);
+        
+        // For demo, just close modal and show notification
+        closeModal(actionConfirmModal);
+        showNotification(`Provider ${action}d successfully!`, 'success');
+        
+        // Refresh the providers list (in real app, this would fetch from API)
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
+    }
+
+    // Send message
+    function sendMessage() {
+        const subject = document.getElementById('msgSubject').value;
+        const content = document.getElementById('msgContent').value;
+        
+        if (!subject || !content) {
+            showNotification('Please fill in all fields', 'error');
+            return;
+        }
+
+        // Here you would make API call to send message
+        console.log('Sending message:', { subject, content });
+        
+        closeModal(messageModal);
+        showNotification('Message sent successfully!', 'success');
+    }
+
+    // Modal helper functions
+    function openModal(modal) {
+        modal.classList.add('open');
+    }
+
+    function closeModal(modal) {
+        modal.classList.remove('open');
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? 'var(--orange)' : type === 'error' ? '#e74c3c' : '#3498db'};
+            color: ${type === 'success' ? '#000' : '#fff'};
+            padding: 15px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 3000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+
+        document.body.appendChild(notification);
+
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Load providers data from API
+    async function loadProviders() {
+        const providersGrid = document.getElementById('providersGrid');
+        
+        // Show loading state
+        if (providersGrid) {
+            providersGrid.innerHTML = '<p class="loading-state" style="text-align:center;width:100%;grid-column:1/-1;color:#888;">Loading providers...</p>';
+        }
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/providers`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.providers && Array.isArray(data.providers)) {
+                // Convert array to object with ID as key for compatibility
+                providersData = {};
+                data.providers.forEach(provider => {
+                    providersData[provider.id] = provider;
+                });
+            } else {
+                providersData = {};
+            }
+            
+            // Render provider cards after loading data
+            renderProviderCards();
+        } catch (error) {
+            console.error('Error loading providers:', error);
+            
+            // Don't show error notification for development, just log it
+            if (error.message.includes('Failed to fetch')) {
+                console.log('API endpoint not available yet - showing empty state');
+            } else {
+                showNotification('Failed to load providers', 'error');
+            }
+            
+            providersData = {};
+            renderProviderCards(); // Show empty state
+        }
+    }
+
+    // Initialize everything
+    async function initializeApp() {
+        await loadProviders();
+        initializeEventListeners();
+    }
+
+    initializeApp();
+});

@@ -86,19 +86,19 @@ document.querySelector(".submit").addEventListener("click", () => {
 
   // Validate form
   if (!apartmentId) {
-    alert("Please enter apartment ID");
+    showConfirmDialog("Validation Error", "Please enter apartment ID", () => {}, "OK", "OK", "#e74c3c");
     return;
   }
   if (!contactNumber) {
-    alert("Please enter contact number");
+    showConfirmDialog("Validation Error", "Please enter contact number", () => {}, "OK", "OK", "#e74c3c");
     return;
   }
   if (!selectedDate) {
-    alert("Please select a date");
+    showConfirmDialog("Validation Error", "Please select a date", () => {}, "OK", "OK", "#e74c3c");
     return;
   }
   if (!selectedTime) {
-    alert("Please select a time");
+    showConfirmDialog("Validation Error", "Please select a time", () => {}, "OK", "OK", "#e74c3c");
     return;
   }
 
@@ -117,7 +117,7 @@ document.querySelector(".submit").addEventListener("click", () => {
     .then(services => {
       const service = services.find(s => s.name === serviceName);
       if (!service) {
-        alert("Service not found");
+        showConfirmDialog("Error", "Service not found", () => {}, "OK", "OK", "#e74c3c");
         return;
       }
 
@@ -138,23 +138,223 @@ document.querySelector(".submit").addEventListener("click", () => {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'booking_created') {
-          alert("Service booked successfully!");
-          window.location.href = "mybookings.html";
+          showConfirmDialog("Success!", "Service booked successfully! You will be redirected to your bookings.", () => {
+            window.location.href = "mybookings.html";
+          }, "View Bookings", "Cancel", "#2ecc71");
         } else {
-          alert("Booking failed. Please try again.");
+          showConfirmDialog("Booking Failed", "Booking failed. Please try again.", () => {}, "OK", "OK", "#e74c3c");
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        alert("Booking failed. Please try again.");
+        showConfirmDialog("Booking Failed", "Booking failed. Please try again.", () => {}, "OK", "OK", "#e74c3c");
       });
     })
     .catch(error => {
       console.error('Error fetching services:', error);
-      alert("Failed to load services. Please try again.");
+      showConfirmDialog("Error", "Failed to load services. Please try again.", () => {}, "OK", "OK", "#e74c3c");
     });
 });
 function goBack(event) {
         event.preventDefault();
         window.history.back();
       }
+
+function showNotification(message, type = 'info', duration = 3000) {
+    // Remove any existing notifications
+    const existing = document.querySelector('.notification-popup');
+    if (existing) {
+        existing.remove();
+    }
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification-popup notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#2ecc71' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        min-width: 300px;
+        max-width: 400px;
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+    // Add CSS animation
+    if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            .notification-popup {
+                font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+            }
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .notification-content i {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+            .notification-content span {
+                flex: 1;
+                font-weight: 500;
+            }
+            .notification-close {
+                background: none;
+                border: none;
+                color: white;
+                cursor: pointer;
+                padding: 2px;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+            .notification-close:hover {
+                background: rgba(255,255,255,0.2);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Auto remove after duration
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, duration);
+}
+
+// Themed confirm dialog
+function showConfirmDialog(title, message, onConfirm, confirmText = 'OK', cancelText = 'Cancel', confirmColor = '#e74c3c') {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s ease-out;
+    `;
+
+    // Create modal box
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: var(--bg-card, #1c1c1c);
+        border: 1px solid var(--border-color, #2a2a2a);
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease-out;
+    `;
+
+    modal.innerHTML = `
+        <h3 style="color: var(--text-main, #fff); margin: 0 0 12px; font-size: 18px; font-weight: 600;">${title}</h3>
+        <p style="color: var(--text-muted, #9e9e9e); margin: 0 0 24px; line-height: 1.5;">${message}</p>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button class="btn-cancel" style="
+                background: transparent;
+                border: 1px solid var(--border-color, #2a2a2a);
+                color: var(--text-muted, #9e9e9e);
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            ">${cancelText}</button>
+            <button class="btn-confirm" style="
+                background: ${confirmColor};
+                border: none;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            ">${confirmText}</button>
+        </div>
+    `;
+
+    // Add hover effects
+    const cancelBtn = modal.querySelector('.btn-cancel');
+    const confirmBtn = modal.querySelector('.btn-confirm');
+    cancelBtn.onmouseover = () => { cancelBtn.style.background = 'rgba(255,255,255,0.05)'; };
+    cancelBtn.onmouseout = () => { cancelBtn.style.background = 'transparent'; };
+    confirmBtn.onmouseover = () => { confirmBtn.style.background = confirmColor === '#e74c3c' ? '#c0392b' : confirmColor === '#2ecc71' ? '#27ae60' : '#2980b9'; };
+    confirmBtn.onmouseout = () => { confirmBtn.style.background = confirmColor; };
+
+    // Event handlers
+    cancelBtn.onclick = () => closeModal();
+    confirmBtn.onclick = () => {
+        closeModal();
+        onConfirm();
+    };
+    overlay.onclick = (e) => {
+        if (e.target === overlay) closeModal();
+    };
+
+    function closeModal() {
+        overlay.style.animation = 'fadeOut 0.2s ease-in';
+        modal.style.animation = 'slideDown 0.2s ease-in';
+        setTimeout(() => overlay.remove(), 200);
+    }
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+}
+
+// Add animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideDown {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(20px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
