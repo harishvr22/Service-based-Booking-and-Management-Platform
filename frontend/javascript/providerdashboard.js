@@ -48,6 +48,10 @@ async function fetchProfile(userId) {
 }
 
 async function fetchDashboardStats() {
+    const userId = parseInt(localStorage.getItem('userId'));
+    const userRole = localStorage.getItem('userRole') || ''; 
+    const providerTrade = userRole.replace('Provider: ', '').trim();
+
     try {
         const response = await fetch('http://127.0.0.1:5000/bookings');
         if (!response.ok) throw new Error('Server error');
@@ -55,27 +59,22 @@ async function fetchDashboardStats() {
 
         if (!Array.isArray(bookings)) return;
 
-        const pending = bookings.filter(b => b.status === 'pending').length;
-        const inProgress = bookings.filter(b => b.status === 'accepted' || b.status === 'in-progress').length;
-        const completed = bookings.filter(b => b.status === 'completed').length;
+        // Filter: Pending requests for this trade, Assigned work for this provider
+        const pending = bookings.filter(b => b.status === 'pending' && b.service_name === providerTrade).length;
+        const myBookings = bookings.filter(b => (b.provider_id == userId));
+        const inProgress = myBookings.filter(b => b.status === 'accepted' || b.status === 'in-progress').length;
+        const completed = myBookings.filter(b => b.status === 'completed').length;
 
-        const ratedBookings = bookings.filter(b => b.rating);
+        const ratedBookings = myBookings.filter(b => b.rating);
         const avgRating = ratedBookings.length ? (ratedBookings.reduce((sum, b) => sum + b.rating, 0) / ratedBookings.length).toFixed(1) : '0.0';
 
-        // Update Stats Cards
         if (document.getElementById('newRequestsCount')) document.getElementById('newRequestsCount').textContent = pending;
         if (document.getElementById('inProgressCount')) document.getElementById('inProgressCount').textContent = inProgress;
         if (document.getElementById('completedCount')) document.getElementById('completedCount').textContent = completed;
         if (document.getElementById('avgRating')) document.getElementById('avgRating').textContent = avgRating;
-
-        // Update Performance Section
         if (document.getElementById('jobsCompleted')) document.getElementById('jobsCompleted').textContent = completed;
         
-        // Calculate dynamic acceptance rate
-        const total = bookings.length;
-        const accepted = bookings.filter(b => b.status !== 'pending' && b.status !== 'rejected' && b.status !== 'cancelled').length;
-        const rate = total > 0 ? Math.round((accepted / total) * 100) : 100;
-        
+        const rate = myBookings.length > 0 ? Math.round((completed / myBookings.length) * 100) : 100;
         if (document.getElementById('acceptanceRate')) document.getElementById('acceptanceRate').textContent = rate + '%';
         if (document.getElementById('avgResponse')) document.getElementById('avgResponse').textContent = 'Live';
     } catch (error) {
@@ -87,6 +86,9 @@ async function fetchPendingRequests() {
     const list = document.getElementById('pendingRequestsList');
     if (!list) return;
 
+    const userRole = localStorage.getItem('userRole') || ''; 
+    const providerTrade = userRole.replace('Provider: ', '').trim();
+
     try {
         const response = await fetch('http://127.0.0.1:5000/bookings');
         if (!response.ok) throw new Error('Server error');
@@ -94,10 +96,11 @@ async function fetchPendingRequests() {
 
         if (!Array.isArray(bookings)) throw new Error('Invalid data format');
 
-        const pendingBookings = bookings.filter(b => b.status === 'pending').slice(0, 3);
+        // Show pending requests that match the provider's trade
+        const pendingBookings = bookings.filter(b => b.status === 'pending' && b.service_name === providerTrade).slice(0, 3);
 
         if (pendingBookings.length === 0) {
-            list.innerHTML = '<p style="color: #888; font-size: 14px; text-align: center; padding: 20px;">No pending requests.</p>';
+            list.innerHTML = '<p style="color: #888; font-size: 14px; text-align: center; padding: 20px;">No pending requests for your category.</p>';
             return;
         }
 
@@ -124,6 +127,8 @@ async function fetchRecentHistory() {
     const list = document.getElementById('recentHistoryList');
     if (!list) return;
 
+    const userId = parseInt(localStorage.getItem('userId'));
+
     try {
         const response = await fetch('http://127.0.0.1:5000/bookings');
         if (!response.ok) throw new Error('Server error');
@@ -131,10 +136,11 @@ async function fetchRecentHistory() {
 
         if (!Array.isArray(bookings)) throw new Error('Invalid data format');
 
-        const completedBookings = bookings.filter(b => b.status === 'completed').slice(0, 3);
+        // Show only history for THIS provider
+        const completedBookings = bookings.filter(b => b.status === 'completed' && b.provider_id == userId).slice(0, 3);
 
         if (completedBookings.length === 0) {
-            list.innerHTML = '<p style="color: #888; font-size: 14px; text-align: center; padding: 20px;">No recent history.</p>';
+            list.innerHTML = '<p style="color: #888; font-size: 14px; text-align: center; padding: 20px;">No completed jobs found.</p>';
             return;
         }
 

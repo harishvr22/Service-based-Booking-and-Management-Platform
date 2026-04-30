@@ -119,51 +119,68 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    function saveProfile() {
-        const updatedData = {
-            name: document.getElementById('dispName').value,
-            email: document.getElementById('dispEmail').value,
-            phone: document.getElementById('dispPhone').value,
-            flat: document.getElementById('dispFlat').value,
-            block: document.getElementById('dispBlock').value,
-            moveIn: document.getElementById('dispMoveIn').value,
-            emergencyName: document.getElementById('dispEmergencyName').value,
-            emergencyPhone: document.getElementById('dispEmergencyPhone').value
-        };
+    async function saveProfile() {
+        const userId = localStorage.getItem('userId');
+        const name = document.getElementById('dispName').value;
+        const email = document.getElementById('dispEmail').value;
+        const phone = document.getElementById('dispPhone').value;
+        const flat = document.getElementById('dispFlat').value;
+        const block = document.getElementById('dispBlock').value;
+        const moveIn = document.getElementById('dispMoveIn').value;
+        const emergencyName = document.getElementById('dispEmergencyName').value;
+        const emergencyPhone = document.getElementById('dispEmergencyPhone').value;
 
-        // Update UI
-        document.getElementById('profileName').textContent = updatedData.name;
-        document.getElementById('profileEmail').textContent = updatedData.email;
+        const apartment_id = block && flat ? `${block}|${flat}` : flat;
 
-        // Update Initials
-        const names = updatedData.name.split(' ');
-        const initials = names.map(n => n[0]).join('').toUpperCase();
-        document.getElementById('avatarInitials').textContent = initials;
+        try {
+            const response = await fetch('http://127.0.0.1:5000/update-profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    name,
+                    email,
+                    phone,
+                    role: 'Resident', // Keep as resident
+                    apartment_id,
+                    availability: moveIn,
+                    skills: emergencyName,
+                    bio: emergencyPhone
+                })
+            });
 
-        // Save to localStorage
-        localStorage.setItem('userName', updatedData.name);
-        localStorage.setItem('userEmail', updatedData.email);
-        localStorage.setItem('userPhone', updatedData.phone);
-        localStorage.setItem('userFlat', updatedData.flat);
-        localStorage.setItem('userBlock', updatedData.block);
-        localStorage.setItem('userMoveIn', updatedData.moveIn);
-        localStorage.setItem('emergencyName', updatedData.emergencyName);
-        localStorage.setItem('emergencyPhone', updatedData.emergencyPhone);
+            const result = await response.json();
+            if (result.status === 'updated') {
+                // Update UI
+                document.getElementById('profileName').textContent = name;
+                document.getElementById('profileEmail').textContent = email;
 
-        // Reset UI state
-        isEditing = false;
-        editBtn.textContent = 'Edit Profile';
-        cancelBtn.style.display = 'none';
-        inputs.forEach(input => input.readOnly = true);
+                // Update Initials
+                const names = name.split(' ');
+                const initials = names.map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                document.getElementById('avatarInitials').textContent = initials;
 
-        // Show themed notification
-        showNotification('Profile updated successfully!', 'success');
+                // Save to localStorage
+                localStorage.setItem('userName', name);
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userPhone', phone);
+                localStorage.setItem('userApartment', apartment_id);
+                localStorage.setItem('userAvailability', moveIn);
+                localStorage.setItem('userSkills', emergencyName);
+                localStorage.setItem('userBio', emergencyPhone);
 
-        // Trigger avatar update across all pages by dispatching a storage event
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'userName',
-            newValue: updatedData.name
-        }));
+                // Reset UI state
+                isEditing = false;
+                editBtn.textContent = 'Edit Profile';
+                cancelBtn.style.display = 'none';
+                inputs.forEach(input => input.readOnly = true);
+
+                showNotification('Profile updated successfully!', 'success');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            showNotification('Failed to update profile.', 'error');
+        }
     }
 
     // Initial load from backend if available
@@ -214,14 +231,24 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('dispName').value = localStorage.getItem('userName') || user.name;
             document.getElementById('dispEmail').value = localStorage.getItem('userEmail') || user.email;
             document.getElementById('dispPhone').value = localStorage.getItem('userPhone') || user.phone || 'Not set';
-            document.getElementById('dispFlat').value = localStorage.getItem('userFlat') || user.flat || 'Not set';
-            document.getElementById('dispBlock').value = localStorage.getItem('userBlock') || user.block || 'Not set';
-            document.getElementById('dispMoveIn').value = localStorage.getItem('userMoveIn') || user.moveIn || 'Not set';
-            document.getElementById('dispEmergencyName').value = localStorage.getItem('emergencyName') || 'Not set';
-            document.getElementById('dispEmergencyPhone').value = localStorage.getItem('emergencyPhone') || 'Not set';
-
-            const names = (localStorage.getItem('userName') || user.name).split(' ');
-            const initials = names.map(n => n[0]).join('').toUpperCase();
+            
+            let apartment = localStorage.getItem('userApartment') || '';
+            let flat = 'Not set';
+            let block = 'Not set';
+            if (apartment.includes('|')) {
+                [block, flat] = apartment.split('|');
+            } else {
+                flat = apartment || 'Not set';
+            }
+            
+            document.getElementById('dispFlat').value = flat;
+            document.getElementById('dispBlock').value = block;
+            document.getElementById('dispMoveIn').value = localStorage.getItem('userAvailability') || user.moveIn || 'Not set';
+            document.getElementById('dispEmergencyName').value = localStorage.getItem('userSkills') || 'Not set';
+            document.getElementById('dispEmergencyPhone').value = localStorage.getItem('userBio') || 'Not set';
+            
+            const name = localStorage.getItem('userName') || user.name;
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
             document.getElementById('avatarInitials').textContent = initials;
         }
     }

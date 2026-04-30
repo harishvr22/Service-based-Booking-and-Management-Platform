@@ -105,26 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('detailCategory').textContent = provider.category;
         document.getElementById('detailEmail').textContent = provider.email;
         
-        // Update phone (assuming it's always the second detail-value)
-        const phoneElements = document.querySelectorAll('.detail-value');
-        if (phoneElements[1]) phoneElements[1].textContent = provider.phone;
-        
-        // Update joined date and rating
-        const detailSections = document.querySelectorAll('.detail-section');
-        detailSections.forEach(section => {
-            const label = section.querySelector('.detail-label');
-            const value = section.querySelector('.detail-value');
-            
-            if (label && value) {
-                if (label.textContent === 'JOINED DATE') {
-                    value.textContent = provider.joinedDate;
-                } else if (label.textContent === 'RATING') {
-                    value.innerHTML = `<i class="fas fa-star" style="color: var(--orange);"></i> ${provider.rating} / 5.0`;
-                } else if (label.textContent === 'SERVICE DESCRIPTION') {
-                    value.textContent = provider.description;
-                }
-            }
-        });
+        document.getElementById('detailPhone').textContent = provider.phone;
+        document.getElementById('detailJoinedDate').textContent = provider.joinedDate;
+        document.getElementById('detailRating').innerHTML = `<i class="fas fa-star" style="color: var(--orange);"></i> ${provider.rating} / 5.0`;
+        document.getElementById('detailDescription').textContent = provider.description;
+        document.getElementById('detailSkills').textContent = provider.skills;
+        document.getElementById('detailAvailability').textContent = provider.availability;
 
         // Update recent jobs
         const jobHistoryList = document.querySelector('.job-history-list');
@@ -291,21 +277,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Execute confirmed action
-    function executeConfirmedAction(e) {
+    async function executeConfirmedAction(e) {
         const action = e.target.dataset.action;
         const providerId = e.target.dataset.providerId;
         
-        // Here you would make API calls to update provider status
-        console.log(`Executing ${action} on provider ${providerId}`);
-        
-        // For demo, just close modal and show notification
-        closeModal(actionConfirmModal);
-        showNotification(`Provider ${action}d successfully!`, 'success');
-        
-        // Refresh the providers list (in real app, this would fetch from API)
-        setTimeout(() => {
-            location.reload();
-        }, 1500);
+        try {
+            const response = await fetch(`${API_BASE_URL}/update-provider-status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    provider_id: providerId,
+                    status: action === 'approve' ? 'active' : action
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to update status');
+
+            closeModal(actionConfirmModal);
+            showNotification(`Provider ${action}d successfully!`, 'success');
+            
+            setTimeout(() => {
+                loadProviders();
+            }, 1000);
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Failed to update status', 'error');
+        }
     }
 
     // Send message
@@ -374,45 +371,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load providers data from API
     async function loadProviders() {
         const providersGrid = document.getElementById('providersGrid');
-        
-        // Show loading state
         if (providersGrid) {
             providersGrid.innerHTML = '<p class="loading-state" style="text-align:center;width:100%;grid-column:1/-1;color:#888;">Loading providers...</p>';
         }
         
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/providers`);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
+            const response = await fetch(`${API_BASE_URL}/providers`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             
             if (data.providers && Array.isArray(data.providers)) {
-                // Convert array to object with ID as key for compatibility
                 providersData = {};
                 data.providers.forEach(provider => {
-                    providersData[provider.id] = provider;
+                    // Extract specific role, e.g., "Electrician" from "Provider: Electrician"
+                    let specificRole = provider.role;
+                    if (provider.role.includes(':')) {
+                        specificRole = provider.role.split(':')[1].trim();
+                    } else if (provider.role.toLowerCase().startsWith('provider')) {
+                        // If it's just "Provider", try to use skills as the role
+                        specificRole = provider.skills || 'Provider';
+                    }
+
+                    // Map backend data to frontend format
+                    providersData[provider.id] = {
+                        id: provider.id,
+                        name: provider.name,
+                        email: provider.email,
+                        phone: provider.phone || 'N/A',
+                        status: provider.status.toUpperCase(),
+                        category: specificRole.toUpperCase(),
+                        joinedDate: provider.created_at ? new Date(provider.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A',
+                        rating: provider.rating || '0.0',
+                        totalJobs: provider.total_bookings || 0,
+                        description: provider.bio || 'Professional service provider.',
+                        skills: provider.skills || 'N/A',
+                        availability: provider.availability || 'N/A',
+                        recentJobs: []
+                    };
                 });
-            } else {
-                providersData = {};
             }
-            
-            // Render provider cards after loading data
             renderProviderCards();
         } catch (error) {
             console.error('Error loading providers:', error);
-            
-            // Don't show error notification for development, just log it
-            if (error.message.includes('Failed to fetch')) {
-                console.log('API endpoint not available yet - showing empty state');
-            } else {
-                showNotification('Failed to load providers', 'error');
-            }
-            
+            showNotification('Failed to load providers', 'error');
             providersData = {};
-            renderProviderCards(); // Show empty state
+            renderProviderCards();
         }
     }
 

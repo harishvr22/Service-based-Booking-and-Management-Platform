@@ -31,6 +31,11 @@ if (loginForm) {
           // Store the actual name from backend response
           localStorage.setItem('userName', data.user.name);
           localStorage.setItem('userId', data.user.id);
+          localStorage.setItem('userPhone', data.user.phone || '');
+          localStorage.setItem('userApartment', data.user.apartment_id || '');
+          localStorage.setItem('userAvailability', data.user.availability || '');
+          localStorage.setItem('userSkills', data.user.skills || '');
+          localStorage.setItem('userBio', data.user.bio || '');
           showConfirmDialog("Login Successful", "Login successful! You will be redirected to your dashboard.", () => {
             const normalizedRole = role.toLowerCase();
             console.log('Normalized role:', normalizedRole);
@@ -161,14 +166,31 @@ if (signupForm) {
     } else {
       data.phone = document.getElementById("providerPhone").value;
       const serviceCategory = document.getElementById("serviceCategory")?.value || '';
+      
+      // Map category to Role
+      const roleMap = {
+        'Plumbing': 'Provider: Plumber',
+        'Electrical': 'Provider: Electrician',
+        'Cleaning': 'Provider: Cleaner',
+        'Carpentry': 'Provider: Carpenter',
+        'HVAC': 'Provider: HVAC Technician'
+      };
+      data.role = roleMap[serviceCategory] || 'Provider';
+      
       const specialization = document.getElementById("specialization")?.value || '';
-      data.skills = serviceCategory + (specialization ? ' - ' + specialization : '');
+      data.skills = specialization || 'General Service';
 
       const experience = document.getElementById("experience")?.value || '';
-      data.bio = experience ? `Experience: ${experience}` : 'Certified Service Provider';
-
       const serviceArea = document.getElementById("serviceArea")?.value || '';
-      data.availability = serviceArea ? `${serviceArea} Wing` : 'General Availability';
+      
+      // Combine experience and area into Bio
+      let bioParts = [];
+      if (experience) bioParts.push(`Experience: ${experience}`);
+      if (serviceArea) bioParts.push(`Service Area: ${serviceArea} Wing`);
+      data.bio = bioParts.join(' | ') || 'Certified Service Provider';
+
+      // Default availability time (Standard practice)
+      data.availability = 'Mon-Sat • 9 AM - 7 PM';
     }
 
     console.log("step1Data:", step1Data);

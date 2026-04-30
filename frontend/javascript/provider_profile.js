@@ -3,14 +3,79 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const userId = localStorage.getItem('userId') || '7'; // Fallback to test user ID 7
-    if (!localStorage.getItem('userId')) {
-        console.warn('No userId found in localStorage, using test user ID 7');
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        console.warn('No userId found in localStorage, redirecting to login');
+        window.location.href = 'login.html';
+        return;
     }
 
     fetchProfile(userId);
     setupSaveButton(userId);
+    setupDeleteAccount();
 });
+
+async function setupDeleteAccount() {
+    const deleteBtn = document.getElementById('deleteAccountBtn');
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const deletePasswordInput = document.getElementById('deletePassword');
+
+    if (!deleteBtn || !deleteModal) return;
+
+    deleteBtn.addEventListener('click', () => {
+        deleteModal.classList.add('active');
+        deletePasswordInput.value = '';
+        deletePasswordInput.focus();
+    });
+
+    cancelDeleteBtn.addEventListener('click', () => {
+        deleteModal.classList.remove('active');
+    });
+
+    // Close modal on outside click
+    deleteModal.addEventListener('click', (e) => {
+        if (e.target === deleteModal) deleteModal.classList.remove('active');
+    });
+
+    confirmDeleteBtn.addEventListener('click', async () => {
+        const password = deletePasswordInput.value;
+        if (!password) {
+            alert('Please enter your password to confirm.');
+            return;
+        }
+
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/delete-account', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: localStorage.getItem('userEmail'),
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+            if (data.status === 'success' || data.message === 'Account deleted successfully') {
+                localStorage.clear();
+                window.location.href = 'landingpage.html';
+            } else {
+                alert('Error: ' + (data.message || 'Failed to delete account'));
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.textContent = 'Delete Permanently';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            confirmDeleteBtn.disabled = false;
+            confirmDeleteBtn.textContent = 'Delete Permanently';
+        }
+    });
+}
 
 async function fetchProfile(userId) {
     try {
@@ -26,10 +91,11 @@ async function fetchProfile(userId) {
             if (document.getElementById('profileEmailLarge')) document.getElementById('profileEmailLarge').textContent = user.email;
 
             // Update Form
+            const displayRole = user.role ? user.role.replace('Provider: ', '') : 'Electrician';
             if (document.getElementById('editFullName')) document.getElementById('editFullName').value = user.name;
             if (document.getElementById('editEmail')) document.getElementById('editEmail').value = user.email;
             if (document.getElementById('editPhone')) document.getElementById('editPhone').value = user.phone || '';
-            if (document.getElementById('editRole')) document.getElementById('editRole').value = user.role || 'Electrician';
+            if (document.getElementById('editRole')) document.getElementById('editRole').value = displayRole;
             if (document.getElementById('editAvailability')) document.getElementById('editAvailability').value = user.availability || 'Mon-Sat • 9 AM - 7 PM';
             if (document.getElementById('editSkills')) document.getElementById('editSkills').value = user.skills || 'General Service';
             if (document.getElementById('editBio')) document.getElementById('editBio').value = user.bio || 'Certified service provider.';
@@ -94,7 +160,7 @@ function setupSaveButton(userId) {
                     name,
                     email,
                     phone,
-                    role,
+                    role: 'Provider: ' + role,
                     availability,
                     skills,
                     bio
