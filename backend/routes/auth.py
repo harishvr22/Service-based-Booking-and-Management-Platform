@@ -3,68 +3,6 @@ from db import db
 
 auth_bp = Blueprint("auth", __name__)
 
-# SIGNUP API
-@auth_bp.route("/signup", methods=["POST"])
-def signup():
-
-    data = request.json
-
-    cursor = db.cursor()
-
-    query = """
-    INSERT INTO users(name,email,password,phone,role,apartment_id)
-    VALUES(%s,%s,%s,%s,%s,%s)
-    """
-
-    cursor.execute(query,(
-        data["name"],
-        data["email"],
-        data["password"],
-        data["phone"],
-        data["role"],
-        data["apartment_id"]
-    ))
-
-    db.commit()
-
-    return jsonify({"status":"registered"})
-
-
-# LOGIN API
-@auth_bp.route("/login", methods=["POST"])
-def login():
-
-    data = request.json
-
-    email = data["email"]
-    password = data["password"]
-    
-    # DEBUG: Print what was received
-    print(f"DEBUG LOGIN - Email: '{email}' (len={len(email)})")
-    print(f"DEBUG LOGIN - Password: '{password}' (len={len(password)})")
-
-    cursor = db.cursor(dictionary=True)
-
-    query = "SELECT id,name,role FROM users WHERE email=%s AND password=%s"
-
-    cursor.execute(query,(email,password))
-
-    user = cursor.fetchone()
-    
-    # DEBUG: Print query result
-    print(f"DEBUG LOGIN - User found: {user}")
-
-    if user:
-        print(f"✓ Login successful for {email} with role {user['role']}")
-        return jsonify({
-            "status":"success",
-            "role":user["role"],
-            "id":user["id"],
-            "name":user["name"]
-        })
-    else:
-        print(f"✗ Login failed - Invalid credentials for {email}")
-        return jsonify({"status":"invalid", "message":"Invalid email or password"})
 
 
 # DELETE ACCOUNT API
@@ -80,7 +18,7 @@ def delete_account():
     if not user_id and not email:
         return jsonify({"status": "error", "message": "User ID or email required"}), 400
 
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(dictionary=True, buffered=True)
 
     # Verify user exists and password matches
     if user_id:
@@ -95,15 +33,37 @@ def delete_account():
     if not user:
         return jsonify({"status": "error", "message": "Invalid credentials"}), 401
 
-    # Delete related bookings first
-    cursor.execute("DELETE FROM bookings WHERE resident_id=%s", (user["id"],))
+    # Delete related bookings
+    cursor.execute("DELETE FROM bookings WHERE resident_id=%s OR resident_id IN (SELECT id FROM users WHERE email=%s)", (user["id"], user["email"]))
+
+    # Delete related complaints
+    try:
+        cursor.execute("DELETE FROM complaints WHERE user_id=%s OR user_email=%s", (user["id"], user["email"]))
+    except:
+        pass
 
     # Delete the user
     cursor.execute("DELETE FROM users WHERE id=%s", (user["id"],))
 
+    cursor.close()
     db.commit()
 
-    return jsonify({"status": "deleted"})
+    return jsonify({"status": "success", "message": "Account deleted successfully"})
+
+
+# GET PROFILE API
+@auth_bp.route("/profile/<int:user_id>", methods=["GET"])
+def get_profile(user_id):
+    cursor = db.cursor(dictionary=True, buffered=True)
+    query = "SELECT id, name, email, phone, role, apartment_id, availability, skills, bio FROM users WHERE id=%s"
+    cursor.execute(query, (user_id,))
+    user = cursor.fetchone()
+    
+    cursor.close()
+    if user:
+        return jsonify({"status": "success", "user": user})
+    else:
+        return jsonify({"status": "error", "message": "User not found"}), 404
 
 
 # UPDATE PROFILE API
@@ -114,15 +74,22 @@ def update_profile():
     user_id = int(data.get("user_id"))
     name = data.get("name")
     email = data.get("email")
+    phone = data.get("phone")
+    role = data.get("role")
+    apartment_id = data.get("apartment_id")
+    availability = data.get("availability")
+    skills = data.get("skills")
+    bio = data.get("bio")
 
     if not user_id:
         return jsonify({"status": "error", "message": "User ID required"}), 400
 
-    cursor = db.cursor()
+    cursor = db.cursor(buffered=True)
 
-    query = "UPDATE users SET name=%s, email=%s WHERE id=%s"
-    cursor.execute(query, (name, email, user_id))
+    query = "UPDATE users SET name=%s, email=%s, phone=%s, role=%s, apartment_id=%s, availability=%s, skills=%s, bio=%s WHERE id=%s"
+    cursor.execute(query, (name, email, phone, role, apartment_id, availability, skills, bio, user_id))
 
+    cursor.close()
     db.commit()
 
     return jsonify({"status": "updated"})
@@ -140,7 +107,7 @@ def change_password():
     if not user_id or not current_password or not new_password:
         return jsonify({"status": "error", "message": "User ID, current password, and new password required"}), 400
 
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(dictionary=True, buffered=True)
 
     # Verify current password
     query = "SELECT id FROM users WHERE id=%s AND password=%s"
@@ -155,6 +122,7 @@ def change_password():
     query = "UPDATE users SET password=%s WHERE id=%s"
     cursor.execute(query, (new_password, user_id))
 
+    cursor.close()
     db.commit()
 
     return jsonify({"status": "password_changed"})
@@ -163,12 +131,17 @@ def change_password():
 # GET PROVIDERS
 @auth_bp.route("/providers", methods=["GET"])
 def get_providers():
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(dictionary=True, buffered=True)
 
-    query = "SELECT id, name, email, phone, role FROM users WHERE role LIKE 'Provider%'"
+    query = """
+        SELECT u.*, 
+        (SELECT COUNT(*) FROM bookings WHERE provider_id = u.id) as total_bookings 
+        FROM users u WHERE u.role LIKE 'Provider%'
+    """
     cursor.execute(query)
 
     providers = cursor.fetchall()
+    cursor.close()
 
     return jsonify({"providers": providers})
 
@@ -179,32 +152,20 @@ def update_provider_status():
     data = request.json
 
     provider_id = int(data.get("provider_id"))
-    status = data.get("status")  # 'approved', 'rejected', 'suspended'
+    status = data.get("status")  # 'active', 'suspended', 'approved', 'rejected'
 
     if not provider_id or not status:
         return jsonify({"status": "error", "message": "Provider ID and status required"}), 400
 
-    cursor = db.cursor()
+    cursor = db.cursor(buffered=True)
 
-    # First check if status column exists, if not we'll need to handle it differently
-    # For now, let's assume we add a status column or use a different approach
-    # Since the current table doesn't have status, let's use a different field or create logic
+    # Map 'approved' to 'active' status for backend consistency
+    db_status = 'active' if status == 'approved' else status
 
-    # For now, let's use the role field to indicate status
-    # 'Provider' = pending, 'Provider_Approved' = approved, 'Provider_Rejected' = rejected, 'Provider_Suspended' = suspended
+    query = "UPDATE users SET status=%s WHERE id=%s AND role LIKE 'Provider%'"
+    cursor.execute(query, (db_status, provider_id))
 
-    role_mapping = {
-        'approved': 'Provider_Approved',
-        'rejected': 'Provider_Rejected',
-        'suspended': 'Provider_Suspended',
-        'pending': 'Provider'
-    }
-
-    new_role = role_mapping.get(status, 'Provider')
-
-    query = "UPDATE users SET role=%s WHERE id=%s AND role LIKE 'Provider%'"
-    cursor.execute(query, (new_role, provider_id))
-
+    cursor.close()
     db.commit()
 
     return jsonify({"status": "updated"})
@@ -213,12 +174,17 @@ def update_provider_status():
 # GET RESIDENTS
 @auth_bp.route("/residents", methods=["GET"])
 def get_residents():
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(dictionary=True, buffered=True)
 
-    query = "SELECT id, name, email, phone, role, apartment_id FROM users WHERE role LIKE 'Resident%'"
+    query = """
+        SELECT u.*, 
+        (SELECT COUNT(*) FROM bookings WHERE resident_id = u.id) as total_bookings 
+        FROM users u WHERE u.role LIKE 'Resident%'
+    """
     cursor.execute(query)
 
     residents = cursor.fetchall()
+    cursor.close()
 
     return jsonify({"residents": residents})
 
@@ -229,23 +195,20 @@ def update_resident_status():
     data = request.json
 
     resident_id = int(data.get("resident_id"))
-    status = data.get("status")  # 'active', 'suspended'
+    status = data.get("status")  # 'active', 'suspended', 'approved'
 
     if not resident_id or not status:
         return jsonify({"status": "error", "message": "Resident ID and status required"}), 400
 
-    cursor = db.cursor()
+    cursor = db.cursor(buffered=True)
 
-    role_mapping = {
-        'active': 'Resident',
-        'suspended': 'Resident_Suspended'
-    }
+    # Map 'approved' to 'active' status
+    db_status = 'active' if status == 'approved' else status
 
-    new_role = role_mapping.get(status, 'Resident')
+    query = "UPDATE users SET status=%s WHERE id=%s AND role LIKE 'Resident%'"
+    cursor.execute(query, (db_status, resident_id))
 
-    query = "UPDATE users SET role=%s WHERE id=%s AND role LIKE 'Resident%'"
-    cursor.execute(query, (new_role, resident_id))
-
+    cursor.close()
     db.commit()
 
     return jsonify({"status": "updated"})

@@ -12,7 +12,7 @@ def book_service():
     data = request.json
 
     try:
-        cursor = db.cursor()
+        cursor = db.cursor(buffered=True)
 
         query = """
         INSERT INTO bookings(resident_id,service_id,status,apartment_id,mobile_number,problem_description,time_duration,preferred_date,preferred_time,additional_notes)
@@ -31,6 +31,7 @@ def book_service():
             data.get("additional_notes")
         ))
 
+        cursor.close()
         db.commit()
     except Exception as e:
         print("Database error in book_service:", e)
@@ -38,7 +39,7 @@ def book_service():
     
     # Create a notification for providers about new booking
     try:
-        notif_cursor = db.cursor()
+        notif_cursor = db.cursor(buffered=True)
         notif_query = """
         INSERT INTO notifications(title, message, audience, created_by, created_at)
         VALUES(%s, %s, %s, %s, NOW())
@@ -49,6 +50,7 @@ def book_service():
             "Providers",
             0  # System ID 0
         ))
+        notif_cursor.close()
         db.commit()
         # Emit to all connected clients (filtered by audience in frontend)
         socketio.emit('new_notification', {
@@ -68,7 +70,7 @@ def book_service():
 def view_bookings():
     
     try:
-        cursor = db.cursor(dictionary=True)
+        cursor = db.cursor(dictionary=True, buffered=True)
         cursor.execute("""
             SELECT b.*, s.service_name 
             FROM bookings b 
@@ -76,6 +78,7 @@ def view_bookings():
             ORDER BY b.created_at DESC
         """)
         bookings = cursor.fetchall()
+        cursor.close()
         return jsonify(bookings)
     except Exception as e:
         print("Database error in view_bookings:", e)
@@ -95,7 +98,7 @@ def update_status():
 
     data = request.json
 
-    cursor = db.cursor()
+    cursor = db.cursor(buffered=True)
 
     query = "UPDATE bookings SET status=%s WHERE id=%s"
 
@@ -104,6 +107,7 @@ def update_status():
         data["booking_id"]
     ))
 
+    cursor.close()
     db.commit()
 
     return jsonify({"status":"updated"})

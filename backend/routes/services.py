@@ -6,10 +6,11 @@ services_bp = Blueprint("services", __name__)
 @services_bp.route("/services", methods=["GET"])
 def get_services():
 
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(dictionary=True, buffered=True)
 
     cursor.execute("SELECT * FROM services")
 
     services = cursor.fetchall()
+    cursor.close()
 
     return jsonify(services)
