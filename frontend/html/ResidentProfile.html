@@ -189,6 +189,27 @@
 
     <script src="../javascript/resident_profile.js"></script>
     <script src="../javascript/header.js"></script>
+
+    <!-- Custom Delete Modal -->
+    <div id="deleteModal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>Delete Account</h2>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.</p>
+                <div class="modal-input-group">
+                    <label for="deletePassword">Confirm Password</label>
+                    <input type="password" id="deletePassword" placeholder="Enter your password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDeleteBtn" class="btn secondary">Cancel</button>
+                <button id="confirmDeleteBtn" class="btn btn-danger">Confirm Deletion</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

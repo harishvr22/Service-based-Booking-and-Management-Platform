@@ -69,82 +69,7 @@
 
                 <!-- Grid -->
                 <div class="providers-grid" id="providersGrid">
-                    <!-- Approved Provider Card -->
-                    <div class="provider-card" data-provider-id="1">
-                        <div class="card-status">APPROVED</div>
-                        <h3 class="provider-name">Mike's Plumbing</h3>
-                        <p class="provider-category">PLUMBING</p>
-                        <p class="provider-email">mike@pro.com</p>
-                        <div class="provider-stats">
-                            <span><b>4.8</b> rating</span>
-                            <span><b>142</b> jobs</span>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-suspend">SUSPEND PROVIDER</button>
-                        </div>
-                    </div>
-
-                    <!-- Approved Provider Card 2 -->
-                    <div class="provider-card" data-provider-id="2">
-                        <div class="card-status">APPROVED</div>
-                        <h3 class="provider-name">Bright Spark Electric</h3>
-                        <p class="provider-category">ELECTRICAL</p>
-                        <p class="provider-email">spark@pro.com</p>
-                        <div class="provider-stats">
-                            <span><b>4.6</b> rating</span>
-                            <span><b>98</b> jobs</span>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-suspend">SUSPEND PROVIDER</button>
-                        </div>
-                    </div>
-
-                    <!-- Approved Provider Card 3 -->
-                    <div class="provider-card" data-provider-id="3">
-                        <div class="card-status">APPROVED</div>
-                        <h3 class="provider-name">Crystal Cleaning Co.</h3>
-                        <p class="provider-category">CLEANING</p>
-                        <p class="provider-email">crystal@pro.com</p>
-                        <div class="provider-stats">
-                            <span><b>4.9</b> rating</span>
-                            <span><b>213</b> jobs</span>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-suspend">SUSPEND PROVIDER</button>
-                        </div>
-                    </div>
-
-                    <!-- Pending Provider Card 1 -->
-                    <div class="provider-card" data-provider-id="4">
-                        <div class="card-status pending">PENDING</div>
-                        <h3 class="provider-name">GreenLeaf Gardens</h3>
-                        <p class="provider-category">LANDSCAPING</p>
-                        <p class="provider-email">green@pro.com</p>
-                        <div class="provider-stats">
-                            <span><b>4.5</b> rating</span>
-                            <span><b>67</b> jobs</span>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
-                            <button class="btn-reject"><i class="far fa-times-circle"></i> REJECT</button>
-                        </div>
-                    </div>
-
-                    <!-- Pending Provider Card 2 -->
-                    <div class="provider-card" data-provider-id="5">
-                        <div class="card-status pending">PENDING</div>
-                        <h3 class="provider-name">FixIt Handyman</h3>
-                        <p class="provider-category">REPAIRS</p>
-                        <p class="provider-email">fixit@pro.com</p>
-                        <div class="provider-stats">
-                            <span><b>4.2</b> rating</span>
-                            <span><b>31</b> jobs</span>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
-                            <button class="btn-reject"><i class="far fa-times-circle"></i> REJECT</button>
-                        </div>
-                    </div>
+                    <!-- Provider cards will be dynamically generated here -->
                 </div>
             </div>
         </main>
@@ -169,24 +94,34 @@
             </div>
             <div class="detail-section">
                 <p class="detail-label">PHONE NUMBER</p>
-                <p class="detail-value">+1 (555) 012-3456</p>
+                <p class="detail-value" id="detailPhone">+1 (555) 012-3456</p>
             </div>
         </div>
 
         <div class="detail-grid">
             <div class="detail-section">
                 <p class="detail-label">JOINED DATE</p>
-                <p class="detail-value">March 12, 2024</p>
+                <p class="detail-value" id="detailJoinedDate">March 12, 2024</p>
             </div>
             <div class="detail-section">
                 <p class="detail-label">RATING</p>
-                <p class="detail-value"><i class="fas fa-star" style="color: var(--orange);"></i> 4.8 / 5.0</p>
+                <p class="detail-value" id="detailRating"><i class="fas fa-star" style="color: var(--orange);"></i> 4.8 / 5.0</p>
             </div>
         </div>
 
         <div class="detail-section">
             <p class="detail-label">SERVICE DESCRIPTION</p>
-            <p class="detail-value">Professional plumbing services for residential and commercial properties. Specialized in leak detection, pipe replacement, and fixture installation.</p>
+            <p class="detail-value" id="detailDescription">Professional service provider.</p>
+        </div>
+
+        <div class="detail-section">
+            <p class="detail-label">SKILLS</p>
+            <p class="detail-value" id="detailSkills">N/A</p>
+        </div>
+
+        <div class="detail-section">
+            <p class="detail-label">AVAILABILITY</p>
+            <p class="detail-value" id="detailAvailability">N/A</p>
         </div>
 
         <div class="detail-section">

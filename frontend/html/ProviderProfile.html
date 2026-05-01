@@ -28,9 +28,7 @@
             <li>
               <a href="ServiceRequests.html"><i class="fas fa-clipboard-list"></i> REQUESTS</a>
             </li>
-            <li>
-              <a href="UpdateJobStatus.html"><i class="far fa-calendar-check"></i> SCHEDULE</a>
-            </li>
+
             <li>
               <a href="JobHistory.html"><i class="fas fa-history"></i> HISTORY</a>
             </li>
@@ -84,29 +82,29 @@
             
             <!-- Left Panel: Avatar & Stats -->
             <div class="profile-left-panel" style="background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 40px 20px; text-align: center;">
-                <div class="profile-avatar-large" style="width: 100px; height: 100px; background: var(--orange); color: black; border-radius: 50%; font-size: 32px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                    AV
+                <div id="profileAvatarLarge" class="profile-avatar-large avatar" style="width: 100px; height: 100px; background: var(--orange); color: black; border-radius: 50%; font-size: 32px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    ?
                 </div>
-                <h2 style="font-size: 20px; color: white; margin-bottom: 5px; font-weight: 600;">Arjun Verma</h2>
-                <p style="color: var(--orange); font-size: 14px; font-weight: 500; margin-bottom: 5px;">Electrician</p>
-                <p style="color: #888; font-size: 13px; margin-bottom: 15px;">arjun.provider@servicebook.in</p>
+                <h2 id="profileNameLarge" style="font-size: 20px; color: white; margin-bottom: 5px; font-weight: 600;">Loading...</h2>
+                <p id="profileRoleLarge" style="color: var(--orange); font-size: 14px; font-weight: 500; margin-bottom: 5px;">Provider</p>
+                <p id="profileEmailLarge" style="color: #888; font-size: 13px; margin-bottom: 15px;">Email Loading...</p>
                 
                 <div class="profile-rating" style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 30px;">
                     <i class="fas fa-star" style="color: var(--orange); font-size: 14px;"></i>
                     <i class="fas fa-star" style="color: var(--orange); font-size: 14px;"></i>
+                    <i class="fas fa-star" style="color: var(--orange); font-size: 14px;"></i>
+                    <i class="fas fa-star" style="color: var(--orange); font-size: 14px;"></i>
                     <i class="fas fa-star-half-alt" style="color: var(--orange); font-size: 14px;"></i>
-                    <i class="far fa-star" style="color: #444; font-size: 14px;"></i>
-                    <i class="far fa-star" style="color: #444; font-size: 14px;"></i>
-                    <span style="color: #888; font-size: 12px; margin-left: 5px; font-weight: 500;">2.3 avg</span>
+                    <span id="profileAvgRating" style="color: #888; font-size: 12px; margin-left: 5px; font-weight: 500;">4.8 avg</span>
                 </div>
 
                 <div class="profile-stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
-                        <div style="font-size: 22px; font-weight: 700; color: var(--orange); margin-bottom: 4px;">4</div>
+                        <div id="jobsDoneCount" style="font-size: 22px; font-weight: 700; color: var(--orange); margin-bottom: 4px;">0</div>
                         <div style="font-size: 10px; font-weight: 600; color: #666; letter-spacing: 1px;">JOBS DONE</div>
                     </div>
                     <div>
-                        <div style="font-size: 22px; font-weight: 700; color: var(--orange); margin-bottom: 4px;">8+</div>
+                        <div style="font-size: 22px; font-weight: 700; color: var(--orange); margin-bottom: 4px;">3+</div>
                         <div style="font-size: 10px; font-weight: 600; color: #666; letter-spacing: 1px;">YEARS EXP</div>
                     </div>
                 </div>
@@ -120,52 +118,90 @@
                     <!-- Row 1 -->
                     <div class="form-group">
                         <label>FULL NAME</label>
-                        <input type="text" value="Arjun Verma" class="form-input">
+                        <input type="text" id="editFullName" value="" class="form-input" placeholder="Full Name">
                     </div>
                     <div class="form-group">
                         <label>EMAIL</label>
-                        <input type="email" value="arjun.provider@servicebook.in" class="form-input">
+                        <input type="email" id="editEmail" value="" class="form-input" placeholder="Email">
                     </div>
 
                     <!-- Row 2 -->
                     <div class="form-group">
                         <label>ROLE / SERVICE</label>
-                        <select class="form-input" style="appearance: auto;">
-                            <option value="Electrician" selected>Electrician</option>
+                        <select id="editRole" class="form-input" style="appearance: auto;">
+                            <option value="Electrician">Electrician</option>
                             <option value="Plumber">Plumber</option>
                             <option value="Carpenter">Carpenter</option>
                             <option value="Cleaner">Cleaner</option>
+                            <option value="HVAC Technician">HVAC Technician</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>PHONE</label>
-                        <input type="text" value="+91 98000 12345" class="form-input">
+                        <input type="text" id="editPhone" value="" class="form-input" placeholder="Phone Number">
                     </div>
 
                     <!-- Row 3 -->
                     <div class="form-group">
                         <label>AVAILABILITY</label>
-                        <input type="text" value="Mon-Sat • 9 AM - 7 PM" class="form-input">
+                        <input type="text" id="editAvailability" value="Mon-Sat • 9 AM - 7 PM" class="form-input">
                     </div>
                     <div class="form-group">
                         <label>SKILLS</label>
-                        <input type="text" value="Electrical, Fan Installation, Wiring, Switch Repair" class="form-input">
+                        <input type="text" id="editSkills" value="General Service" class="form-input">
                     </div>
                     <!-- Row 4 (Full width textarea) -->
                     <div class="form-group full-width" style="grid-column: 1 / -1;">
                         <label>BIO</label>
-                        <textarea class="form-textarea">Certified electrician with 8+ years of residential service experience.</textarea>
+                        <textarea id="editBio" class="form-textarea">Certified service provider.</textarea>
                     </div>
                 </div>
 
                 <div style="display: flex; justify-content: flex-end; margin-top: 30px; border-top: 1px solid #2a2a2a; padding-top: 20px;">
                     <button class="btn-save-changes">Save Changes</button>
                 </div>
+
+                <!-- Danger Zone -->
+                <div class="danger-zone">
+                    <p class="welcome-sub" style="color: #e74c3c; letter-spacing: 2px; font-size: 10px; font-weight: 700; margin-bottom: 15px;">DANGER ZONE</p>
+                    <div class="danger-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="color: white; font-size: 14px; margin-bottom: 4px;">Delete Account</h4>
+                                <p class="warning-text" style="margin-top: 0;">Once deleted, your profile and job history are gone forever.</p>
+                            </div>
+                            <button id="deleteAccountBtn" class="btn-danger">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="custom-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Delete Account?</h2>
+        </div>
+        <div class="modal-body">
+            <p>This action is permanent and cannot be undone. All your professional data will be removed from our system.</p>
+            <div class="modal-input-group">
+                <label>CONFIRM WITH PASSWORD</label>
+                <input type="password" id="deletePassword" placeholder="Enter your password">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="cancelDeleteBtn" class="btn-cancel">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn-danger">Delete Permanently</button>
+        </div>
+    </div>
   </div>
 
   <script src="../javascript/provider_profile.js"></script>

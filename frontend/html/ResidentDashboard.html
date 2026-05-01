@@ -85,19 +85,19 @@
         <section class="stats-grid">
           <div class="stat-card">
             <p class="stat-title">TOTAL BOOKINGS</p>
-            <h3>4</h3>
+            <h3 id="totalBookings">0</h3>
           </div>
           <div class="stat-card">
             <p class="stat-title">PENDING</p>
-            <h3>1</h3>
+            <h3 id="pendingBookings">0</h3>
           </div>
           <div class="stat-card">
             <p class="stat-title">COMPLETED</p>
-            <h3>2</h3>
+            <h3 id="completedBookings">0</h3>
           </div>
           <div class="stat-card">
             <p class="stat-title">AVG. RATING</p>
-            <h3 class="text-orange">5.0</h3>
+            <h3 class="text-orange" id="avgRating">0.0</h3>
           </div>
         </section>
 
@@ -110,29 +110,8 @@
               <a href="mybookings.html" class="view-all">View all &rarr;</a>
             </div>
             
-            <div class="booking-list">
-              <!-- Mockup data matching the design -->
-              <div class="list-item">
-                <div class="item-img"><img src="../assets/plumber.png" alt="Plumbing"></div>
-                <div class="item-details">
-                  <h4>Plumbing</h4>
-                  <p>Apr 19, 2026 - 11:00 AM</p>
-                </div>
-                <div class="item-status status-approved">
-                  <i class="far fa-check-circle"></i> Approved
-                </div>
-              </div>
-              
-              <div class="list-item">
-                <div class="item-img"><img src="../assets/electrical.png" alt="Electrical Repair"></div>
-                <div class="item-details">
-                  <h4>Electrical Repair</h4>
-                  <p>Apr 22, 2026 - 03:00 PM</p>
-                </div>
-                <div class="item-status status-pending">
-                  <i class="far fa-clock"></i> Pending
-                </div>
-              </div>
+            <div class="booking-list" id="upcomingBookingsList">
+              <!-- Dynamically populated by resident_dashboard.js -->
             </div>
           </div>
 

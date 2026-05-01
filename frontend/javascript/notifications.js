@@ -30,7 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'], timeout: 3000 });
         socket.on('new_notification', function (data) {
-            if (allowedAudiences.includes(data.audience)) {
+            const currentUserId = localStorage.getItem('userId') || localStorage.getItem('user_id');
+            const matchAudience = allowedAudiences.includes(data.audience);
+            const matchUser = data.user_id && currentUserId && String(data.user_id) === String(currentUserId);
+            
+            if (matchAudience || matchUser) {
                 fetchNotifications();
             }
         });
@@ -51,7 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(timeoutId);
             if (!response.ok) throw new Error('Failed to fetch');
             const allNotifs = await response.json();
-            notifs = allNotifs.filter(n => allowedAudiences.includes(n.audience));
+            const currentUserId = localStorage.getItem('userId') || localStorage.getItem('user_id');
+            
+            notifs = allNotifs.filter(n => {
+                // Show if it's for everyone/role
+                const matchAudience = allowedAudiences.includes(n.audience);
+                
+                // Show if it's specifically for this user
+                const matchUser = n.user_id && currentUserId && String(n.user_id) === String(currentUserId);
+                
+                // If a notification has a specific user_id, only show it to THAT user
+                if (n.user_id) {
+                    return matchUser;
+                }
+                
+                return matchAudience;
+            });
             // Save to localStorage for offline fallback
             localStorage.setItem('cached_notifs_' + audienceTag, JSON.stringify(notifs));
         } catch (error) {

@@ -83,10 +83,10 @@
         <div class="bookings-wrapper">
           <!-- Filter Tabs -->
           <div class="filter-tabs">
-            <button class="filter-tab active">ALL</button>
-            <button class="filter-tab">PENDING</button>
-            <button class="filter-tab">APPROVED</button>
-            <button class="filter-tab">COMPLETED</button>
+            <button class="filter-tab active" data-filter="all">ALL</button>
+            <button class="filter-tab" data-filter="pending">PENDING</button>
+            <button class="filter-tab" data-filter="approved">APPROVED</button>
+            <button class="filter-tab" data-filter="completed">COMPLETED</button>
           </div>
 
           <!-- Clear History Button -->
@@ -99,7 +99,6 @@
 
           <!-- Empty state -->
           <div id="emptyState" class="empty-state" style="display: none;">
-            <div class="empty-icon">📭</div>
             <h2>No bookings placed</h2>
             <p>You haven't booked any services yet. Start by booking a service.</p>
             <a href="servicebooking.html" class="btn-primary" style="display:inline-block; padding: 12px 24px;">Book a Service</a>

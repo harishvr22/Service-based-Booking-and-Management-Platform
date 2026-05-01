@@ -61,23 +61,23 @@
                 <!-- Stats Grid -->
                 <div class="ad-stats-grid">
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="fas fa-users text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+12%</span></div>
-                        <div class="ad-stat-val">5</div>
+                        <div class="ad-stat-top"><i class="fas fa-users text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">LIVE</span></div>
+                        <div class="ad-stat-val" id="stat-users">0</div>
                         <div class="ad-stat-label">TOTAL USERS</div>
                     </div>
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="fas fa-wrench text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+5%</span></div>
-                        <div class="ad-stat-val">3</div>
+                        <div class="ad-stat-top"><i class="fas fa-wrench text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">LIVE</span></div>
+                        <div class="ad-stat-val" id="stat-providers">0</div>
                         <div class="ad-stat-label">ACTIVE PROVIDERS</div>
                     </div>
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="far fa-calendar-check text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+8%</span></div>
-                        <div class="ad-stat-val">4</div>
+                        <div class="ad-stat-top"><i class="far fa-calendar-check text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">LIVE</span></div>
+                        <div class="ad-stat-val" id="stat-bookings">0</div>
                         <div class="ad-stat-label">ACTIVE BOOKINGS</div>
                     </div>
                     <div class="ad-stat-card">
-                        <div class="ad-stat-top"><i class="fas fa-dollar-sign text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">+18%</span></div>
-                        <div class="ad-stat-val">$200</div>
+                        <div class="ad-stat-top"><i class="fas fa-dollar-sign text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">LIVE</span></div>
+                        <div class="ad-stat-val" id="stat-revenue">$0</div>
                         <div class="ad-stat-label">REVENUE</div>
                     </div>
                 </div>
@@ -98,31 +98,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td style="font-weight: 500;">Sarah Mitchell</td>
-                                    <td style="color: #aaa;">Leak Repair</td>
-                                    <td><span class="badge-solid badge-approved">APPROVED</span></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: 500;">James Carter</td>
-                                    <td style="color: #aaa;">Deep Clean</td>
-                                    <td><span class="badge-solid badge-in-progress">IN PROGRESS</span></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: 500;">David Park</td>
-                                    <td style="color: #aaa;">Wiring Check</td>
-                                    <td><span class="badge-solid badge-completed">COMPLETED</span></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: 500;">Maria Lopez</td>
-                                    <td style="color: #aaa;">Faucet Install</td>
-                                    <td><span class="badge-solid badge-pending">PENDING</span></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: 500;">Aisha Khan</td>
-                                    <td style="color: #aaa;">Lawn Care</td>
-                                    <td><span class="badge-solid badge-cancelled">CANCELLED</span></td>
-                                </tr>
+                                <!-- Recent bookings will be dynamically populated here -->
                             </tbody>
                         </table>
                     </div>
@@ -131,36 +107,16 @@
                     <div class="ad-panel">
                         <h3 class="ad-panel-title">ACTION REQUIRED</h3>
                         <p class="ad-panel-desc">&nbsp;</p> <!-- spacer -->
-
-                        <div class="ad-action-item" style="cursor: pointer;" onclick="window.location.href='admin_providers.html'">
-                            <div class="ad-action-icon icon-orange"><i class="fas fa-wrench"></i></div>
-                            <div class="ad-action-info">
-                                <h4>Provider Approvals</h4>
-                                <p>2 awaiting review</p>
-                            </div>
+                        <div class="ad-action-list" id="actionRequiredList">
+                            <!-- Action items will be dynamically populated here -->
                         </div>
-
-                        <div class="ad-action-item" style="cursor: pointer;" onclick="window.location.href='admin_complaints.html'">
-                            <div class="ad-action-icon icon-red"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div class="ad-action-info">
-                                <h4>Open Complaints</h4>
-                                <p>2 need attention</p>
-                            </div>
-                        </div>
-
-                        <div class="ad-action-item" style="cursor: pointer;" onclick="window.location.href='admin_monitoring.html'">
-                            <div class="ad-action-icon icon-orange"><i class="far fa-clock"></i></div>
-                            <div class="ad-action-info">
-                                <h4>Pending Bookings</h4>
-                                <p>2 to approve</p>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
             </div>
         </main>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../javascript/admin_dashboard.js"></script>
 </body>
 </html>
