@@ -28,6 +28,8 @@
             background: rgba(255,140,0,0.1); color: var(--orange); border: 1px solid rgba(255,140,0,0.3);
         }
         .card-status.inactive { background: rgba(231,76,60,0.1); color: #e74c3c; border-color: rgba(231,76,60,0.3); }
+        .card-status.pending { background: rgba(241,196,15,0.1); color: #f1c40f; border-color: rgba(241,196,15,0.3); }
+        .card-status.active { background: rgba(46,204,113,0.1); color: #2ecc71; border-color: rgba(46,204,113,0.3); }
 
         /* Avatar row */
         .res-avatar-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
@@ -102,10 +104,12 @@
         }
         .d-badge {
             display: inline-block; padding: 4px 10px;
-            background: rgba(255,140,0,0.1); color: var(--orange);
             font-size: 10px; font-weight: 700; letter-spacing: 1px;
             border-radius: 4px; margin-bottom: 6px;
         }
+        .d-badge.pending { background: rgba(241,196,15,0.1); color: #f1c40f; border: 1px solid rgba(241,196,15,0.3); }
+        .d-badge.active { background: rgba(46,204,113,0.1); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
+        .d-badge.suspended { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); }
         .d-name { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 2px; }
         .d-sub { font-size: 13px; color: var(--text-muted); }
 
