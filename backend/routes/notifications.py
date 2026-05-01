@@ -19,23 +19,29 @@ def get_notifications():
 def create_notification():
     data = request.json
     cursor = db.cursor(buffered=True)
-    query = """
-    INSERT INTO notifications(title, message, audience, created_by, created_at)
-    VALUES(%s, %s, %s, %s, NOW())
-    """
-    cursor.execute(query, (
-        data["title"],
-        data["message"],
-        data["audience"],
-        int(data.get("created_by", 1))  # default to admin ID 1
-    ))
-    cursor.close()
-    db.commit()
-    
-    # Emit to all connected clients
-    socketio.emit('new_notification', data)
-    
-    return jsonify({"status": "notification_created"})
+    try:
+        query = """
+        INSERT INTO notifications(title, message, audience, user_id, created_by, created_at)
+        VALUES(%s, %s, %s, %s, %s, NOW())
+        """
+        cursor.execute(query, (
+            data["title"],
+            data["message"],
+            data["audience"],
+            data.get("user_id"),
+            int(data.get("created_by", 1))  # default to admin ID 1
+        ))
+        db.commit()
+        
+        # Emit to all connected clients
+        socketio.emit('new_notification', data)
+        
+        return jsonify({"status": "notification_created"})
+    except Exception as e:
+        print(f"Error creating notification: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        cursor.close()
 
 # Mark as read
 @notifications_bp.route("/notifications/<int:id>/read", methods=["PUT"])

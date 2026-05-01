@@ -212,3 +212,79 @@ def update_resident_status():
     db.commit()
 
     return jsonify({"status": "updated"})
+
+
+# GET ADMIN DASHBOARD DATA
+@auth_bp.route("/admin/dashboard", methods=["GET"])
+def get_admin_dashboard():
+    cursor = db.cursor(dictionary=True)
+
+    # 1. Total users (Residents only as requested)
+    cursor.execute("SELECT COUNT(*) as count FROM users WHERE role LIKE 'Resident%'")
+    total_users = cursor.fetchone()['count']
+
+    # 2. Providers (All providers)
+    cursor.execute("SELECT COUNT(*) as count FROM users WHERE role LIKE 'Provider%'")
+    active_providers = cursor.fetchone()['count']
+
+    # 3. Active bookings
+    cursor.execute("SELECT COUNT(*) as count FROM bookings WHERE status IN ('pending', 'accepted')")
+    active_bookings = cursor.fetchone()['count']
+
+    # 4. Revenue (Set to $0 since no revenue feature yet)
+    revenue = "$0"
+
+    return jsonify({
+        "stats": {
+            "total_users": total_users,
+            "active_providers": active_providers,
+            "active_bookings": active_bookings,
+            "revenue": revenue
+        }
+    })
+
+# DELETE RESIDENT
+@auth_bp.route("/resident/<int:resident_id>", methods=["DELETE"])
+def delete_resident(resident_id):
+    cursor = db.cursor(buffered=True)
+    
+    try:
+        # Delete related child records first to avoid Foreign Key constraint errors
+        cursor.execute("DELETE FROM bookings WHERE resident_id=%s OR provider_id=%s", (resident_id, resident_id))
+        cursor.execute("DELETE FROM notifications WHERE user_id=%s OR created_by=%s", (resident_id, resident_id))
+        cursor.execute("DELETE FROM complaints WHERE user_id=%s", (resident_id,))
+        cursor.execute("DELETE FROM announcements WHERE created_by=%s", (resident_id,))
+        
+        # Finally delete the user
+        cursor.execute("DELETE FROM users WHERE id=%s AND role LIKE 'Resident%'", (resident_id,))
+        
+        db.commit()
+        return jsonify({"status": "deleted"})
+    except Exception as e:
+        db.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        cursor.close()
+
+# DELETE PROVIDER
+@auth_bp.route("/provider/<int:provider_id>", methods=["DELETE"])
+def delete_provider(provider_id):
+    cursor = db.cursor(buffered=True)
+    
+    try:
+        # Delete related child records first to avoid Foreign Key constraint errors
+        cursor.execute("DELETE FROM bookings WHERE provider_id=%s", (provider_id,))
+        cursor.execute("DELETE FROM notifications WHERE user_id=%s OR created_by=%s", (provider_id, provider_id))
+        cursor.execute("DELETE FROM complaints WHERE user_id=%s", (provider_id,))
+        cursor.execute("DELETE FROM announcements WHERE created_by=%s", (provider_id,))
+        
+        # Finally delete the user
+        cursor.execute("DELETE FROM users WHERE id=%s AND role LIKE 'Provider%'", (provider_id,))
+        
+        db.commit()
+        return jsonify({"status": "deleted"})
+    except Exception as e:
+        db.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        cursor.close()
