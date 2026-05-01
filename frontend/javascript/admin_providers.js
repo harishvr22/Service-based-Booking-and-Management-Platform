@@ -38,10 +38,20 @@ document.addEventListener('DOMContentLoaded', () => {
         card.dataset.providerId = provider.id;
 
         const statusClass = provider.status === 'PENDING' ? 'pending' : '';
-        const actionButtons = provider.status === 'PENDING' ? 
-            `<button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
-             <button class="btn-reject"><i class="far fa-times-circle"></i> REJECT</button>` :
-            `<button class="btn-suspend">SUSPEND PROVIDER</button>`;
+        let actionButtons = '';
+        if (provider.status === 'PENDING') {
+            actionButtons = `
+                <button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
+                <button class="btn-reject"><i class="far fa-times-circle"></i> REJECT</button>
+            `;
+        } else if (provider.status === 'SUSPENDED' || provider.status === 'SUSPEND') {
+            actionButtons = `
+                <button class="btn-approve"><i class="far fa-check-circle"></i> APPROVE</button>
+                <button class="btn-delete"><i class="fas fa-trash"></i> DELETE</button>
+            `;
+        } else {
+            actionButtons = `<button class="btn-suspend">SUSPEND PROVIDER</button>`;
+        }
 
         card.innerHTML = `
             <div class="card-status ${statusClass}">${provider.status}</div>
@@ -136,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (messageBtn) {
-            messageBtn.onclick = () => openMessageModal(provider.name);
+            messageBtn.onclick = () => openMessageModal(provider.name, provider.id);
         }
 
         // Show overlay
@@ -205,6 +215,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 showActionConfirmation(providerId, 'reject', providerName);
             });
         });
+
+        // Delete buttons
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = e.target.closest('.provider-card');
+                const providerId = card.dataset.providerId;
+                const providerName = card.querySelector('.provider-name').textContent;
+                showActionConfirmation(providerId, 'delete', providerName);
+            });
+        });
     }
 
     // Setup modal controls
@@ -227,10 +248,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Open message modal
-    function openMessageModal(providerName) {
+    let currentMessageTargetId = null;
+
+    function openMessageModal(providerName, providerId) {
         document.getElementById('msgTargetName').textContent = providerName;
         document.getElementById('msgSubject').value = '';
         document.getElementById('msgContent').value = '';
+        currentMessageTargetId = providerId;
         openModal(messageModal);
     }
 
@@ -267,6 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmBtn.textContent = 'REJECT';
             confirmBtn.style.background = '#e74c3c';
             confirmBtn.style.color = '#fff';
+        } else if (action === 'delete') {
+            icon.innerHTML = '<i class="fas fa-trash" style="color: #e74c3c;"></i>';
+            icon.style.background = 'rgba(231, 76, 60, 0.1)';
+            icon.style.border = '1px solid rgba(231, 76, 60, 0.3)';
+            title.textContent = 'Delete Provider';
+            confirmBtn.textContent = 'DELETE';
+            confirmBtn.style.background = '#e74c3c';
+            confirmBtn.style.color = '#fff';
         }
 
         targetName.textContent = providerName;
@@ -282,6 +314,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const providerId = e.target.dataset.providerId;
         
         try {
+            if (action === 'delete') {
+                const response = await fetch(`${API_BASE_URL}/provider/${providerId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('Failed to delete provider');
+                closeModal(actionConfirmModal);
+                showNotification(`Provider deleted successfully!`, 'success');
+                setTimeout(() => { loadProviders(); }, 1000);
+                return;
+            }
+
             const response = await fetch(`${API_BASE_URL}/update-provider-status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -306,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Send message
-    function sendMessage() {
+    async function sendMessage() {
         const subject = document.getElementById('msgSubject').value;
         const content = document.getElementById('msgContent').value;
         
@@ -315,11 +358,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Here you would make API call to send message
-        console.log('Sending message:', { subject, content });
-        
-        closeModal(messageModal);
-        showNotification('Message sent successfully!', 'success');
+        try {
+            const response = await fetch(`${API_BASE_URL}/notifications`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: subject,
+                    message: content,
+                    audience: 'Providers',
+                    user_id: currentMessageTargetId
+                })
+            });
+
+            if (response.ok) {
+                closeModal(messageModal);
+                showNotification('Message sent successfully!', 'success');
+            } else {
+                showNotification('Failed to send message', 'error');
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            showNotification('Error sending message', 'error');
+        }
     }
 
     // Modal helper functions

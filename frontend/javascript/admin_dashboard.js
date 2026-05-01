@@ -50,10 +50,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     
     // Update stats display
     function updateStatsDisplay(users, providers, bookings, revenue) {
-        const userStat = document.querySelector('#stat-users .ad-stat-val');
-        const providerStat = document.querySelector('#stat-providers .ad-stat-val');
-        const bookingStat = document.querySelector('#stat-bookings .ad-stat-val');
-        const revenueStat = document.querySelector('#stat-revenue .ad-stat-val');
+        const userStat = document.getElementById('stat-users');
+        const providerStat = document.getElementById('stat-providers');
+        const bookingStat = document.getElementById('stat-bookings');
+        const revenueStat = document.getElementById('stat-revenue');
         
         if (userStat) userStat.textContent = users || '0';
         if (providerStat) providerStat.textContent = providers || '0';
@@ -302,119 +302,128 @@ document.addEventListener('DOMContentLoaded', async function () {
     };
 
     // 1. Booking Trends (Bar Chart)
-    const bookingCtx = document.getElementById('bookingTrendsChart').getContext('2d');
-    new Chart(bookingCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
-            datasets: [{
-                label: 'Bookings',
-                data: [32, 45, 38, 52, 60, 48],
-                backgroundColor: '#E85A2D',
-                borderRadius: 4,
-                barThickness: 25
-            }]
-        },
-        options: {
-            ...commonOptions,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: '#333',
-                    titleFont: { family: 'Inter' },
-                    bodyFont: { family: 'Inter' }
+    const bookingCanvas = document.getElementById('bookingTrendsChart');
+    if (bookingCanvas) {
+        const bookingCtx = bookingCanvas.getContext('2d');
+        new Chart(bookingCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+                datasets: [{
+                    label: 'Bookings',
+                    data: [32, 45, 38, 52, 60, 48],
+                    backgroundColor: '#E85A2D',
+                    borderRadius: 4,
+                    barThickness: 25
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: '#333',
+                        titleFont: { family: 'Inter' },
+                        bodyFont: { family: 'Inter' }
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
     // 2. Service Breakdown (Donut Chart)
-    const serviceCtx = document.getElementById('serviceBreakdownChart').getContext('2d');
-    const serviceChart = new Chart(serviceCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Plumbing', 'Electrical', 'Cleaning', 'Carpentry'],
-            datasets: [{
-                data: [35, 25, 22, 18],
-                backgroundColor: [
-                    '#E85A2D', // Plumbing - Orange/Red
-                    '#3498db', // Electrical - Blue
-                    '#2ecc71', // Cleaning - Green
-                    '#f1c40f'  // Carpentry - Yellow
-                ],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    labels: {
-                        usePointStyle: true,
-                        boxWidth: 8,
-                        font: {
-                            family: 'Inter',
-                            size: 12
-                        },
-                        padding: 20
-                    }
-                }
-            }
-        }
-    });
-
-    // 3. Revenue Trend (Line Chart)
-    const revenueCtx = document.getElementById('revenueTrendChart').getContext('2d');
-
-    // Create gradient
-    let gradient = revenueCtx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(232, 90, 45, 0.2)');
-    gradient.addColorStop(1, 'rgba(232, 90, 45, 0)');
-
-    new Chart(revenueCtx, {
-        type: 'line',
-        data: {
-            labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
-            datasets: [{
-                label: 'Revenue',
-                data: [25000, 31000, 29000, 40000, 48000, 38000],
-                borderColor: '#E85A2D',
-                backgroundColor: gradient,
-                borderWidth: 2,
-                tension: 0.4, // Smooth curve
-                fill: true,
-                pointRadius: 0,
-                pointHoverRadius: 6
-            }]
-        },
-        options: {
-            ...commonOptions,
-            scales: {
-                y: {
-                    ...commonOptions.scales.y,
-                    ticks: {
-                        callback: function (value) {
-                            return '₹' + value / 1000 + 'k';
+    const serviceCanvas = document.getElementById('serviceBreakdownChart');
+    if (serviceCanvas) {
+        const serviceCtx = serviceCanvas.getContext('2d');
+        const serviceChart = new Chart(serviceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Plumbing', 'Electrical', 'Cleaning', 'Carpentry'],
+                datasets: [{
+                    data: [35, 25, 22, 18],
+                    backgroundColor: [
+                        '#E85A2D', // Plumbing - Orange/Red
+                        '#3498db', // Electrical - Blue
+                        '#2ecc71', // Cleaning - Green
+                        '#f1c40f'  // Carpentry - Yellow
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            font: {
+                                family: 'Inter',
+                                size: 12
+                            },
+                            padding: 20
                         }
                     }
-                },
-                x: {
-                    ...commonOptions.scales.x,
-                    grid: {
-                        display: true,
-                        borderDash: [5, 5],
-                        color: '#f0f0f0'
+                }
+            }
+        });
+    }
+
+    // 3. Revenue Trend (Line Chart)
+    const revenueCanvas = document.getElementById('revenueTrendChart');
+    if (revenueCanvas) {
+        const revenueCtx = revenueCanvas.getContext('2d');
+
+        // Create gradient
+        let gradient = revenueCtx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(232, 90, 45, 0.2)');
+        gradient.addColorStop(1, 'rgba(232, 90, 45, 0)');
+
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [25000, 31000, 29000, 40000, 48000, 38000],
+                    borderColor: '#E85A2D',
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    tension: 0.4, // Smooth curve
+                    fill: true,
+                    pointRadius: 0,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        ...commonOptions.scales.y,
+                        ticks: {
+                            callback: function (value) {
+                                return '₹' + value / 1000 + 'k';
+                            }
+                        }
+                    },
+                    x: {
+                        ...commonOptions.scales.x,
+                        grid: {
+                            display: true,
+                            borderDash: [5, 5],
+                            color: '#f0f0f0'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
     // Load dashboard data on initialization
     loadDashboardData();

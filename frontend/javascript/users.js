@@ -35,6 +35,30 @@ document.addEventListener('DOMContentLoaded', function () {
             const statusClass = res.status.toLowerCase();
             const avatarClass = res.status === 'suspended' ? 'res-avatar inactive-av' : 'res-avatar';
 
+            let cardActions = '';
+            if (res.status === 'pending') {
+                cardActions = `
+                    <div class="card-actions" style="display: flex; gap: 8px;">
+                        <button class="btn-approve" data-id="${res.id}" style="flex: 1; background: var(--orange, #ff8c00); color: black; border: none; padding: 10px; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.2s;"><i class="fas fa-check"></i> APPROVE</button>
+                        <button class="btn-reject" data-id="${res.id}" style="flex: 1; background: transparent; border: 1px solid #e74c3c; color: #e74c3c; padding: 10px; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.2s;"><i class="fas fa-times"></i> REJECT</button>
+                    </div>
+                `;
+            } else if (res.status === 'suspended') {
+                cardActions = `
+                    <div class="card-actions" style="display: flex; gap: 8px;">
+                        <button class="btn-approve" data-id="${res.id}" style="flex: 1; background: var(--orange, #ff8c00); color: black; border: none; padding: 10px; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.2s;"><i class="fas fa-check"></i> APPROVE</button>
+                        <button class="btn-delete" data-id="${res.id}" data-name="${res.name}" style="flex: 1; background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.2s;"><i class="fas fa-trash"></i> DELETE</button>
+                    </div>
+                `;
+            } else {
+                cardActions = `
+                    <div class="card-actions">
+                        <button class="btn-msg" data-id="${res.id}" data-name="${res.name}"><i class="far fa-envelope"></i> MESSAGE</button>
+                        <button class="btn-rem">VIEW DETAILS</button>
+                    </div>
+                `;
+            }
+
             card.innerHTML = `
                 <div class="card-status ${statusClass}">${res.status.toUpperCase()}</div>
                 <div class="res-avatar-row">
@@ -50,13 +74,36 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span>Bookings: <b>${res.total_bookings || 0}</b></span>
                 </div>
                 
-                <div class="card-actions">
-                    <button class="btn-msg"><i class="far fa-envelope"></i> MESSAGE</button>
-                    <button class="btn-rem">VIEW DETAILS</button>
-                </div>
+                ${cardActions}
             `;
             
-            card.addEventListener('click', () => openDetailPanel(res.id));
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-msg')) {
+                    e.stopPropagation();
+                    const btn = e.target.closest('.btn-msg');
+                    openMessageModal(btn.dataset.name, btn.dataset.id);
+                    return;
+                }
+                if (e.target.closest('.btn-approve')) {
+                    e.stopPropagation();
+                    const btn = e.target.closest('.btn-approve');
+                    updateStatus(btn.dataset.id, 'approved');
+                    return;
+                }
+                if (e.target.closest('.btn-reject')) {
+                    e.stopPropagation();
+                    const btn = e.target.closest('.btn-reject');
+                    updateStatus(btn.dataset.id, 'rejected');
+                    return;
+                }
+                if (e.target.closest('.btn-delete')) {
+                    e.stopPropagation();
+                    const btn = e.target.closest('.btn-delete');
+                    openRemoveModal(btn.dataset.name, btn.dataset.id);
+                    return;
+                }
+                openDetailPanel(res.id);
+            });
             residentsGrid.appendChild(card);
         });
     }
@@ -111,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
         msgBtn.className = 'd-btn-msg';
         msgBtn.style.flex = "1";
         msgBtn.innerHTML = '<i class="far fa-envelope"></i> MESSAGE';
-        msgBtn.onclick = () => openMessageModal(res.name);
+        msgBtn.onclick = () => openMessageModal(res.name, res.id);
         footer.appendChild(msgBtn);
 
         wrap.classList.add('open');
@@ -130,6 +177,23 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (error) {
             console.error('Error updating status:', error);
+        }
+    }
+
+    async function deleteResident(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/resident/${id}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                showCustomToast('Resident deleted successfully!', 'success');
+                loadResidents();
+            } else {
+                showCustomToast('Failed to delete resident.', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting resident:', error);
+            showCustomToast('Error deleting resident.', 'error');
         }
     }
 
@@ -152,10 +216,130 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modal Logic (Message)
     const msgModal = document.getElementById('messageModal');
-    function openMessageModal(name) {
+    let currentMessageTargetId = null;
+
+    function openMessageModal(name, id) {
         document.getElementById('msgTargetName').textContent = name;
+        currentMessageTargetId = id;
+        document.getElementById('msgSubject').value = '';
+        document.getElementById('msgContent').value = '';
         msgModal.classList.add('open');
     }
+
     document.getElementById('closeMsgModal').onclick = () => msgModal.classList.remove('open');
     document.getElementById('cancelMsgBtn').onclick = () => msgModal.classList.remove('open');
+
+    document.getElementById('sendMsgBtn').onclick = async () => {
+        const title = document.getElementById('msgSubject').value.trim();
+        const message = document.getElementById('msgContent').value.trim();
+
+        if (!title || !message) {
+            showCustomToast('Please enter both subject and message.', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/notifications`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: title,
+                    message: message,
+                    audience: 'Residents',
+                    user_id: currentMessageTargetId
+                })
+            });
+
+            if (response.ok) {
+                msgModal.classList.remove('open');
+                showCustomToast('Notification sent successfully!', 'success');
+            } else {
+                showCustomToast('Failed to send notification.', 'error');
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            showCustomToast('Error sending notification.', 'error');
+        }
+    };
+
+    // Modal Logic (Remove Resident)
+    const remModal = document.getElementById('removeConfirmModal');
+    let currentRemoveTargetId = null;
+
+    function openRemoveModal(name, id) {
+        const nameEl = document.getElementById('removeTargetName');
+        if(nameEl) nameEl.textContent = name;
+        currentRemoveTargetId = id;
+        if(remModal) remModal.classList.add('open');
+    }
+
+    const cancelRemBtn = document.getElementById('cancelRemBtn');
+    if(cancelRemBtn) {
+        cancelRemBtn.onclick = () => remModal.classList.remove('open');
+    }
+
+    const confirmRemBtn = document.getElementById('confirmRemBtn');
+    if(confirmRemBtn) {
+        confirmRemBtn.onclick = () => {
+            remModal.classList.remove('open');
+            if (currentRemoveTargetId) {
+                deleteResident(currentRemoveTargetId);
+            }
+        };
+    }
 });
+
+function showCustomToast(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    const isError = type === 'error';
+    const mainColor = isError ? '#e74c3c' : '#ff8c00'; // Red for error, Orange for success
+    
+    toast.style.cssText = `
+        background: #1c1c1c;
+        border: 1px solid ${mainColor};
+        border-left: 4px solid ${mainColor};
+        color: #fff;
+        padding: 15px 20px;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        min-width: 250px;
+        transform: translateX(120%);
+        transition: transform 0.3s ease-out;
+    `;
+
+    const icon = document.createElement('i');
+    icon.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+    icon.style.color = mainColor;
+    icon.style.fontSize = '18px';
+
+    const text = document.createElement('span');
+    text.textContent = message;
+
+    toast.appendChild(icon);
+    toast.appendChild(text);
+    container.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 10);
+
+    // Animate out and remove
+    setTimeout(() => {
+        toast.style.transform = 'translateX(120%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
