@@ -15,7 +15,8 @@
   font-size: 14px;
 }
 
-.mark-read-btn {
+.mark-read-btn,
+.clear-notif-btn {
   background: none;
   border: none;
   color: var(--orange);
@@ -25,8 +26,12 @@
   transition: opacity 0.2s;
   padding-top: 10px;
 }
-.mark-read-btn:hover {
+.mark-read-btn:hover,
+.clear-notif-btn:hover {
   opacity: 0.8;
+}
+.clear-notif-btn {
+  color: #e74c3c;
 }
 
 .notifications-wrapper {

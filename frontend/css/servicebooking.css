@@ -29,10 +29,10 @@ body.dark-theme {
   height: 100vh;
 }
 
-/* Sidebar Styles - Same as Resident.css */
+/* Sidebar Styles - Sync with Resident.css */
 .sidebar {
   width: 250px;
-  background-color: var(--bg-sidebar);
+  background-color: #121212;
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -45,8 +45,7 @@ body.dark-theme {
 }
 
 .brand {
-  padding: 10px 24px;
-  margin-bottom: 30px;
+  padding: 0 24px 30px;
 }
 
 .brand h2 {
@@ -64,10 +63,9 @@ body.dark-theme {
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
   letter-spacing: 1px;
   padding: 0 24px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .sidebar-nav ul {
@@ -82,53 +80,59 @@ body.dark-theme {
   display: flex;
   align-items: center;
   padding: 12px 24px;
-  color: var(--text-muted);
+  color: #c9c9c9;
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 14px;
   font-weight: 500;
+  gap: 12px;
 }
 
 .sidebar-nav a:hover {
-  background-color: var(--highlight);
-  color: var(--text-main);
+  background-color: #1a1a1a;
+  color: #fff;
 }
 
-.sidebar-nav a.active {
-  background-color: var(--orange);
-  color: var(--text-main);
+.sidebar-nav li.active a {
+  background-color: #1a1a1a;
+  color: var(--orange);
+  border-left: 3px solid var(--orange);
+  padding-left: 21px; /* adjust for border */
 }
 
 .sidebar-nav i {
-  width: 20px;
-  margin-right: 12px;
   font-size: 16px;
+  width: 20px;
+  text-align: center;
+  color: #888;
+}
+
+.sidebar-nav li.active a i {
+  color: var(--orange);
 }
 
 .logout-section {
-  padding: 0 24px;
-  margin-top: auto;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border-color);
 }
 
 .logout-btn {
   display: flex;
   align-items: center;
-  padding: 12px;
+  gap: 12px;
   color: var(--text-muted);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s;
   font-size: 14px;
   font-weight: 500;
 }
 
 .logout-btn:hover {
-  background-color: var(--highlight);
   color: var(--text-main);
 }
 
 .logout-btn i {
   width: 20px;
-  margin-right: 12px;
   font-size: 16px;
 }
 
@@ -140,11 +144,11 @@ body.dark-theme {
   flex-direction: column;
 }
 
-/* Top Navigation - Same as Resident.css */
+/* Top Navigation - Sync with Resident.css */
 .top-nav {
-  background-color: var(--bg-card);
+  background-color: var(--bg-dark);
   border-bottom: 1px solid var(--border-color);
-  padding: 16px 32px;
+  padding: 20px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -153,34 +157,44 @@ body.dark-theme {
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   color: var(--text-main);
-  font-size: 18px;
   font-weight: 600;
+  font-size: 15px;
 }
 
 .nav-left i {
-  color: var(--orange);
+  color: var(--text-muted);
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 .nav-icon-btn {
-  color: var(--text-muted);
+  background: none;
+  border: none;
+  color: #fff;
   font-size: 18px;
+  cursor: pointer;
+  position: relative;
   text-decoration: none;
-  padding: 8px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
 }
 
 .nav-icon-btn:hover {
-  background-color: var(--highlight);
-  color: var(--text-main);
+  color: var(--orange);
+}
+
+.badge {
+  background-color: var(--orange);
+  color: #000;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: auto;
+  font-weight: 700;
 }
 
 .user-profile {
@@ -190,16 +204,16 @@ body.dark-theme {
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
   background-color: var(--orange);
-  color: white;
+  color: #000;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 16px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 .user-details {
@@ -208,13 +222,13 @@ body.dark-theme {
 }
 
 .user-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text-main);
+  color: #fff;
 }
 
 .user-role {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
