@@ -8,6 +8,7 @@ from routes.bookings import booking_bp
 from routes.notifications import notifications_bp
 from routes.admins import admins_bp
 from routes.users import users_bp
+from routes.complaints import complaints_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -28,6 +29,7 @@ app.register_blueprint(booking_bp)
 app.register_blueprint(notifications_bp)
 app.register_blueprint(admins_bp)
 app.register_blueprint(users_bp)
+app.register_blueprint(complaints_bp)
 
 @app.route("/")
 def home():

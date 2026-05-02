@@ -234,12 +234,31 @@ def get_admin_dashboard():
     # 4. Revenue (Set to $0 since no revenue feature yet)
     revenue = "$0"
 
+    # 5. Action Required counts
+    cursor.execute("SELECT COUNT(*) as count FROM users WHERE role LIKE 'Resident%' AND status = 'pending'")
+    pending_residents = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COUNT(*) as count FROM users WHERE role LIKE 'Provider%' AND status = 'pending'")
+    pending_providers = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COUNT(*) as count FROM complaints WHERE status = 'open'")
+    open_complaints = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COUNT(*) as count FROM bookings WHERE status = 'pending'")
+    pending_bookings = cursor.fetchone()['count']
+
     return jsonify({
         "stats": {
             "total_users": total_users,
             "active_providers": active_providers,
             "active_bookings": active_bookings,
             "revenue": revenue
+        },
+        "action_required": {
+            "resident_approvals": pending_residents,
+            "provider_approvals": pending_providers,
+            "open_complaints": open_complaints,
+            "pending_bookings": pending_bookings
         }
     })
 
