@@ -27,16 +27,26 @@ async function fetchRequests() {
         if (!Array.isArray(data)) {
             activeRequests = [];
         } else {
-            activeRequests = data.map(req => ({
-                id: req.id.toString(),
-                title: req.service_name || 'Service Request',
-                status: req.status,
-                name: `Resident #${req.resident_id}`,
-                contact: req.mobile_number || 'N/A',
-                block: req.apartment_id || 'N/A',
-                problem: req.problem_description || 'No description provided',
-                date: req.preferred_date || 'N/A'
-            }));
+            activeRequests = data.map(req => {
+                let flatDisplay = req.apartment_id || 'N/A';
+                let blockDisplay = 'N/A';
+                if (flatDisplay.includes('|')) {
+                    const parts = flatDisplay.split('|');
+                    blockDisplay = parts[0] + ' Block';
+                    flatDisplay = parts[1];
+                }
+
+                return {
+                    id: req.id.toString(),
+                    title: req.service_name || 'Service Request',
+                    status: req.status,
+                    name: `Resident #${req.resident_id}`,
+                    contact: req.mobile_number || 'N/A',
+                    block: `${blockDisplay} - Flat ${flatDisplay}`,
+                    problem: req.problem_description || 'No description provided',
+                    date: req.preferred_date || 'N/A'
+                };
+            });
         }
         renderCards(activeRequests);
     } catch (error) {

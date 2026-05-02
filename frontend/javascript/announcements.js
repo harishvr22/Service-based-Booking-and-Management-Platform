@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const announcementList = document.getElementById('announcementList');
     
     let selectedAudience = 'All';
+    let announcementToDelete = null;
+
+    // Modal elements
+    const deleteModal = document.getElementById('deleteConfirmModal');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
     // Initial load
     fetchAnnouncements();
@@ -183,35 +189,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Global delete function
-    window.deleteAnnouncement = async function(btn, id) {
-        if (!confirm('Are you sure you want to delete this announcement?')) return;
-
-        const item = btn.closest('.announcement-item');
-        
-        try {
-            const response = await fetch(`${API_BASE}/notifications/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                item.style.opacity = '0';
-                item.style.transform = 'translateY(-20px)';
-                item.style.transition = 'all 0.3s ease';
-                setTimeout(() => {
-                    item.remove();
-                    showToast('Announcement removed from server.', 'info');
-                }, 300);
-            } else {
-                throw new Error('Delete failed');
-            }
-        } catch (error) {
-            console.error('Delete error:', error);
-            // Fallback for localStorage items or failed server delete
-            item.remove();
-            removeFromLocalStorage(id);
-            showToast('Announcement removed locally.', 'info');
-        }
+    window.deleteAnnouncement = function(btn, id) {
+        announcementToDelete = { btn, id };
+        deleteModal.classList.add('open');
     };
+
+    // Modal event listeners
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.remove('open');
+            announcementToDelete = null;
+        });
+    }
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (!announcementToDelete) return;
+            
+            const { btn, id } = announcementToDelete;
+            const item = btn.closest('.announcement-item');
+            
+            confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DELETING...';
+            confirmDeleteBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/notifications/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(-20px)';
+                    item.style.transition = 'all 0.3s ease';
+                    setTimeout(() => {
+                        item.remove();
+                        showToast('Announcement removed from server.', 'info');
+                    }, 300);
+                } else {
+                    throw new Error('Delete failed');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                item.remove();
+                removeFromLocalStorage(id);
+                showToast('Announcement removed locally.', 'info');
+            } finally {
+                deleteModal.classList.remove('open');
+                confirmDeleteBtn.innerHTML = 'YES, DELETE';
+                confirmDeleteBtn.disabled = false;
+                announcementToDelete = null;
+            }
+        });
+    }
 
     function removeFromLocalStorage(id) {
         let adminNotifs = JSON.parse(localStorage.getItem('admin_sent_announcements') || '[]');
