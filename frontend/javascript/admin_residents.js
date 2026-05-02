@@ -65,8 +65,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const avatarClass = isActive ? 'res-avatar' : 'res-avatar inactive-av';
 
         const initials = resident.name ? resident.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'NA';
-        const apartment = resident.apartment_id || 'N/A';
-        const block = apartment !== 'N/A' ? apartment.split('-')[0] + ' Block' : 'N/A';
+        const apartmentRaw = resident.apartment_id || 'N/A';
+        let flatNumber = apartmentRaw;
+        let blockName = 'N/A';
+        
+        if (apartmentRaw.includes('|')) {
+            const parts = apartmentRaw.split('|');
+            blockName = parts[0] + ' Block';
+            flatNumber = parts[1];
+        } else if (apartmentRaw !== 'N/A') {
+            blockName = apartmentRaw.split('-')[0] + ' Block';
+        }
+
         const moveInDate = resident.move_in_date || 'N/A';
         const bookingCount = resident.booking_count || 0;
 
@@ -76,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="${avatarClass}">${initials}</div>
                 <div>
                     <div class="res-name">${resident.name || 'N/A'}</div>
-                    <div class="res-flat">Flat ${apartment} &middot; ${block}</div>
+                    <div class="res-flat">Flat ${flatNumber} &middot; ${blockName}</div>
                 </div>
             </div>
             <p class="res-email"><i class="far fa-envelope"></i> ${resident.email || 'N/A'}</p>

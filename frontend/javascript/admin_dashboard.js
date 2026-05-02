@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
             
             const data = await response.json();
+            console.log('Dashboard Data Received:', data);
             
             // Update stats
             if (data.stats) {
@@ -86,47 +87,84 @@ document.addEventListener('DOMContentLoaded', async function () {
     
     // Update action required panel
     function updateActionPanel(actions) {
-        const panel = document.querySelector('.ad-panel:last-child .ad-action-item');
-        if (!panel) return;
+        const actionList = document.getElementById('actionRequiredList');
+        if (!actionList) return;
         
-        if (actions.provider_approvals) {
-            panel.innerHTML = `
-                <div class="ad-action-icon icon-orange"><i class="fas fa-wrench"></i></div>
-                <div class="ad-action-info">
-                    <h4>Provider Approvals</h4>
-                    <p>${actions.provider_approvals} awaiting review</p>
-                </div>
-            `;
-            panel.onclick = () => window.location.href = 'admin_providers.html';
+        actionList.innerHTML = '';
+        
+        let hasActions = false;
+
+        // 1. Resident Approvals
+        if (actions.resident_approvals > 0) {
+            hasActions = true;
+            const item = createActionItem(
+                'icon-orange', 
+                'fas fa-users', 
+                'Resident Approvals', 
+                `${actions.resident_approvals} new residents`,
+                'users.html'
+            );
+            actionList.appendChild(item);
+        }
+
+        // 2. Provider Approvals
+        if (actions.provider_approvals > 0) {
+            hasActions = true;
+            const item = createActionItem(
+                'icon-orange', 
+                'fas fa-wrench', 
+                'Provider Approvals', 
+                `${actions.provider_approvals} awaiting review`,
+                'admin_providers.html'
+            );
+            actionList.appendChild(item);
         }
         
-        if (actions.open_complaints) {
-            const complaintsPanel = panel.nextElementSibling;
-            if (complaintsPanel) {
-                complaintsPanel.innerHTML = `
-                    <div class="ad-action-icon icon-red"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="ad-action-info">
-                        <h4>Open Complaints</h4>
-                        <p>${actions.open_complaints} need attention</p>
-                    </div>
-                `;
-                complaintsPanel.onclick = () => window.location.href = 'admin_complaints.html';
-            }
+        // 3. Open Complaints
+        if (actions.open_complaints > 0) {
+            hasActions = true;
+            const item = createActionItem(
+                'icon-red', 
+                'fas fa-exclamation-triangle', 
+                'Open Complaints', 
+                `${actions.open_complaints} need attention`,
+                'admin_complaints.html'
+            );
+            actionList.appendChild(item);
         }
         
-        if (actions.pending_bookings) {
-            const bookingsPanel = panel.nextElementSibling;
-            if (bookingsPanel) {
-                bookingsPanel.innerHTML = `
-                    <div class="ad-action-icon icon-orange"><i class="far fa-clock"></i></div>
-                    <div class="ad-action-info">
-                        <h4>Pending Bookings</h4>
-                        <p>${actions.pending_bookings} to approve</p>
-                    </div>
-                `;
-                bookingsPanel.onclick = () => window.location.href = 'admin_monitoring.html';
-            }
+        // 4. Pending Bookings
+        if (actions.pending_bookings > 0) {
+            hasActions = true;
+            const item = createActionItem(
+                'icon-orange', 
+                'far fa-clock', 
+                'Pending Bookings', 
+                `${actions.pending_bookings} to approve`,
+                'admin_monitoring.html'
+            );
+            actionList.appendChild(item);
         }
+
+        if (!hasActions) {
+            actionList.innerHTML = '<p style="color: #666; font-size: 13px; text-align: center; padding: 20px;">No actions required at this time.</p>';
+        }
+    }
+
+    function createActionItem(iconClass, iconIcon, title, desc, link) {
+        const div = document.createElement('div');
+        div.className = 'ad-action-item';
+        div.style.cursor = 'pointer';
+        div.onclick = () => window.location.href = link;
+        
+        div.innerHTML = `
+            <div class="ad-action-icon ${iconClass}"><i class="${iconIcon}"></i></div>
+            <div class="ad-action-info">
+                <h4>${title}</h4>
+                <p>${desc}</p>
+            </div>
+        `;
+        return div;
     }
     
     // Update charts with real data
@@ -427,4 +465,17 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Load dashboard data on initialization
     loadDashboardData();
+
+    // Socket.io for real-time updates
+    const socket = io('http://localhost:5000');
+    
+    socket.on('connect', () => {
+        console.log('Connected to real-time server');
+    });
+
+    socket.on('new_complaint', (data) => {
+        console.log('New complaint received:', data);
+        // Refresh dashboard data to update Action Required section
+        loadDashboardData();
+    });
 });

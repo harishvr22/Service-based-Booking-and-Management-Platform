@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ServiceBook – Support & Complaints</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/Resident.css" />
+  <style>
+    .support-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 20px;
+    }
+    .complaint-form-card, .complaint-list-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      color: white;
+      outline: none;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: none;
+    }
+    .complaint-item {
+      padding: 15px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .complaint-item:last-child {
+      border-bottom: none;
+    }
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-open { background: rgba(255, 140, 0, 0.1); color: var(--orange); border: 1px solid var(--orange); }
+    .status-resolved { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; }
+    .status-closed { background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid #444; }
+  </style>
+</head>
+
+<body class="dark-theme">
+
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h2 style="color: var(--orange);">ServiceBook</h2>
+        <p style="font-size: 10px; letter-spacing: 2px; color: #a0a0a0; margin-top: -5px; font-weight: 600;">RESIDENT PORTAL</p>
+      </div>
+      <div class="menu-section">
+        <p class="menu-title">MENU</p>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="ResidentDashboard.html"><i class="fas fa-th-large"></i> Overview</a>
+            </li>
+            <li>
+              <a href="servicebooking.html"><i class="fas fa-wrench"></i> Services</a>
+            </li>
+            <li>
+              <a href="mybookings.html"><i class="far fa-calendar-alt"></i> Bookings</a>
+            </li>
+            <li>
+              <a href="notifications.html"><i class="far fa-bell"></i> Notifications</a>
+            </li>
+            <li class="active">
+              <a href="resident_support.html"><i class="fas fa-headset"></i> Support</a>
+            </li>
+            <li>
+              <a href="ResidentProfile.html"><i class="far fa-user"></i> Profile</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="logout-section">
+        <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Navbar -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <i class="fas fa-headset" style="color: #888;"></i>
+          <span><span style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px;">RESIDENT</span> &nbsp;/&nbsp; Support & Help</span>
+        </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+          <div class="user-profile">
+            <div class="avatar" style="background: var(--orange); color: black; font-weight: bold; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;">A</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Body -->
+      <div class="dashboard-body">
+        <section class="welcome-section">
+          <h1>Support <span style="color: var(--orange);">Center</span>.</h1>
+          <p class="welcome-desc">How can we help you today? Raise a ticket or track your existing complaints.</p>
+        </section>
+
+        <div class="support-container">
+          <!-- New Complaint Form -->
+          <div class="complaint-form-card">
+            <h3 style="margin-bottom: 25px;">New Support Ticket</h3>
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" id="complaintTitle" placeholder="Briefly describe the issue">
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <select id="complaintPriority">
+                <option value="low">Low - General Question</option>
+                <option value="medium" selected>Medium - Normal Issue</option>
+                <option value="high">High - Urgent</option>
+                <option value="critical">Critical - Emergency</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Detailed Description</label>
+              <textarea id="complaintDesc" rows="6" placeholder="Explain the problem in detail..."></textarea>
+            </div>
+            <button onclick="submitComplaint()" class="btn-primary" id="submitBtn" style="width: 100%; padding: 15px;">SUBMIT TICKET &rarr;</button>
+          </div>
+
+          <!-- Past Complaints List -->
+          <div class="complaint-list-card">
+            <h3 style="margin-bottom: 25px;">Your Recent Tickets</h3>
+            <div id="complaintList">
+              <p style="color: #888; text-align: center; padding: 40px;">Loading your tickets...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../javascript/resident_support.js"></script>
+</body>
+</html>

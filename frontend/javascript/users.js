@@ -59,13 +59,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
             }
 
+            let flatDisplay = res.apartment_id || 'N/A';
+            let blockDisplay = 'N/A';
+            if (flatDisplay.includes('|')) {
+                const parts = flatDisplay.split('|');
+                blockDisplay = parts[0] + ' Block';
+                flatDisplay = parts[1];
+            }
+
             card.innerHTML = `
                 <div class="card-status ${statusClass}">${res.status.toUpperCase()}</div>
                 <div class="res-avatar-row">
                     <div class="${avatarClass}">${initials}</div>
                     <div>
                         <div class="res-name">${res.name}</div>
-                        <div class="res-flat">FLAT ${res.apartment_id || 'N/A'}</div>
+                        <div class="res-flat">Flat ${flatDisplay} &middot; ${blockDisplay}</div>
                     </div>
                 </div>
                 <div class="res-email"><i class="far fa-envelope"></i> ${res.email}</div>
@@ -112,11 +120,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const res = residentsData[id];
         if (!res) return;
 
+        let flatDisplay = res.apartment_id || 'N/A';
+        let blockDisplay = 'N/A';
+        if (flatDisplay.includes('|')) {
+            const parts = flatDisplay.split('|');
+            blockDisplay = parts[0] + ' Block';
+            flatDisplay = parts[1];
+        }
+
         const initials = res.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
         document.getElementById('dAvatar').textContent = initials;
         document.getElementById('dName').textContent = res.name;
-        document.getElementById('dSub').textContent = 'Resident \u00b7 Flat ' + (res.apartment_id || 'N/A');
-        document.getElementById('dRoom').textContent = res.apartment_id || 'N/A';
+        document.getElementById('dSub').textContent = 'Resident \u00b7 Flat ' + flatDisplay;
+        document.getElementById('dRoom').textContent = flatDisplay;
+        document.getElementById('dBlock').textContent = blockDisplay;
         document.getElementById('dEmail').textContent = res.email;
         document.getElementById('dPhone').textContent = res.phone || 'N/A';
         document.getElementById('dBookings').textContent = res.total_bookings || 0;

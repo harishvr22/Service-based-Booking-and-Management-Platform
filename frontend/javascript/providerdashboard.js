@@ -168,9 +168,76 @@ const logoutBtn = document.querySelector('.logout-btn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        if (confirm('Are you sure you want to logout?')) {
-            localStorage.clear();
-            window.location.href = 'landingpage.html';
         }
     });
 }
+
+// Modal Functions
+window.openRaiseModal = function() {
+  const modal = document.getElementById('raiseModal');
+  document.getElementById('complaintTitle').value = '';
+  document.getElementById('complaintDesc').value = '';
+  modal.style.display = 'flex';
+};
+
+window.closeRaiseModal = function() {
+  document.getElementById('raiseModal').style.display = 'none';
+};
+
+window.submitComplaint = function() {
+  const userId = localStorage.getItem('userId');
+  const title = document.getElementById('complaintTitle').value.trim();
+  const description = document.getElementById('complaintDesc').value.trim();
+  const priority = document.getElementById('complaintPriority').value;
+  
+  if (!userId) {
+    alert('User session not found. Please log in again.');
+    return;
+  }
+  
+  if (!title || !description) {
+    alert('Please fill in both subject and description.');
+    return;
+  }
+  
+  const submitBtn = document.querySelector('#raiseModal button[onclick="submitComplaint()"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = 'SUBMITTING...';
+  submitBtn.disabled = true;
+  
+  const payload = {
+    user_id: userId,
+    title: title,
+    description: description,
+    priority: priority
+  };
+  
+  fetch('http://localhost:5000/complaints', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(async res => {
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || 'Server error');
+    }
+    return data;
+  })
+  .then(data => {
+    if (data.status === 'success') {
+      alert('Complaint raised successfully. Admin will review it shortly.');
+      closeRaiseModal();
+    } else {
+      alert('Error: ' + data.message);
+    }
+  })
+  .catch(err => {
+    console.error('Error submitting complaint:', err);
+    alert('Failed to submit: ' + err.message);
+  })
+  .finally(() => {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  });
+};
