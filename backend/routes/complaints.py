@@ -68,3 +68,52 @@ def get_complaints():
     except Exception as e:
         print(f"Error fetching complaints: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@complaints_bp.route('/admin/complaints/<int:complaint_id>', methods=['PUT'])
+def update_complaint_status(complaint_id):
+    data = request.json
+    status = data.get('status')
+    
+    if not status:
+        return jsonify({'status': 'error', 'message': 'Status is required'}), 400
+        
+    try:
+        cursor = db.cursor(buffered=True)
+        query = "UPDATE complaints SET status = %s, updated_at = NOW() WHERE id = %s"
+        cursor.execute(query, (status, complaint_id))
+        db.commit()
+        cursor.close()
+        
+        # Notify admin via socket to refresh stats
+        socketio.emit('new_complaint', {'action': 'status_updated', 'id': complaint_id})
+        
+        return jsonify({'status': 'success', 'message': 'Complaint status updated'})
+    except Exception as e:
+        print(f"Error updating complaint: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@complaints_bp.route('/complaints', methods=['DELETE'])
+def delete_complaints():
+    user_id = request.args.get('user_id')
+    
+    try:
+        cursor = db.cursor()
+        if user_id:
+            # Delete complaints for a specific user
+            query = "DELETE FROM complaints WHERE user_id = %s"
+            cursor.execute(query, (user_id,))
+        else:
+            # Delete all complaints (Admin action)
+            query = "DELETE FROM complaints"
+            cursor.execute(query)
+            
+        db.commit()
+        cursor.close()
+        
+        # Notify via socket
+        socketio.emit('new_complaint', {'action': 'all_deleted'})
+        
+        return jsonify({'status': 'success', 'message': 'Complaints deleted successfully'})
+    except Exception as e:
+        print(f"Error deleting complaints: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500

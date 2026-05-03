@@ -3,36 +3,42 @@
 // Service data
 const services = {
   electrical: {
+    id: 2,
     name: 'Electrical Repair',
     description: 'Expert electrical services including wiring, fixture installation, circuit repairs, and safety inspections by licensed electricians.',
     price: '$60-150',
     image: '../assets/electrical.png'
   },
   plumbing: {
+    id: 1,
     name: 'Plumbing',
     description: 'Professional plumbing services for pipe repairs, installations, leak detection, drain cleaning, and emergency plumbing issues.',
     price: '$50-120',
     image: '../assets/plumber.png'
   },
   cleaning: {
+    id: 5,
     name: 'Deep Cleaning',
     description: 'Thorough cleaning services including deep house cleaning, carpet cleaning, window washing, and post-renovation cleanup.',
     price: '$40-80',
     image: '../assets/cleaning.png'
   },
   ac: {
+    id: 6,
     name: 'AC Service',
     description: 'Complete air conditioning services including installation, repair, maintenance, and cleaning for all AC types and brands.',
     price: '$70-200',
     image: '../assets/ac service.png'
   },
   carpentry: {
+    id: 3,
     name: 'Carpentry',
     description: 'Custom carpentry services including furniture repair, installation, woodwork, cabinets, and custom-built solutions.',
     price: '$45-150',
     image: '../assets/carpentering.png'
   },
   painting: {
+    id: 4,
     name: 'Painting',
     description: 'Professional painting services for interior and exterior walls, furniture, and decorative painting with quality materials.',
     price: '$55-180',

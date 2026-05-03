@@ -115,14 +115,14 @@ document.querySelector(".submit").addEventListener("click", () => {
   fetch('http://localhost:5000/services')
     .then(response => response.json())
     .then(services => {
-      const service = services.find(s => s.name === serviceName);
+      const service = services.find(s => (s.service_name || s.name) === serviceName);
       if (!service) {
         showConfirmDialog("Error", "Service not found", () => {}, "OK", "OK", "#e74c3c");
         return;
       }
 
-      // Assume resident_id is 1 for now (should get from login response or localStorage)
-      const residentId = 1; // TODO: get actual resident id
+      // Get actual resident id from localStorage
+      const residentId = localStorage.getItem('userId') || '1';
 
       // Post to backend
       fetch('http://localhost:5000/book-service', {

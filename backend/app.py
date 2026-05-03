@@ -13,15 +13,10 @@ from routes.complaints import complaints_bp
 app = Flask(__name__)
 CORS(app)
 socketio.init_app(app, cors_allowed_origins="*")
-from db import db
+from db import db, close_db
 
 # Register routes
-@app.before_request
-def check_db_connection():
-    try:
-        db.ping(reconnect=True, attempts=3, delay=2)
-    except Exception as e:
-        print(f"Database ping failed: {e}")
+app.teardown_appcontext(close_db)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(services_bp)
