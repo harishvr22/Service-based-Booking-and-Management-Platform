@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
-        window.location.href = 'login.html';
+        console.error('No userId found in resident_support.js');
         return;
     }
 
@@ -43,6 +43,25 @@ async function fetchUserComplaints(userId) {
     }
 }
 
+// Custom Alert Logic
+function showCustomAlert(title, message, type = 'success') {
+    const modal = document.getElementById('alertModal');
+    const icon = document.getElementById('alertIcon');
+    const titleEl = document.getElementById('alertTitle');
+    const msgEl = document.getElementById('alertMessage');
+    
+    icon.innerHTML = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
+    icon.className = `alert-icon ${type}`;
+    titleEl.textContent = title;
+    msgEl.textContent = message;
+    
+    modal.style.display = 'flex';
+}
+
+window.closeAlert = function() {
+    document.getElementById('alertModal').style.display = 'none';
+};
+
 window.submitComplaint = function() {
     const userId = localStorage.getItem('userId');
     const title = document.getElementById('complaintTitle').value.trim();
@@ -50,7 +69,7 @@ window.submitComplaint = function() {
     const priority = document.getElementById('complaintPriority').value;
     
     if (!title || !description) {
-        alert('Please fill in both subject and description.');
+        showCustomAlert('Required', 'Please fill in both subject and description.', 'error');
         return;
     }
     
@@ -78,20 +97,65 @@ window.submitComplaint = function() {
     })
     .then(data => {
         if (data.status === 'success') {
-            alert('Support ticket raised successfully!');
+            showCustomAlert('Ticket Raised', 'Support ticket raised successfully! Admin will review it shortly.', 'success');
             document.getElementById('complaintTitle').value = '';
             document.getElementById('complaintDesc').value = '';
             fetchUserComplaints(userId); // Refresh list
         } else {
-            alert('Error: ' + data.message);
+            showCustomAlert('Error', data.message, 'error');
         }
     })
     .catch(err => {
         console.error('Error submitting complaint:', err);
-        alert('Failed to submit: ' + err.message);
+        showCustomAlert('Submission Failed', err.message, 'error');
     })
     .finally(() => {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     });
+};
+
+let confirmCallback = null;
+
+function showCustomConfirm(title, message, onConfirm) {
+    const modal = document.getElementById('confirmModal');
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+    confirmCallback = onConfirm;
+    modal.style.display = 'flex';
+}
+
+window.closeConfirm = function(isConfirmed) {
+    document.getElementById('confirmModal').style.display = 'none';
+    if (isConfirmed && confirmCallback) {
+        confirmCallback();
+    }
+    confirmCallback = null;
+};
+
+window.clearMyComplaints = function() {
+    const userId = localStorage.getItem('userId');
+    
+    showCustomConfirm(
+        'Clear History', 
+        'Are you sure you want to clear your complaint history? This will delete all your past records from the database.',
+        () => {
+            fetch(`http://localhost:5000/complaints?user_id=${userId}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showCustomAlert('Cleared', 'Your complaint history has been cleared.', 'success');
+                    fetchUserComplaints(userId);
+                } else {
+                    showCustomAlert('Error', data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error clearing history:', err);
+                showCustomAlert('Error', 'Failed to clear history from server.', 'error');
+            });
+        }
+    );
 };

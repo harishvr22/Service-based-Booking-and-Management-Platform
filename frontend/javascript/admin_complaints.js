@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Admin Complaints JS Initialized');
     
-    const API_BASE_URL = 'http://127.0.0.1:5000';
+    const API_BASE_URL = 'http://localhost:5000';
     let complaintsData = [];
     
     // Load complaints from API
@@ -126,11 +126,74 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sendBtn) {
             sendBtn.addEventListener('click', handleSendMessage);
         }
+
+        // Clear All Complaints
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', () => {
+                showCustomConfirm(
+                    'Delete All Complaints',
+                    'Are you sure you want to permanently delete ALL complaints from the database? This cannot be undone.',
+                    async () => {
+                        try {
+                            const response = await fetch(`${API_BASE_URL}/complaints`, {
+                                method: 'DELETE'
+                            });
+                            const data = await response.json();
+                            if (data.status === 'success') {
+                                showCustomAlert('Success', 'All complaints cleared successfully!', 'success');
+                                loadComplaints(); // Refresh list
+                            } else {
+                                throw new Error(data.message);
+                            }
+                        } catch (error) {
+                            console.error('Error clearing complaints:', error);
+                            showCustomAlert('Error', 'Failed to clear complaints.', 'error');
+                        }
+                    }
+                );
+            });
+        }
     }
     
     // Load complaints on page load
     loadComplaints();
 });
+
+let confirmCallback = null;
+
+function showCustomConfirm(title, message, onConfirm) {
+    const modal = document.getElementById('confirmModal');
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+    confirmCallback = onConfirm;
+    modal.style.display = 'flex';
+}
+
+window.closeConfirm = function(isConfirmed) {
+    document.getElementById('confirmModal').style.display = 'none';
+    if (isConfirmed && confirmCallback) {
+        confirmCallback();
+    }
+    confirmCallback = null;
+};
+
+function showCustomAlert(title, message, type = 'success') {
+    const modal = document.getElementById('alertModal');
+    const icon = document.getElementById('alertIcon');
+    const titleEl = document.getElementById('alertTitle');
+    const msgEl = document.getElementById('alertMessage');
+    
+    icon.innerHTML = type === 'success' ? '<i class="fas fa-check-circle" style="color: #2ecc71;"></i>' : '<i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i>';
+    titleEl.textContent = title;
+    msgEl.textContent = message;
+    
+    modal.style.display = 'flex';
+}
+
+window.closeAlert = function() {
+    document.getElementById('alertModal').style.display = 'none';
+};
 
 
 /**
@@ -224,38 +287,45 @@ async function handleSendMessage() {
  * @param {string} id - The complaint ID
  * @param {HTMLElement} element - The complaint DOM element
  */
-function handleResolveComplaint(id, element) {
-    // In a real app, this would be an API call
+async function handleResolveComplaint(id, element) {
     console.log(`Resolving complaint: ${id}`);
     
-    // Show a confirmation or loading state
     const btn = element.querySelector('.comp-btn:not(.btn-outline)');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
     btn.disabled = true;
 
-    // Simulate API delay
-    setTimeout(() => {
-        // Update the UI to show it's resolved
-        const statusBadge = element.querySelector('.comp-badge:last-child');
-        if (statusBadge) {
-            statusBadge.textContent = 'RESOLVED';
-            statusBadge.className = 'comp-badge comp-res';
+    try {
+        const response = await fetch(`http://localhost:5000/admin/complaints/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'resolved' })
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            // Update the UI
+            const statusBadge = element.querySelector('.comp-badge:last-child');
+            if (statusBadge) {
+                statusBadge.textContent = 'RESOLVED';
+                statusBadge.className = 'comp-badge comp-res';
+            }
+
+            element.style.opacity = '0.7';
+            element.style.transition = 'opacity 0.5s ease';
+            btn.remove();
+
+            showToast(`Complaint #${id} has been marked as resolved.`, 'success');
+        } else {
+            throw new Error(data.message || 'Update failed');
         }
-
-        // Fade out or dim the item
-        element.style.opacity = '0.7';
-        element.style.transition = 'opacity 0.5s ease';
-        
-        // Remove the resolve button
-        btn.remove();
-
-        // Optional: show a success message (if a toast system exists)
-        showToast(`Complaint ${id} has been marked as resolved.`, 'success');
-        
-        // Update data in localStorage if needed
-        updateComplaintStatusInStorage(id, 'RESOLVED');
-    }, 1000);
+    } catch (error) {
+        console.error('Error resolving complaint:', error);
+        showToast('Failed to update complaint status on server.', 'error');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
 }
 
 /**
@@ -318,14 +388,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-/**
- * Load complaints from storage or populate with defaults
- */
-function loadComplaints() {
-    // This function can be used to dynamically render complaints
-    // For now, we'll just log that it's ready
-    console.log('Loading complaints data...');
-}
+
 
 // Add CSS for toast animations
 const style = document.createElement('style');

@@ -11,25 +11,43 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Fetch dashboard data from backend
+  // Initial fetch
+  fetchDashboardData(userId);
+
+  // Dynamic updates via Socket.IO if available (shared with notifications.js logic)
+  try {
+    if (typeof io !== 'undefined') {
+      const socket = io('http://localhost:5000');
+      socket.on('new_notification', (data) => {
+        // Refresh dashboard data if a relevant notification occurs
+        // This makes the dashboard "dynamically change over booking"
+        fetchDashboardData(userId);
+      });
+    }
+  } catch (err) {
+    console.warn('Socket connection failed for dashboard updates:', err);
+  }
+});
+
+function fetchDashboardData(userId) {
+  console.log('Fetching dashboard data for user:', userId);
   Promise.all([
     fetch(`http://localhost:5000/bookings?resident_id=${userId}`).then(r => r.ok ? r.json() : []),
     fetch('http://localhost:5000/services').then(r => r.ok ? r.json() : [])
   ])
     .then(([bookings, services]) => {
+      console.log(`Received ${bookings.length} bookings and ${services.length} services`);
       // Update stats
       updateStats(bookings);
 
       // Update upcoming bookings
       updateUpcomingBookings(bookings);
 
-      // Update services grid
-      updateServicesGrid(services);
     })
     .catch(error => {
       console.error('Error fetching dashboard data:', error);
     });
-});
+}
 
 function updateStats(bookings) {
   const stats = {
@@ -39,11 +57,15 @@ function updateStats(bookings) {
     avgRating: bookings.filter(b => b.rating).reduce((sum, b) => sum + b.rating, 0) / bookings.filter(b => b.rating).length || 0
   };
 
-  const statCards = document.querySelectorAll('.stat-card h3');
-  if (statCards[0]) statCards[0].textContent = stats.total;
-  if (statCards[1]) statCards[1].textContent = stats.pending;
-  if (statCards[2]) statCards[2].textContent = stats.completed;
-  if (statCards[3]) statCards[3].textContent = stats.avgRating.toFixed(1);
+  const totalEl = document.getElementById('totalBookings');
+  const pendingEl = document.getElementById('pendingBookings');
+  const completedEl = document.getElementById('completedBookings');
+  const ratingEl = document.getElementById('avgRating');
+
+  if (totalEl) totalEl.textContent = stats.total;
+  if (pendingEl) pendingEl.textContent = stats.pending;
+  if (completedEl) completedEl.textContent = stats.completed;
+  if (ratingEl) ratingEl.textContent = stats.avgRating.toFixed(1);
 }
 
 function updateUpcomingBookings(bookings) {
@@ -53,7 +75,7 @@ function updateUpcomingBookings(bookings) {
   // Get upcoming bookings (approved or pending, sorted by date)
   const upcoming = bookings
     .filter(b => b.status === 'approved' || b.status === 'pending' || b.status === 'accepted')
-    .sort((a, b) => new Date(a.date || '0') - new Date(b.date || '0'))
+    .sort((a, b) => new Date(a.preferred_date || '0') - new Date(b.preferred_date || '0'))
     .slice(0, 3); // Show max 3
   
   bookingList.innerHTML = '';
@@ -65,7 +87,7 @@ function updateUpcomingBookings(bookings) {
   
   upcoming.forEach(booking => {
     const serviceName = booking.service_name || booking.serviceName || 'Service';
-    const dateStr = booking.date || 'TBD';
+    const dateStr = booking.preferred_date || 'TBD';
     const status = booking.status || 'pending';
     const statusClass = (status === 'approved' || status === 'accepted') ? 'status-approved' : 'status-pending';
     const statusIcon = (status === 'approved' || status === 'accepted') ? 'check-circle' : 'clock';
@@ -76,7 +98,10 @@ function updateUpcomingBookings(bookings) {
       <div class="item-img"><img src="${getServiceImage(serviceName)}" alt="${serviceName}"></div>
       <div class="item-details">
         <h4>${serviceName}</h4>
-        <p>${dateStr}</p>
+        <p><i class="far fa-calendar-alt"></i> ${dateStr}</p>
+        <p class="problem-desc" style="font-size: 11px; color: #888; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">
+          ${booking.problem_description || 'No description provided'}
+        </p>
       </div>
       <div class="item-status ${statusClass}">
         <i class="far fa-${statusIcon}"></i> ${status.charAt(0).toUpperCase() + status.slice(1)}

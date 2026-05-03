@@ -21,7 +21,7 @@ function getServiceImage(serviceName) {
   if (n.includes('clean')) return '../assets/cleaning.png';
   if (n.includes('paint')) return '../assets/painting.png';
   if (n.includes('carpent')) return '../assets/carpentering.png';
-  if (n.includes('ac ') || n.includes('hvac')) return '../assets/ac service.png';
+  if (n.includes('ac') || n.includes('hvac') || n.includes('air condition')) return '../assets/ac service.png';
   return '../assets/apartment.jpg'; 
 }
 
@@ -29,8 +29,16 @@ function getServiceImage(serviceName) {
 
 
 function loadBookings() {
-  console.log('Loading bookings...');
-  fetch('http://localhost:5000/bookings')
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    console.error('No userId found. User might not be logged in.');
+    globalBookings = [];
+    renderBookingsList(globalBookings, globalServiceMap);
+    return;
+  }
+
+  console.log('Loading bookings for user:', userId);
+  fetch(`http://localhost:5000/bookings?resident_id=${userId}`)
     .then(response => {
       console.log('Bookings response status:', response.status);
       return response.json();
@@ -95,7 +103,7 @@ function renderBookingsList(bookings, serviceMap) {
       const bStatus = statusRaw.charAt(0).toUpperCase() + statusRaw.slice(1);
       const imgPath = getServiceImage(sName);
       
-      const dateStr = booking.date && booking.time ? `${booking.date} - ${booking.time}` : (booking.date || 'Date TBD');
+      const dateStr = booking.preferred_date && booking.preferred_time ? `${booking.preferred_date} - ${booking.preferred_time}` : (booking.preferred_date || 'Date TBD');
       
       let reviewSection = '';
       if (bStatus.toLowerCase() === 'completed' && booking.review) {
@@ -120,7 +128,10 @@ function renderBookingsList(bookings, serviceMap) {
           <div class="item-img"><img src="${imgPath}" alt="${sName}"></div>
           <div class="item-details">
             <h4>${sName}</h4>
-            <p>${dateStr}</p>
+            <p><i class="far fa-calendar-alt"></i> ${dateStr}</p>
+            <p class="problem-summary" style="font-size: 13px; color: #aaa; margin-top: 5px; font-style: italic;">
+              "${booking.problem_description || 'No description provided'}"
+            </p>
             ${reviewSection}
           </div>
           <div class="item-actions">
