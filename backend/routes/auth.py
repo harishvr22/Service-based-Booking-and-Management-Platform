@@ -8,47 +8,49 @@ auth_bp = Blueprint("auth", __name__)
 # DELETE ACCOUNT API
 @auth_bp.route("/delete-account", methods=["DELETE"])
 def delete_account():
-
-    data = request.json
-
-    user_id = data.get("user_id")
-    email = data.get("email")
-    password = data.get("password")  # For confirmation
-
-    if not user_id and not email:
-        return jsonify({"status": "error", "message": "User ID or email required"}), 400
-
-    cursor = db.cursor(dictionary=True, buffered=True)
-
-    # Verify user exists and password matches
-    if user_id:
-        query = "SELECT id, email FROM users WHERE id=%s AND password=%s"
-        cursor.execute(query, (user_id, password))
-    else:
-        query = "SELECT id, email FROM users WHERE email=%s AND password=%s"
-        cursor.execute(query, (email, password))
-
-    user = cursor.fetchone()
-
-    if not user:
-        return jsonify({"status": "error", "message": "Invalid credentials"}), 401
-
-    # Delete related bookings
-    cursor.execute("DELETE FROM bookings WHERE resident_id=%s OR resident_id IN (SELECT id FROM users WHERE email=%s)", (user["id"], user["email"]))
-
-    # Delete related complaints
     try:
-        cursor.execute("DELETE FROM complaints WHERE user_id=%s OR user_email=%s", (user["id"], user["email"]))
-    except:
-        pass
+        data = request.json
+        user_id = data.get("user_id")
+        email = data.get("email")
+        password = data.get("password")  # For confirmation
 
-    # Delete the user
-    cursor.execute("DELETE FROM users WHERE id=%s", (user["id"],))
+        if not user_id and not email:
+            return jsonify({"status": "error", "message": "User ID or email required"}), 400
 
-    cursor.close()
-    db.commit()
+        cursor = db.cursor(dictionary=True, buffered=True)
 
-    return jsonify({"status": "success", "message": "Account deleted successfully"})
+        # Verify user exists and password matches
+        if user_id:
+            query = "SELECT id, email FROM users WHERE id=%s AND password=%s"
+            cursor.execute(query, (user_id, password))
+        else:
+            query = "SELECT id, email FROM users WHERE email=%s AND password=%s"
+            cursor.execute(query, (email, password))
+
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({"status": "error", "message": "Invalid credentials"}), 401
+
+        # Delete related bookings (as resident or provider)
+        cursor.execute("DELETE FROM bookings WHERE resident_id=%s OR provider_id=%s", (user["id"], user["id"]))
+
+        # Delete related complaints
+        try:
+            cursor.execute("DELETE FROM complaints WHERE user_id=%s OR user_email=%s", (user["id"], user["email"]))
+        except:
+            pass
+
+        # Delete the user
+        cursor.execute("DELETE FROM users WHERE id=%s", (user["id"],))
+
+        db.commit()
+        cursor.close()
+
+        return jsonify({"status": "success", "message": "Account deleted successfully"})
+    except Exception as e:
+        print(f"Delete error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # GET PROFILE API

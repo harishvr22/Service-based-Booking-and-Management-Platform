@@ -24,18 +24,18 @@ if (loginForm) {
       .then(data => {
         console.log('Login response:', data);
         if (data.status === 'success') {
-          localStorage.setItem('userEmail', email);
+          sessionStorage.setItem('userEmail', email);
           const role = data.user && data.user.role ? String(data.user.role).trim() : 'admin';
-          localStorage.setItem('userRole', role);
-          localStorage.setItem('isLoggedIn', 'true');
+          sessionStorage.setItem('userRole', role);
+          sessionStorage.setItem('isLoggedIn', 'true');
           // Store the actual name from backend response
-          localStorage.setItem('userName', data.user.name);
-          localStorage.setItem('userId', data.user.id);
-          localStorage.setItem('userPhone', data.user.phone || '');
-          localStorage.setItem('userApartment', data.user.apartment_id || '');
-          localStorage.setItem('userAvailability', data.user.availability || '');
-          localStorage.setItem('userSkills', data.user.skills || '');
-          localStorage.setItem('userBio', data.user.bio || '');
+          sessionStorage.setItem('userName', data.user.name);
+          sessionStorage.setItem('userId', data.user.id);
+          sessionStorage.setItem('userPhone', data.user.phone || '');
+          sessionStorage.setItem('userApartment', data.user.apartment_id || '');
+          sessionStorage.setItem('userAvailability', data.user.availability || '');
+          sessionStorage.setItem('userSkills', data.user.skills || '');
+          sessionStorage.setItem('userBio', data.user.bio || '');
           showConfirmDialog("Login Successful", "Login successful! You will be redirected to your dashboard.", () => {
             const normalizedRole = role.toLowerCase();
             console.log('Normalized role:', normalizedRole);

@@ -83,3 +83,51 @@ def delete_admin():
     db.commit()
     
     return jsonify({"status": "success", "message": "Admin access revoked"})
+
+# GET ALL BOOKINGS FOR MONITORING
+@admins_bp.route("/admin/bookings", methods=["GET"])
+def get_admin_bookings():
+    try:
+        cursor = db.cursor(dictionary=True, buffered=True)
+        
+        query = """
+            SELECT 
+                b.id, 
+                s.service_name as service, 
+                b.apartment_id as apartment, 
+                u_res.name as resident, 
+                COALESCE(u_prov.name, 'Unassigned') as provider, 
+                b.status, 
+                b.preferred_date as date, 
+                b.preferred_time as time, 
+                'normal' as priority,
+                b.problem_description as description,
+                b.created_at
+            FROM bookings b
+            LEFT JOIN services s ON b.service_id = s.id
+            LEFT JOIN users u_res ON b.resident_id = u_res.id
+            LEFT JOIN users u_prov ON b.provider_id = u_prov.id
+            ORDER BY b.created_at DESC
+        """
+        
+        cursor.execute(query)
+        bookings = cursor.fetchall()
+        cursor.close()
+        
+        # Format dates and times for JSON
+        for b in bookings:
+            if b.get('date'):
+                b['date'] = str(b['date'])
+            if b.get('time'):
+                b['time'] = str(b['time'])
+            if b.get('created_at'):
+                b['created_at'] = str(b['created_at'])
+            b['id'] = str(b['id'])
+                
+        return jsonify({
+            "status": "success",
+            "bookings": bookings
+        })
+    except Exception as e:
+        print("Error fetching admin bookings:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500

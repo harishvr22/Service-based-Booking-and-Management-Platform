@@ -12,12 +12,13 @@ def book_service():
     try:
         cursor = db.cursor(buffered=True)
         query = """
-        INSERT INTO bookings(resident_id, service_id, status, apartment_id, mobile_number, problem_description, time_duration, preferred_date, preferred_time, additional_notes)
-        VALUES(%s, %s, 'pending', %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO bookings(resident_id, service_id, status, priority, apartment_id, mobile_number, problem_description, time_duration, preferred_date, preferred_time, additional_notes)
+        VALUES(%s, %s, 'pending', %s, %s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(query, (
             data.get("resident_id"),
             data.get("service_id"),
+            data.get("priority", "medium"),
             data.get("apartment_id"),
             data.get("mobile_number"),
             data.get("problem_description"),
@@ -39,13 +40,11 @@ def book_service():
         INSERT INTO notifications(title, message, audience, created_by, created_at)
         VALUES(%s, %s, %s, %s, NOW())
         """
-        # Note: If no admin/system user exists with ID 0, this might fail due to FK constraint.
-        # Assuming system notifications use a valid user or 0 is allowed.
         notif_cursor.execute(notif_query, (
             "New Service Booking",
             f"A resident has booked a service. Please check your dashboard.",
             "Providers",
-            data.get("resident_id") # Use the resident's ID as creator
+            data.get("resident_id")
         ))
         db.commit()
         notif_cursor.close()
@@ -72,9 +71,10 @@ def view_bookings():
         cursor = db.cursor(dictionary=True, buffered=True)
         
         query = """
-            SELECT b.*, s.service_name 
+            SELECT b.*, s.service_name, u.name as resident_name 
             FROM bookings b 
             LEFT JOIN services s ON b.service_id = s.id 
+            LEFT JOIN users u ON b.resident_id = u.id
         """
         params = []
         
@@ -114,16 +114,48 @@ def view_bookings():
 @booking_bp.route("/update-status", methods=["PUT"])
 def update_status():
     data = request.json
+    print(f"DEBUG: Received update-status request: {data}")
+    
     try:
+        status = data.get("status")
+        booking_id = data.get("booking_id")
+        provider_id = data.get("provider_id")
+
+        if not booking_id or not status:
+            return jsonify({"status": "error", "message": "Missing booking_id or status"}), 400
+
         cursor = db.cursor(buffered=True)
-        query = "UPDATE bookings SET status=%s WHERE id=%s"
-        cursor.execute(query, (
-            data["status"],
-            data["booking_id"]
-        ))
+        
+        # Convert to int safely
+        try:
+            b_id = int(booking_id)
+            p_id = int(provider_id) if provider_id else None
+        except (ValueError, TypeError):
+            return jsonify({"status": "error", "message": "Invalid ID format"}), 400
+
+        if p_id and status == 'accepted':
+            query = "UPDATE bookings SET status=%s, provider_id=%s WHERE id=%s"
+            cursor.execute(query, (status, p_id, b_id))
+        else:
+            query = "UPDATE bookings SET status=%s WHERE id=%s"
+            cursor.execute(query, (status, b_id))
+            
         db.commit()
         cursor.close()
         return jsonify({"status": "updated"})
     except Exception as e:
-        print("Database error in update_status:", e)
-        return jsonify({"status": "error", "message": str(e)}), 500
+        print(f"DEBUG: Database error in update_status for booking {data.get('booking_id')}: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# DELETE BOOKING
+@booking_bp.route("/bookings/<int:booking_id>", methods=["DELETE"])
+def delete_booking(booking_id):
+    try:
+        cursor = db.cursor(buffered=True)
+        cursor.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
+        db.commit()
+        cursor.close()
+        return jsonify({"status": "success", "message": "Booking deleted"})
+    except Exception as e:
+        print("Database error in delete_booking:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500

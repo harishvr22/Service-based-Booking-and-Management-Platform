@@ -3,9 +3,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     if (!userId) {
-        console.warn('No userId found in localStorage, redirecting to login');
+        console.warn('No userId found in sessionStorage, redirecting to login');
         window.location.href = 'login.html';
         return;
     }
@@ -54,14 +54,14 @@ async function setupDeleteAccount() {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email: localStorage.getItem('userEmail'),
+                    email: sessionStorage.getItem('userEmail'),
                     password: password
                 })
             });
 
             const data = await response.json();
             if (data.status === 'success' || data.message === 'Account deleted successfully') {
-                localStorage.clear();
+                sessionStorage.clear();
                 window.location.href = 'landingpage.html';
             } else {
                 alert('Error: ' + (data.message || 'Failed to delete account'));
@@ -105,8 +105,8 @@ async function fetchProfile(userId) {
             const avatarEl = document.getElementById('profileAvatarLarge');
             if (avatarEl) avatarEl.textContent = initials;
 
-            // Sync localStorage
-            localStorage.setItem('providerRole', user.role || 'Provider');
+            // Sync sessionStorage
+            sessionStorage.setItem('providerRole', user.role || 'Provider');
 
             // Fetch job stats for "JOBS DONE"
             fetchJobStats(userId);
@@ -169,10 +169,10 @@ function setupSaveButton(userId) {
 
             const result = await response.json();
             if (result.status === 'updated') {
-                // Update localStorage to sync with header.js
-                localStorage.setItem('providerName', name);
-                localStorage.setItem('userName', name);
-                localStorage.setItem('providerRole', role);
+                // Update sessionStorage to sync with header.js
+                sessionStorage.setItem('providerName', name);
+                sessionStorage.setItem('userName', name);
+                sessionStorage.setItem('providerRole', role);
 
                 // Show success
                 saveBtn.textContent = 'Saved!';

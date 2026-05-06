@@ -36,9 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadUserData() {
-    const userId = localStorage.getItem('userId');
-    const userName = localStorage.getItem('userName');
-    const userEmail = localStorage.getItem('userEmail');
+    const userId = sessionStorage.getItem('userId');
+    const userName = sessionStorage.getItem('userName');
+    const userEmail = sessionStorage.getItem('userEmail');
 
     if (userName) {
         document.getElementById('adminName').value = userName;
@@ -60,7 +60,7 @@ function loadUserData() {
 }
 
 function updateProfile() {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     const name = document.getElementById('adminName').value;
     const email = document.getElementById('adminEmail').value;
 
@@ -93,9 +93,9 @@ function updateProfile() {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'updated') {
-            // Update localStorage
-            localStorage.setItem('userName', name);
-            localStorage.setItem('userEmail', email);
+            // Update sessionStorage
+            sessionStorage.setItem('userName', name);
+            sessionStorage.setItem('userEmail', email);
             // Update display
             const displayNameEl = document.querySelector('.avatar-info h4');
             if (displayNameEl) {
@@ -122,7 +122,7 @@ function updateProfile() {
 }
 
 function changePassword() {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     const currentPassword = document.getElementById('currentPassword').value;
     const newPassword = document.getElementById('newPassword').value;
 

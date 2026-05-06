@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="monitor-details">
                     <h4>${booking.service} - ${booking.apartment}</h4>
-                    <p>${booking.resident} • ${booking.provider}</p>
+                    <p><b>Res:</b> ${booking.resident} • <b>Prov:</b> ${booking.provider}</p>
                 </div>
             </div>
             <div class="monitor-item-right">
@@ -199,10 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-row">
                 <span>Provider</span>
                 <span>${booking.provider}</span>
-            </div>
-            <div class="modal-row">
-                <span>Date & Time</span>
-                <span>${booking.date} at ${booking.time}</span>
             </div>
             <div class="modal-row">
                 <span>Status</span>

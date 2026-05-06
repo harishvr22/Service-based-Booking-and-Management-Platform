@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const userId = localStorage.getItem('userId');
-  const userName = localStorage.getItem('userName') || 'Guest';
+  const userId = sessionStorage.getItem('userId');
+  const userName = sessionStorage.getItem('userName') || 'Guest';
   
   // Set user name in UI
   const userNameEls = document.querySelectorAll('.user-name');
@@ -124,7 +124,7 @@ window.closeRaiseModal = function() {
 };
 
 window.submitComplaint = function() {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   const title = document.getElementById('complaintTitle').value.trim();
   const description = document.getElementById('complaintDesc').value.trim();
   const priority = document.getElementById('complaintPriority').value;

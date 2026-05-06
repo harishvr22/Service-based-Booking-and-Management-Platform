@@ -29,7 +29,7 @@ function getServiceImage(serviceName) {
 
 
 function loadBookings() {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   if (!userId) {
     console.error('No userId found. User might not be logged in.');
     globalBookings = [];
@@ -136,10 +136,127 @@ function renderBookingsList(bookings, serviceMap) {
           </div>
           <div class="item-actions">
             ${actionsHTML}
+            <button class="delete-btn" onclick="deleteBooking(${booking.id})" style="background: none; border: none; color: #e74c3c; cursor: pointer; margin-left: 10px; font-size: 16px;" title="Delete Booking">
+              <i class="fas fa-trash-alt"></i>
+            </button>
           </div>
         </div>
       `;
     }).join('');
+}
+
+function deleteBooking(bookingId) {
+  showConfirmDialog(
+    'Delete Booking',
+    'Are you sure you want to delete this booking record? This action cannot be undone.',
+    () => {
+      fetch(`http://localhost:5000/bookings/${bookingId}`, {
+        method: 'DELETE'
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            loadBookings();
+            showToast('Booking deleted successfully', 'success');
+          } else {
+            showToast('Error: ' + data.message, 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting booking:', error);
+          showToast('Failed to delete booking', 'error');
+        });
+    }
+  );
+}
+
+// Themed Confirm Dialog
+function showConfirmDialog(title, message, onConfirm) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7); z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s ease-out;
+  `;
+
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 12px;
+    padding: 24px; max-width: 400px; width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease-out;
+  `;
+
+  modal.innerHTML = `
+    <h3 style="color: #fff; margin: 0 0 12px; font-size: 18px; font-weight: 600;">${title}</h3>
+    <p style="color: #9e9e9e; margin: 0 0 24px; line-height: 1.5; font-size: 14px;">${message}</p>
+    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+      <button class="btn-cancel" style="
+        background: transparent; border: 1px solid #2a2a2a; color: #9e9e9e;
+        padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+      ">Cancel</button>
+      <button class="btn-confirm" style="
+        background: #e74c3c; border: none; color: white;
+        padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;
+      ">Delete</button>
+    </div>
+  `;
+
+  const closeModal = () => {
+    overlay.style.animation = 'fadeOut 0.2s ease-in';
+    setTimeout(() => overlay.remove(), 200);
+  };
+
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+  modal.querySelector('.btn-cancel').onclick = closeModal;
+  modal.querySelector('.btn-confirm').onclick = () => {
+    closeModal();
+    onConfirm();
+  };
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  if (!document.getElementById('modal-animations')) {
+    const style = document.createElement('style');
+    style.id = 'modal-animations';
+    style.textContent = `
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+      @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// Custom Toast Notification
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed; bottom: 30px; right: 30px;
+    background: ${type === 'success' ? '#2ecc71' : '#e74c3c'};
+    color: white; padding: 12px 24px; border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10001;
+    font-size: 14px; font-weight: 500;
+    animation: slideInRight 0.3s ease-out;
+  `;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'fadeOut 0.3s ease-in forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+
+  if (!document.getElementById('toast-animations')) {
+    const style = document.createElement('style');
+    style.id = 'toast-animations';
+    style.textContent = `
+      @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    `;
+    document.head.appendChild(style);
+  }
 }
 
 function setupFilters() {
@@ -171,7 +288,7 @@ function clearHistory() {
   const confirmDelete = confirm('Are you sure you want to clear all your booking history? This action cannot be undone.');
   
   if (confirmDelete) {
-    localStorage.removeItem('bookings');
+    sessionStorage.removeItem('bookings');
     showNotification('Your booking history has been cleared.', 'success');
     location.reload(); 
   }

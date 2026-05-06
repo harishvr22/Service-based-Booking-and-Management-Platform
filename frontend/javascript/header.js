@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const providerPages = ['ProviderDashboard', 'ServiceRequests', 'JobHistory', 'ProviderProfile', 'provider_notifications'];
   const isProviderPage = providerPages.some(p => window.location.href.includes(p)) || document.title.includes('Provider');
   
-  const userName = localStorage.getItem('userName');
-  const providerName = localStorage.getItem('providerName');
+  const userName = sessionStorage.getItem('userName');
+  const providerName = sessionStorage.getItem('providerName');
   
   // Use providerName if available, else fallback to userName, then defaults
   const displayName = isProviderPage ? (providerName || userName || 'Provider') : (userName || 'Guest');
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const dashRole = document.getElementById('providerRole');
     if (dashRole) {
-      const savedRole = localStorage.getItem('providerRole') || 'Provider';
+      const savedRole = sessionStorage.getItem('providerRole') || 'Provider';
       dashRole.innerHTML = `<i class="fas fa-tools"></i> ${savedRole}`;
     }
 
@@ -43,20 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
   logoutBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      localStorage.clear();
+      sessionStorage.clear();
       window.location.href = 'landingpage.html';
     });
-  });
-
-  // Listen for storage changes to update avatar/name in real-time across tabs
-  window.addEventListener('storage', (e) => {
-    const isProvider = providerPages.some(p => window.location.href.includes(p)) || document.title.includes('Provider');
-    
-    if (e.key === 'userName' && !isProvider) {
-      updateUI(e.newValue || 'Guest');
-    }
-    if (e.key === 'providerName' && isProvider) {
-      updateUI(e.newValue || 'Provider');
-    }
   });
 });

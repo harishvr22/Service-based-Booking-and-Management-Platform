@@ -11,7 +11,7 @@ from routes.users import users_bp
 from routes.complaints import complaints_bp
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], allow_headers=["Content-Type", "Authorization"])
 socketio.init_app(app, cors_allowed_origins="*")
 from db import db, close_db
 

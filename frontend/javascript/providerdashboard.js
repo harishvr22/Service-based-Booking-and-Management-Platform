@@ -1,16 +1,16 @@
 // Load provider data from localStorage and backend
 document.addEventListener('DOMContentLoaded', function () {
-    const userId = localStorage.getItem('userId');
-    const userName = localStorage.getItem('userName');
+    const userId = sessionStorage.getItem('userId');
+    const userName = sessionStorage.getItem('userName');
 
     if (!userId) {
         // Fallback for testing or redirect
-        console.log('No userId found in localStorage');
+        console.log('No userId found in sessionStorage');
         // window.location.href = 'login.html';
     }
 
     // Update welcome name
-    const displayName = localStorage.getItem('providerName') || localStorage.getItem('userName') || 'Provider';
+    const displayName = sessionStorage.getItem('providerName') || sessionStorage.getItem('userName') || 'Provider';
     const nameEl = document.getElementById('providerName');
     if (nameEl) nameEl.textContent = 'Hi, ' + displayName + '.';
 
@@ -39,8 +39,8 @@ async function fetchProfile(userId) {
                 roleEl.innerHTML = `<i class="fas fa-tools"></i> ${user.role || 'Provider'}`;
             }
 
-            // Sync with localStorage for header.js
-            localStorage.setItem('providerName', user.name);
+            // Sync with sessionStorage for header.js
+            sessionStorage.setItem('providerName', user.name);
         }
     } catch (error) {
         console.error('Error fetching dashboard profile:', error);
@@ -48,8 +48,8 @@ async function fetchProfile(userId) {
 }
 
 async function fetchDashboardStats() {
-    const userId = parseInt(localStorage.getItem('userId'));
-    const userRole = localStorage.getItem('userRole') || ''; 
+    const userId = parseInt(sessionStorage.getItem('userId'));
+    const userRole = sessionStorage.getItem('userRole') || ''; 
     const providerTrade = userRole.replace('Provider: ', '').trim();
 
     try {
@@ -86,7 +86,7 @@ async function fetchPendingRequests() {
     const list = document.getElementById('pendingRequestsList');
     if (!list) return;
 
-    const userRole = localStorage.getItem('userRole') || ''; 
+    const userRole = sessionStorage.getItem('userRole') || ''; 
     const providerTrade = userRole.replace('Provider: ', '').trim();
 
     try {
@@ -110,8 +110,24 @@ async function fetchPendingRequests() {
             item.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #222;';
             item.innerHTML = `
                 <div>
-                    <h4 style="color: white; font-size: 15px; margin-bottom: 4px;">${req.service_name || 'Service Request'}</h4>
-                    <p style="color: #888; font-size: 12px;"><i class="far fa-user"></i> Resident #${req.resident_id} &nbsp;•&nbsp; <i class="fas fa-map-marker-alt"></i> ${req.apartment_id || 'N/A'}</p>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <h4 style="color: white; font-size: 15px; margin: 0;">${req.service_name || 'Service Request'}</h4>
+                        <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; background: ${
+                            req.priority === 'critical' ? '#e74c3c' : 
+                            req.priority === 'high' ? '#e67e22' : 
+                            req.priority === 'medium' ? '#3498db' : '#2ecc71'
+                        }; color: white;">${req.priority || 'medium'}</span>
+                    </div>
+                    <p style="color: #888; font-size: 12px;">
+                        <i class="far fa-user"></i> ${req.resident_name || 'Resident #' + req.resident_id} &nbsp;•&nbsp; 
+                        <i class="fas fa-map-marker-alt"></i> ${
+                            req.apartment_id ? (
+                                req.apartment_id.includes('|') ? `Block ${req.apartment_id.split('|')[0]} - Flat ${req.apartment_id.split('|')[1]}` :
+                                req.apartment_id.includes('-') ? `Block ${req.apartment_id.split('-')[0]} - Flat ${req.apartment_id.split('-')[1]}` :
+                                req.apartment_id
+                            ) : 'N/A'
+                        }
+                    </p>
                 </div>
                 <a href="ServiceRequests.html" style="background: rgba(255,140,0,0.1); color: var(--orange); border: 1px solid rgba(255,140,0,0.3); padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; text-decoration: none;">Review</a>
             `;
@@ -127,7 +143,7 @@ async function fetchRecentHistory() {
     const list = document.getElementById('recentHistoryList');
     if (!list) return;
 
-    const userId = parseInt(localStorage.getItem('userId'));
+    const userId = parseInt(sessionStorage.getItem('userId'));
 
     try {
         const response = await fetch('http://127.0.0.1:5000/bookings');
@@ -168,8 +184,28 @@ const logoutBtn = document.querySelector('.logout-btn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+    });
+}
+
+// Live Updates via Socket.IO
+try {
+    const socket = io('http://localhost:5000');
+    socket.on('new_notification', function (data) {
+        console.log('Live update triggered by notification:', data);
+        const userId = sessionStorage.getItem('userId');
+        const userRole = sessionStorage.getItem('userRole') || '';
+        const providerTrade = userRole.replace('Provider: ', '').trim();
+        
+        // Refresh only if notification is relevant to providers
+        if (data.audience === 'Providers' || data.audience === 'All') {
+            fetchDashboardStats();
+            fetchPendingRequests();
         }
     });
+} catch (e) {
+    console.log('Socket.IO not available for live updates');
 }
 
 // Modal Functions
@@ -185,7 +221,7 @@ window.closeRaiseModal = function() {
 };
 
 window.submitComplaint = function() {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   const title = document.getElementById('complaintTitle').value.trim();
   const description = document.getElementById('complaintDesc').value.trim();
   const priority = document.getElementById('complaintPriority').value;

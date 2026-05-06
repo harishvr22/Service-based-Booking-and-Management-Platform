@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ServiceBook – Provider Support</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/Resident.css" />
+  <style>
+    .support-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 20px;
+    }
+    .complaint-form-card, .complaint-list-card {
+      background: #141414;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      color: white;
+      outline: none;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: none;
+    }
+    .complaint-item {
+      padding: 15px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .complaint-item:last-child {
+      border-bottom: none;
+    }
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-open { background: rgba(255, 140, 0, 0.1); color: var(--orange); border: 1px solid var(--orange); }
+    .status-resolved { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; }
+    .status-closed { background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid #444; }
+    
+    /* Custom Alert Modal */
+    .custom-alert-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .custom-alert-content {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .alert-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .alert-icon.success { color: #2ecc71; }
+    .alert-icon.error { color: #e74c3c; }
+    .alert-btn {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background: var(--orange);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body class="dark-theme">
+
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h2 style="color: var(--orange);">ServiceBook</h2>
+        <p style="font-size: 10px; letter-spacing: 2px; color: #a0a0a0; margin-top: -5px; font-weight: 600;">PROVIDER PORTAL</p>
+      </div>
+      <div class="menu-section">
+        <p class="menu-title">WORKSPACE</p>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="ProviderDashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a>
+            </li>
+            <li>
+              <a href="ServiceRequests.html"><i class="fas fa-clipboard-list"></i> REQUESTS</a>
+            </li>
+            <li>
+              <a href="JobHistory.html"><i class="fas fa-history"></i> HISTORY</a>
+            </li>
+            <li>
+              <a href="ProviderProfile.html"><i class="far fa-user"></i> PROFILE</a>
+            </li>
+            <li class="active">
+              <a href="provider_support.html"><i class="fas fa-headset"></i> SUPPORT</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="logout-section">
+        <a href="landingpage.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Navbar -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <i class="fas fa-headset" style="color: #888;"></i>
+          <span><span style="color: #888; font-size: 12px; font-weight: 600; letter-spacing: 1px;">PROVIDER</span> &nbsp;/&nbsp; Support & Help</span>
+        </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+            <a href="provider_notifications.html" class="nav-icon-btn" style="position: relative; color: white; text-decoration: none;">
+                <i class="far fa-bell"></i>
+            </a>
+          <div class="user-profile">
+            <div class="avatar" style="background: var(--orange); color: black; font-weight: bold; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;">P</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Body -->
+      <div class="dashboard-body">
+        <section class="welcome-section" style="margin-bottom: 30px;">
+          <p class="welcome-sub" style="color: var(--orange); letter-spacing: 2px; font-size: 12px; font-weight: 600; margin-bottom: 5px;">HELP CENTER</p>
+          <h1>Support <span style="color: var(--orange);">Center</span>.</h1>
+          <p class="welcome-desc" style="color: #9e9e9e;">Facing issues with a job or the platform? Raise a ticket and our team will assist you.</p>
+        </section>
+
+        <div class="support-container">
+          <!-- New Complaint Form -->
+          <div class="complaint-form-card">
+            <h3 style="margin-bottom: 25px; color: white;">New Support Ticket</h3>
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" id="complaintTitle" placeholder="Briefly describe the issue">
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <select id="complaintPriority">
+                <option value="low">Low - General Question</option>
+                <option value="medium" selected>Medium - Normal Issue</option>
+                <option value="high">High - Urgent</option>
+                <option value="critical">Critical - Emergency</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Detailed Description</label>
+              <textarea id="complaintDesc" rows="6" placeholder="Explain the problem in detail..."></textarea>
+            </div>
+            <button onclick="submitComplaint()" class="btn-primary" id="submitBtn" style="width: 100%; padding: 15px; background: var(--orange); border: none; border-radius: 4px; font-weight: 700; cursor: pointer; color: black;">SUBMIT TICKET &rarr;</button>
+          </div>
+
+          <!-- Past Complaints List -->
+          <div class="complaint-list-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+              <h3 style="margin-bottom: 0; color: white;">Your Recent Tickets</h3>
+              <button onclick="clearMyComplaints()" style="background: none; border: 1px solid #333; color: #888; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">CLEAR HISTORY</button>
+            </div>
+            <div id="complaintList">
+              <p style="color: #888; text-align: center; padding: 40px;">Loading your tickets...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Custom Alert Modal -->
+  <div class="custom-alert-overlay" id="alertModal">
+    <div class="custom-alert-content">
+      <div id="alertIcon" class="alert-icon"></div>
+      <h3 id="alertTitle" style="color: white; margin-bottom: 10px;">Success!</h3>
+      <p id="alertMessage" style="color: #888; font-size: 14px; line-height: 1.5;"></p>
+      <button class="alert-btn" onclick="closeAlert()">OK</button>
+    </div>
+  </div>
+
+  <script src="../javascript/header.js"></script>
+  <script src="../javascript/resident_support.js"></script>
+</body>
+</html>

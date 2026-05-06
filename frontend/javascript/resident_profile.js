@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
         { name: 'Rahul Sharma', email: 'rahul.sharma@email.com', phone: '+91 98765 43210', flat: 'A-302', block: 'A Block', moveIn: '15-01-2024', status: 'Active' }
     ];
 
-    // Get logged in user info from localStorage
-    const loggedInEmail = localStorage.getItem('userEmail') || 'rahul.sharma@email.com';
+    // Get logged in user info from sessionStorage
+    const loggedInEmail = sessionStorage.getItem('userEmail') || 'rahul.sharma@email.com';
 
     // Find user in our "database"
     const user = residents.find(r => r.email === loggedInEmail) || residents[5]; // Fallback to Rahul Sharma if not found
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                email: localStorage.getItem('userEmail'),
+                email: sessionStorage.getItem('userEmail'),
                 password: password
             })
         })
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
             if (data.status === 'success' || data.message === 'Account deleted successfully') {
                 showNotification('Account deleted successfully. You will be redirected to the login page.', 'success');
-                localStorage.clear();
+                sessionStorage.clear();
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 2000);
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     async function saveProfile() {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userId');
         const name = document.getElementById('dispName').value;
         const email = document.getElementById('dispEmail').value;
         const phone = document.getElementById('dispPhone').value;
@@ -160,14 +160,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 const initials = names.map(n => n[0]).join('').toUpperCase().substring(0, 2);
                 document.getElementById('avatarInitials').textContent = initials;
 
-                // Save to localStorage
-                localStorage.setItem('userName', name);
-                localStorage.setItem('userEmail', email);
-                localStorage.setItem('userPhone', phone);
-                localStorage.setItem('userApartment', apartment_id);
-                localStorage.setItem('userAvailability', moveIn);
-                localStorage.setItem('userSkills', emergencyName);
-                localStorage.setItem('userBio', emergencyPhone);
+                // Save to sessionStorage
+                sessionStorage.setItem('userName', name);
+                sessionStorage.setItem('userEmail', email);
+                sessionStorage.setItem('userPhone', phone);
+                sessionStorage.setItem('userApartment', apartment_id);
+                sessionStorage.setItem('userAvailability', moveIn);
+                sessionStorage.setItem('userSkills', emergencyName);
+                sessionStorage.setItem('userBio', emergencyPhone);
 
                 // Reset UI state
                 isEditing = false;
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial load from backend if available
     async function loadFromBackend() {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userId');
         if (userId) {
             try {
                 const response = await fetch(`http://127.0.0.1:5000/profile/${userId}`);
@@ -225,14 +225,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Fallback logic
     function loadFromStorage() {
-        if (localStorage.getItem('userEmail')) {
-            document.getElementById('profileName').textContent = localStorage.getItem('userName') || user.name;
-            document.getElementById('profileEmail').textContent = localStorage.getItem('userEmail') || user.email;
-            document.getElementById('dispName').value = localStorage.getItem('userName') || user.name;
-            document.getElementById('dispEmail').value = localStorage.getItem('userEmail') || user.email;
-            document.getElementById('dispPhone').value = localStorage.getItem('userPhone') || user.phone || 'Not set';
+        if (sessionStorage.getItem('userEmail')) {
+            document.getElementById('profileName').textContent = sessionStorage.getItem('userName') || user.name;
+            document.getElementById('profileEmail').textContent = sessionStorage.getItem('userEmail') || user.email;
+            document.getElementById('dispName').value = sessionStorage.getItem('userName') || user.name;
+            document.getElementById('dispEmail').value = sessionStorage.getItem('userEmail') || user.email;
+            document.getElementById('dispPhone').value = sessionStorage.getItem('userPhone') || user.phone || 'Not set';
             
-            let apartment = localStorage.getItem('userApartment') || '';
+            let apartment = sessionStorage.getItem('userApartment') || '';
             let flat = 'Not set';
             let block = 'Not set';
             if (apartment.includes('|')) {
@@ -243,11 +243,11 @@ document.addEventListener('DOMContentLoaded', function () {
             
             document.getElementById('dispFlat').value = flat;
             document.getElementById('dispBlock').value = block;
-            document.getElementById('dispMoveIn').value = localStorage.getItem('userAvailability') || user.moveIn || 'Not set';
-            document.getElementById('dispEmergencyName').value = localStorage.getItem('userSkills') || 'Not set';
-            document.getElementById('dispEmergencyPhone').value = localStorage.getItem('userBio') || 'Not set';
+            document.getElementById('dispMoveIn').value = sessionStorage.getItem('userAvailability') || user.moveIn || 'Not set';
+            document.getElementById('dispEmergencyName').value = sessionStorage.getItem('userSkills') || 'Not set';
+            document.getElementById('dispEmergencyPhone').value = sessionStorage.getItem('userBio') || 'Not set';
             
-            const name = localStorage.getItem('userName') || user.name;
+            const name = sessionStorage.getItem('userName') || user.name;
             const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
             document.getElementById('avatarInitials').textContent = initials;
         }

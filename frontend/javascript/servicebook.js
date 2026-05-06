@@ -121,8 +121,8 @@ document.querySelector(".submit").addEventListener("click", () => {
         return;
       }
 
-      // Get actual resident id from localStorage
-      const residentId = localStorage.getItem('userId') || '1';
+      // Get actual resident id from sessionStorage
+      const residentId = sessionStorage.getItem('userId') || '1';
 
       // Post to backend
       fetch('http://localhost:5000/book-service', {

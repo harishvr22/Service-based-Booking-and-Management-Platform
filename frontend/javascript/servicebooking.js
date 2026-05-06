@@ -108,6 +108,7 @@ function confirmBooking() {
     const apartmentId = document.getElementById('apartmentId').value.trim();
     const mobileNumber = document.getElementById('mobileNumber').value.trim();
     const problemDescription = document.getElementById('problemDescription').value.trim();
+    const priority = document.getElementById('priority').value;
     const timeDuration = document.getElementById('timeDuration').value;
     const preferredDate = document.getElementById('preferredDate').value;
     const preferredTime = document.getElementById('preferredTime').value;
@@ -191,10 +192,12 @@ function confirmBooking() {
     };
 
     // Send booking to backend
-    const userId = localStorage.getItem('userId') || '1';
+    const residentId = sessionStorage.getItem('userId');
+    const residentName = sessionStorage.getItem('userName');
     const payload = {
-      resident_id: userId,
+      resident_id: residentId,
       service_id: currentService.id,
+      priority: priority,
       apartment_id: apartmentId.toUpperCase(),
       mobile_number: cleanMobileNumber,
       problem_description: problemDescription,

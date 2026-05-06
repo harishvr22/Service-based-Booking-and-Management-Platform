@@ -28,23 +28,30 @@ async function fetchRequests() {
             activeRequests = [];
         } else {
             activeRequests = data.map(req => {
-                let flatDisplay = req.apartment_id || 'N/A';
-                let blockDisplay = 'N/A';
-                if (flatDisplay.includes('|')) {
-                    const parts = flatDisplay.split('|');
-                    blockDisplay = parts[0] + ' Block';
-                    flatDisplay = parts[1];
+                let displayLocation = "";
+                let apt = req.apartment_id || "";
+                
+                if (apt.includes('|')) {
+                    const parts = apt.split('|');
+                    displayLocation = `Block ${parts[0]} - Flat ${parts[1]}`;
+                } else if (apt.includes('-')) {
+                    const parts = apt.split('-');
+                    displayLocation = `Block ${parts[0]} - Flat ${parts[1]}`;
+                } else {
+                    displayLocation = apt || 'N/A';
                 }
 
                 return {
                     id: req.id.toString(),
                     title: req.service_name || 'Service Request',
                     status: req.status,
-                    name: `Resident #${req.resident_id}`,
+                    name: req.resident_name || `Resident #${req.resident_id}`,
                     contact: req.mobile_number || 'N/A',
-                    block: `${blockDisplay} - Flat ${flatDisplay}`,
+                    block: displayLocation,
                     problem: req.problem_description || 'No description provided',
-                    date: req.preferred_date || 'N/A'
+                    priority: req.priority || 'medium',
+                    date: req.preferred_date || 'N/A',
+                    time: req.preferred_time || 'N/A'
                 };
             });
         }
@@ -103,10 +110,16 @@ function renderCards(requests) {
                     <span class="sr-card-id">#${req.id}</span>
                     <span class="sr-badge ${req.status}">${statusLabel}</span>
                 </div>
-                <div class="sr-card-title">${req.title}</div>
+                <div class="sr-card-title" style="display: flex; align-items: center; gap: 10px;">
+                    ${req.title}
+                    <span style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; background: ${
+                        req.priority === 'critical' ? '#e74c3c' : 
+                        req.priority === 'high' ? '#e67e22' : 
+                        req.priority === 'medium' ? '#3498db' : '#2ecc71'
+                    }; color: white;">${req.priority}</span>
+                </div>
                 <div class="sr-card-info">
                     <div class="sr-card-info-item"><i class="far fa-user"></i> ${req.name}</div>
-                    <div class="sr-card-info-item"><i class="fas fa-phone"></i> ${req.contact}</div>
                     <div class="sr-card-info-item"><i class="fas fa-map-marker-alt"></i> ${req.block}</div>
                     <div class="sr-card-info-item"><i class="fas fa-exclamation-circle"></i> ${req.problem.length > 45 ? req.problem.slice(0, 45) + '…' : req.problem}</div>
                 </div>
@@ -135,6 +148,9 @@ function openModal(reqId) {
     document.getElementById('modal-resident').textContent = req.name;
     document.getElementById('modal-phone').textContent = req.contact;
     document.getElementById('modal-block').textContent = req.block;
+    document.getElementById('modal-priority').textContent = req.priority.toUpperCase();
+    document.getElementById('modal-date').textContent = req.date;
+    document.getElementById('modal-time').textContent = req.time;
     document.getElementById('modal-problem').textContent = req.problem;
 
     const statusEl = document.getElementById('modal-status');
@@ -174,21 +190,29 @@ function setupModalClose() {
 
 // ── Actions ──────────────────────────────────────────────────────────────────
 async function updateStatus(bookingId, newStatus) {
+    const providerId = sessionStorage.getItem('userId');
     try {
         const response = await fetch('http://localhost:5000/update-status', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ booking_id: bookingId, status: newStatus })
+            body: JSON.stringify({ 
+                booking_id: bookingId, 
+                status: newStatus,
+                provider_id: providerId 
+            })
         });
 
         const result = await response.json();
         if (result.status === 'updated') {
             showToast(`Status updated to ${newStatus}!`, 'success');
             fetchRequests(); // Refresh list
+        } else {
+            console.error('Update failed:', result.message);
+            showToast(`Error: ${result.message}`, 'error');
         }
     } catch (error) {
         console.error('Error updating status:', error);
-        showToast('Failed to update status.', 'error');
+        showToast('Failed to update status. Check console for details.', 'error');
     }
 }
 

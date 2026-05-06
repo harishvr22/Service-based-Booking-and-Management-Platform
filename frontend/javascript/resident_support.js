@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     if (!userId) {
         console.error('No userId found in resident_support.js');
         return;
@@ -63,7 +63,7 @@ window.closeAlert = function() {
 };
 
 window.submitComplaint = function() {
-    const userId = localStorage.getItem('userId');
+    const residentId = sessionStorage.getItem('userId') || '1';
     const title = document.getElementById('complaintTitle').value.trim();
     const description = document.getElementById('complaintDesc').value.trim();
     const priority = document.getElementById('complaintPriority').value;
@@ -134,7 +134,7 @@ window.closeConfirm = function(isConfirmed) {
 };
 
 window.clearMyComplaints = function() {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     
     showCustomConfirm(
         'Clear History', 

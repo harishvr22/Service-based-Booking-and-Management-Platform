@@ -27,7 +27,7 @@ async function fetchHistory() {
                 id: req.id.toString(),
                 title: req.service_name || 'Service Request',
                 status: req.status,
-                name: `Resident #${req.resident_id}`,
+                name: req.resident_name || `Resident #${req.resident_id}`,
                 contact: req.mobile_number || 'No contact provided',
                 block: req.apartment_id || 'N/A',
                 problem: req.problem_description || 'No description provided',

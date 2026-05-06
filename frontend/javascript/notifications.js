@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'], timeout: 3000 });
         socket.on('new_notification', function (data) {
-            const currentUserId = localStorage.getItem('userId') || localStorage.getItem('user_id');
+            const currentUserId = sessionStorage.getItem('userId') || sessionStorage.getItem('user_id');
             const matchAudience = allowedAudiences.includes(data.audience);
             const matchUser = data.user_id && currentUserId && String(data.user_id) === String(currentUserId);
             
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(timeoutId);
             if (!response.ok) throw new Error('Failed to fetch');
             const allNotifs = await response.json();
-            const currentUserId = localStorage.getItem('userId') || localStorage.getItem('user_id');
+            const currentUserId = sessionStorage.getItem('userId') || sessionStorage.getItem('user_id');
             
             notifs = allNotifs.filter(n => {
                 // Show if it's for everyone/role
@@ -71,18 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 return matchAudience;
             });
-            // Save to localStorage for offline fallback
-            localStorage.setItem('cached_notifs_' + audienceTag, JSON.stringify(notifs));
+            // Save to sessionStorage for offline fallback
+            sessionStorage.setItem('cached_notifs_' + audienceTag, JSON.stringify(notifs));
         } catch (error) {
             console.warn('Backend fetch failed, using fallback:', error.message || error);
             source = 'fallback';
             // Try cached backend data first
-            const cached = JSON.parse(localStorage.getItem('cached_notifs_' + audienceTag) || '[]');
+            const cached = JSON.parse(sessionStorage.getItem('cached_notifs_' + audienceTag) || '[]');
             if (cached.length > 0) {
                 notifs = cached.filter(n => allowedAudiences.includes(n.audience));
             }
-            // Also merge any admin-created localStorage notifs
-            const adminNotifs = JSON.parse(localStorage.getItem('admin_notifications') || '[]');
+            // Also merge any admin-created localStorage/sessionStorage notifs
+            const adminNotifs = JSON.parse(sessionStorage.getItem('admin_notifications') || '[]');
             const localRelevant = adminNotifs.filter(n => allowedAudiences.includes(n.audience));
             if (localRelevant.length > 0) {
                 notifs = notifs.length > 0 ? notifs : localRelevant;
@@ -198,8 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateBadges(count) {
-        // Update notification count in localStorage for cross-page sync
-        localStorage.setItem('unread_notif_count_' + audienceTag, String(count));
+        // Update notification count in sessionStorage for tab sync
+        sessionStorage.setItem('unread_notif_count_' + audienceTag, String(count));
 
         // Update all bell badges on this page
         const badges = document.querySelectorAll('.badge');
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
 (function syncBadgeOnLoad() {
     const isProvider = document.title.includes('Provider') || window.location.href.includes('Provider');
     const audienceTag = isProvider ? 'Providers' : 'Residents';
-    const countStr = localStorage.getItem('unread_notif_count_' + audienceTag);
+    const countStr = sessionStorage.getItem('unread_notif_count_' + audienceTag);
     const count = countStr ? parseInt(countStr, 10) : 0;
 
     const badges = document.querySelectorAll('.badge');
