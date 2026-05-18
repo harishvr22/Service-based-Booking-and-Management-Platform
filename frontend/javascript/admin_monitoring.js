@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             allBookings = data.bookings || [];
             
+            updateStats();
             applyFilters();
         } catch (error) {
             console.error('Error loading bookings:', error);
@@ -60,18 +61,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         filteredBookings = allBookings.filter(booking => {
             const matchesSearch = !searchTerm || 
-                booking.service.toLowerCase().includes(searchTerm) ||
-                booking.resident.toLowerCase().includes(searchTerm) ||
-                booking.provider.toLowerCase().includes(searchTerm) ||
-                booking.id.toLowerCase().includes(searchTerm);
+                (booking.service || "").toLowerCase().includes(searchTerm) ||
+                (booking.resident || "").toLowerCase().includes(searchTerm) ||
+                (booking.provider || "").toLowerCase().includes(searchTerm) ||
+                (booking.id || "").toString().toLowerCase().includes(searchTerm);
 
             const matchesStatus = !statusFilter || booking.status === statusFilter;
-            const matchesService = !serviceFilter || booking.service === serviceFilter;
+            const matchesService = !serviceFilter || (booking.service || "") === serviceFilter;
 
             // Filter by current tab
             const matchesTab = currentTab === 'ongoing' ? 
-                ['pending', 'approved', 'in-progress'].includes(booking.status) :
-                booking.status === 'completed';
+                ['pending', 'approved', 'in-progress', 'accepted'].includes(booking.status) :
+                ['completed', 'cancelled', 'rejected'].includes(booking.status);
 
             return matchesSearch && matchesStatus && matchesService && matchesTab;
         });
@@ -146,9 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const colors = {
             'pending': '#f1c40f',
             'approved': '#3498db',
+            'accepted': '#3498db',
             'in-progress': '#e67e22',
             'completed': '#2ecc71',
-            'cancelled': '#e74c3c'
+            'cancelled': '#e74c3c',
+            'rejected': '#e74c3c'
         };
         return colors[status] || '#888';
     }
@@ -158,9 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const icons = {
             'pending': 'fas fa-clock',
             'approved': 'fas fa-check',
+            'accepted': 'fas fa-check-double',
             'in-progress': 'fas fa-spinner',
             'completed': 'fas fa-check-circle',
-            'cancelled': 'fas fa-times'
+            'cancelled': 'fas fa-times',
+            'rejected': 'fas fa-times-circle'
         };
         return `<i class="${icons[status] || 'fas fa-question'}"></i>`;
     }
@@ -246,24 +251,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Update booking status
-    function updateBookingStatus(bookingId, newStatus) {
+    async function updateBookingStatus(bookingId, newStatus) {
         closeModal('detail-modal');
         showConfirmModal(
             'Update Status',
             `Are you sure you want to update the booking status to ${newStatus}?`,
-            () => {
-                // In real app, make API call
-                console.log(`Updating booking ${bookingId} to ${newStatus}`);
-                
-                // Update local data
-                const booking = allBookings.find(b => b.id === bookingId);
-                if (booking) {
-                    booking.status = newStatus;
+            async () => {
+                try {
+                    // Make real API call to update status
+                    const response = await fetch(`${API_BASE_URL}/update-status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            booking_id: bookingId,
+                            status: newStatus
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.status === 'updated' || data.status === 'success') {
+                        // Update local data
+                        const booking = allBookings.find(b => b.id == bookingId);
+                        if (booking) {
+                            booking.status = newStatus;
+                        }
+                        
+                        applyFilters();
+                        updateStats();
+                        showToast(`Booking status updated to ${newStatus}`, 'success');
+                    } else {
+                        showToast(data.message || 'Failed to update status', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating booking status:', error);
+                    showToast('Failed to update status. Please try again.', 'error');
                 }
-                
-                applyFilters();
-                updateStats();
-                showToast(`Booking status updated to ${newStatus}`, 'success');
             }
         );
     }
@@ -315,9 +340,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateStats() {
         const stats = {
             pending: allBookings.filter(b => b.status === 'pending').length,
-            inprogress: allBookings.filter(b => b.status === 'in-progress').length,
+            inprogress: allBookings.filter(b => ['in-progress', 'approved', 'accepted'].includes(b.status)).length,
             completed: allBookings.filter(b => b.status === 'completed').length,
-            cancelled: allBookings.filter(b => b.status === 'cancelled').length
+            cancelled: allBookings.filter(b => ['cancelled', 'rejected'].includes(b.status)).length
         };
 
         document.getElementById('stat-pending').textContent = stats.pending;

@@ -249,6 +249,18 @@ def get_admin_dashboard():
     cursor.execute("SELECT COUNT(*) as count FROM bookings WHERE status = 'pending'")
     pending_bookings = cursor.fetchone()['count']
 
+    # 6. Recent bookings
+    cursor.execute("""
+        SELECT b.id, s.service_name as service, u.name as resident, b.status 
+        FROM bookings b 
+        LEFT JOIN services s ON b.service_id = s.id 
+        LEFT JOIN users u ON b.resident_id = u.id 
+        ORDER BY b.created_at DESC LIMIT 5
+    """)
+    recent_bookings = cursor.fetchall()
+    for rb in recent_bookings:
+        rb['id'] = str(rb['id'])
+
     return jsonify({
         "stats": {
             "total_users": total_users,
@@ -261,7 +273,8 @@ def get_admin_dashboard():
             "provider_approvals": pending_providers,
             "open_complaints": open_complaints,
             "pending_bookings": pending_bookings
-        }
+        },
+        "recent_bookings": recent_bookings
     })
 
 # DELETE RESIDENT
