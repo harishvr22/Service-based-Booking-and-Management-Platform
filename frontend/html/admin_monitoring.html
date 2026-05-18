@@ -20,23 +20,25 @@
             <p class="admin-menu-title">MANAGE</p>
             <nav class="admin-nav">
                 <ul>
-                    <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEW</a></li>
+                    <li><a href="admin_dashboard.html"><i class="fas fa-th-large"></i> OVERVIEWS</a></li>
                     <li><a href="users.html"><i class="fas fa-users"></i> RESIDENTS</a></li>
                     <li><a href="admin_providers.html"><i class="fas fa-wrench"></i> PROVIDERS</a></li>
                     <li class="active"><a href="admin_monitoring.html"><i class="fas fa-chart-line"></i> MONITORING</a></li>
-                    <li><a href="announcements.html"><i class="fas fa-bullhorn"></i> ANNOUNCEMENTS</a></li>
                     <li><a href="admin_roles.html"><i class="fas fa-shield-alt"></i> ADMIN ROLES</a></li>
+                    <li><a href="announcements.html"><i class="fas fa-bullhorn"></i> ANNOUNCEMENTS</a></li>
                     <li><a href="admin_complaints.html"><i class="fas fa-exclamation-triangle"></i> COMPLAINTS</a></li>
                 </ul>
             </nav>
         </div>
-        <div class="admin-profile">
+        <a href="admin_profile.html" style="text-decoration: none; display: block;">
+        <div class="admin-profile" style="background: rgba(255,255,255,0.05); border: 1px solid var(--orange);">
             <div class="admin-avatar">AR</div>
             <div class="admin-info">
                 <div class="name">Alex Reed</div>
                 <div class="role">SUPER ADMIN</div>
             </div>
         </div>
+        </a>
         <div class="admin-logout">
             <a href="login.html"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
         </div>
@@ -106,10 +108,14 @@
                 </select>
                 <select id="filter-service" class="monitor-filter">
                     <option value="">All Services</option>
-                    <option value="Plumbing">Plumbing</option>
-                    <option value="Cleaning">Cleaning</option>
-                    <option value="Electrical">Electrical</option>
-                    <option value="Carpentry">Carpentry</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Cleaner">Cleaner</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="Painter">Painter</option>
+                    <option value="HVAC Technician">HVAC Technician</option>
+                    <option value="Appliance Repair">Appliance Repair</option>
+                    <option value="Pest Control">Pest Control</option>
                 </select>
                 <button class="btn-refresh" id="btn-refresh" onclick="handleRefresh()">
                     <i class="fas fa-sync-alt"></i> Refresh
@@ -162,5 +168,6 @@
 </div>
 
 <script src="../javascript/admin_monitoring.js"></script>
+    <script src="../javascript/admin_common.js"></script>
 </body>
 </html>
