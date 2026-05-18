@@ -8,11 +8,16 @@ admins_bp = Blueprint("admins", __name__)
 def get_admins():
     cursor = db.cursor(dictionary=True)
     
-    # Get all users with admin roles
-    query = "SELECT id, name, email, role, last_login FROM users WHERE role IN ('super admin', 'manager', 'support', 'admin') ORDER BY id DESC"
+    # Get all admin users; use created_at as a fallback for last activity
+    query = "SELECT id, name, email, role, created_at AS last_login FROM users WHERE role IN ('super admin', 'manager', 'support', 'admin') ORDER BY id DESC"
     
     cursor.execute(query)
     admins = cursor.fetchall()
+    
+    # Convert datetimes to strings for JSON serialization
+    for admin in admins:
+        if admin.get('last_login') is not None:
+            admin['last_login'] = str(admin['last_login'])
     
     return jsonify({
         "status": "success",
