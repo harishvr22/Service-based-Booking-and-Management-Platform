@@ -51,7 +51,7 @@ if (loginForm) {
           }, "Continue", "OK");
         } else {
           console.error('Login failed:', data);
-          showConfirmDialog("Login Failed", "Invalid credentials. Please check your email and password.", () => { }, "OK", "OK");
+          showConfirmDialog("Login Failed", data.message || "Invalid credentials. Please check your email and password.", () => { }, "OK", "OK");
         }
       })
       .catch(error => {
@@ -530,5 +530,127 @@ if (customDropdown) {
       dropdownMenu.classList.remove('show');
       dropdownSelected.classList.remove('active');
     }
+  });
+}
+
+// FORGOT PASSWORD LOGIC
+const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+const forgotPasswordModal = document.getElementById("forgotPasswordModal");
+
+if (forgotPasswordLink && forgotPasswordModal) {
+  forgotPasswordLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    forgotPasswordModal.style.display = "flex";
+    document.getElementById("forgotStep1").style.display = "block";
+    document.getElementById("forgotStep2").style.display = "none";
+    document.getElementById("forgotStep3").style.display = "none";
+    document.getElementById("forgotEmail").value = "";
+    document.getElementById("forgotOTP").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmNewPassword").value = "";
+  });
+}
+
+function closeForgotModal() {
+  const modal = document.getElementById("forgotPasswordModal");
+  if (modal) modal.style.display = "none";
+}
+
+let resetEmail = "";
+
+function sendOTP() {
+  const emailInput = document.getElementById("forgotEmail").value;
+  if (!emailInput) {
+    showNotification("Please enter your email", "error");
+    return;
+  }
+  
+  const btn = document.querySelector("#forgotStep1 .btn");
+  if(btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+  fetch('http://127.0.0.1:5000/forgot-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: emailInput })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(btn) btn.innerHTML = 'Send OTP';
+    if (data.status === 'success') {
+      showNotification(data.message, "success");
+      resetEmail = emailInput;
+      document.getElementById("forgotStep1").style.display = "none";
+      document.getElementById("forgotStep2").style.display = "block";
+    } else {
+      showNotification(data.message || "Failed to send OTP", "error");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    if(btn) btn.innerHTML = 'Send OTP';
+    showNotification("Server error while sending OTP", "error");
+  });
+}
+
+function verifyOTP() {
+  const otpInput = document.getElementById("forgotOTP").value;
+  if (!otpInput) {
+    showNotification("Please enter the OTP", "error");
+    return;
+  }
+
+  fetch('http://127.0.0.1:5000/verify-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: resetEmail, otp: otpInput })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showNotification(data.message, "success");
+      document.getElementById("forgotStep2").style.display = "none";
+      document.getElementById("forgotStep3").style.display = "block";
+    } else {
+      showNotification(data.message || "Invalid OTP", "error");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showNotification("Server error while verifying OTP", "error");
+  });
+}
+
+function resetPassword() {
+  const newPass = document.getElementById("newPassword").value;
+  const confirmPass = document.getElementById("confirmNewPassword").value;
+  const otpInput = document.getElementById("forgotOTP").value;
+
+  if (!newPass || !confirmPass) {
+    showNotification("Please fill all fields", "error");
+    return;
+  }
+  if (newPass !== confirmPass) {
+    showNotification("Passwords do not match", "error");
+    return;
+  }
+
+  fetch('http://127.0.0.1:5000/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: resetEmail, otp: otpInput, new_password: newPass })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showConfirmDialog("Success", "Password reset successfully. You can now login.", () => {
+        closeForgotModal();
+      }, "Login", "Login");
+    } else {
+      showNotification(data.message || "Failed to reset password", "error");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showNotification("Server error while resetting password", "error");
   });
 }

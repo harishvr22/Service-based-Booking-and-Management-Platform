@@ -1,5 +1,10 @@
 from flask import Blueprint, request, jsonify
 from db import db
+import random
+import string
+from datetime import datetime, timedelta
+import smtplib
+from email.mime.text import MIMEText
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -322,3 +327,116 @@ def delete_provider(provider_id):
         return jsonify({"status": "error", "message": str(e)}), 500
     finally:
         cursor.close()
+
+
+# FORGOT PASSWORD - GENERATE OTP
+@auth_bp.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    data = request.json
+    email = data.get("email")
+
+    if not email:
+        return jsonify({"status": "error", "message": "Email is required"}), 400
+
+    cursor = db.cursor(dictionary=True, buffered=True)
+    cursor.execute("SELECT id, name FROM users WHERE email=%s", (email,))
+    user = cursor.fetchone()
+
+    if not user:
+        cursor.close()
+        return jsonify({"status": "error", "message": "No account found with this email"}), 404
+
+    # Generate 6-digit OTP
+    otp = ''.join(random.choices(string.digits, k=6))
+    expires_at = datetime.now() + timedelta(minutes=15)
+
+    # Delete existing OTPs for this email to avoid confusion
+    cursor.execute("DELETE FROM password_resets WHERE email=%s", (email,))
+    
+    # Insert new OTP
+    cursor.execute("INSERT INTO password_resets (email, otp, expires_at) VALUES (%s, %s, %s)", (email, otp, expires_at))
+    db.commit()
+    cursor.close()
+
+    # Send Email
+    sender_email = "kit27.am22@gmail.com" 
+    sender_password = "myitunhvvburfavs" 
+    
+    msg = MIMEText(f"Hello {user['name']},\n\nYour OTP for password reset is: {otp}\n\nThis OTP is valid for 15 minutes.\n\nDo not share this OTP with anyone.")
+    msg['Subject'] = "Password Reset OTP"
+    msg['From'] = sender_email
+    msg['To'] = email
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(sender_email, sender_password)
+            server.send_message(msg)
+
+        print(f"\n==== EMAIL SENT ====")
+        print(f"To: {email}")
+        print(f"====================\n")
+        
+        return jsonify({"status": "success", "message": "OTP sent to your email successfully!"})
+    except Exception as e:
+        print(f"Email send error: {e}")
+        return jsonify({"status": "error", "message": f"Failed to send email: {str(e)}"}), 500
+
+
+# VERIFY OTP
+@auth_bp.route("/verify-otp", methods=["POST"])
+def verify_otp():
+    data = request.json
+    email = data.get("email")
+    otp = data.get("otp")
+
+    if not email or not otp:
+        return jsonify({"status": "error", "message": "Email and OTP are required"}), 400
+
+    cursor = db.cursor(dictionary=True, buffered=True)
+    cursor.execute("SELECT otp, expires_at FROM password_resets WHERE email=%s ORDER BY created_at DESC LIMIT 1", (email,))
+    record = cursor.fetchone()
+    cursor.close()
+
+    if not record:
+        return jsonify({"status": "error", "message": "No OTP requested for this email"}), 400
+
+    if record['otp'] != otp:
+        return jsonify({"status": "error", "message": "Invalid OTP"}), 400
+
+    if datetime.now() > record['expires_at']:
+        return jsonify({"status": "error", "message": "OTP has expired"}), 400
+
+    return jsonify({"status": "success", "message": "OTP verified successfully"})
+
+
+# RESET PASSWORD
+@auth_bp.route("/reset-password", methods=["POST"])
+def reset_password():
+    data = request.json
+    email = data.get("email")
+    otp = data.get("otp")
+    new_password = data.get("new_password")
+
+    if not email or not otp or not new_password:
+        return jsonify({"status": "error", "message": "Email, OTP, and new password required"}), 400
+
+    cursor = db.cursor(dictionary=True, buffered=True)
+    
+    # Verify OTP one last time to prevent bypass
+    cursor.execute("SELECT otp, expires_at FROM password_resets WHERE email=%s ORDER BY created_at DESC LIMIT 1", (email,))
+    record = cursor.fetchone()
+
+    if not record or record['otp'] != otp or datetime.now() > record['expires_at']:
+        cursor.close()
+        return jsonify({"status": "error", "message": "Invalid or expired OTP"}), 400
+
+    # Update password in users table
+    cursor.execute("UPDATE users SET password=%s WHERE email=%s", (new_password, email))
+    
+    # Delete OTP record after successful use
+    cursor.execute("DELETE FROM password_resets WHERE email=%s", (email,))
+    
+    db.commit()
+    cursor.close()
+
+    return jsonify({"status": "success", "message": "Password reset successfully"})
