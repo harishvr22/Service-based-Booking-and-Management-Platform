@@ -173,10 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get service icon
     function getServiceIcon(service) {
         const icons = {
-            'Plumbing': 'fa-wrench',
-            'Electrical': 'fa-bolt',
-            'Cleaning': 'fa-broom',
-            'Carpentry': 'fa-hammer'
+            'Plumber': 'fa-wrench',
+            'Electrician': 'fa-bolt',
+            'Cleaner': 'fa-broom',
+            'Carpenter': 'fa-hammer',
+            'Painter': 'fa-paint-roller',
+            'HVAC Technician': 'fa-snowflake',
+            'Appliance Repair': 'fa-plug',
+            'Pest Control': 'fa-bug'
         };
         return icons[service] || 'fa-tools';
     }

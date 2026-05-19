@@ -1,5 +1,21 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const API_BASE_URL = 'http://127.0.0.1:5000';
+    const apiHost = window.location.hostname || '127.0.0.1';
+    const API_BASE_URL = `http://${apiHost}:5000`;
+    
+    // Update admin profile details from session
+    const adminName = sessionStorage.getItem('userName');
+    const adminRole = sessionStorage.getItem('userRole');
+    if (adminName) {
+        const nameEl = document.querySelector('.admin-info .name');
+        if (nameEl) nameEl.textContent = adminName;
+        
+        const avatarEl = document.querySelector('.admin-avatar');
+        if (avatarEl) avatarEl.textContent = adminName.substring(0, 2).toUpperCase();
+    }
+    if (adminRole) {
+        const roleEl = document.querySelector('.admin-info .role');
+        if (roleEl) roleEl.textContent = adminRole.toUpperCase();
+    }
     
     // Load dashboard data from API
     async function loadDashboardData() {
@@ -23,7 +39,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             
             // Update recent bookings table
             if (data.recent_bookings) {
-                updateBookingsTable(data.recent_bookings);
+                let clearedBookingIds = JSON.parse(localStorage.getItem('cleared_admin_bookings') || '[]');
+                const filteredBookings = data.recent_bookings.filter(b => !clearedBookingIds.includes(String(b.id)));
+                window.currentRecentBookings = filteredBookings;
+                updateBookingsTable(filteredBookings);
             }
             
             // Update action required panel
@@ -38,6 +57,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             
         } catch (error) {
             console.error('Error loading dashboard data:', error);
+            const tableBody = document.querySelector('.ad-table tbody');
+            if (tableBody) {
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#888;padding:20px;">Unable to load recent bookings from the database.</td></tr>';
+            }
             
             // Don't show error notification for development, just log it
             if (error.message.includes('Failed to fetch')) {
@@ -76,15 +99,32 @@ document.addEventListener('DOMContentLoaded', async function () {
         
         bookings.forEach(booking => {
             const row = document.createElement('tr');
+            const badgeClass = getStatusBadgeClass(booking.status);
+            const displayStatus = (booking.status || 'pending').toString().toUpperCase();
             row.innerHTML = `
                 <td style="font-weight: 500;">${booking.resident || 'N/A'}</td>
                 <td style="color: #aaa;">${booking.service || 'N/A'}</td>
-                <td><span class="badge-solid badge-${booking.status || 'pending'}">${(booking.status || 'PENDING').toUpperCase()}</span></td>
+                <td><span class="badge-solid ${badgeClass}">${displayStatus}</span></td>
             `;
             tableBody.appendChild(row);
         });
     }
     
+    // Map booking statuses to badge classes
+    function getStatusBadgeClass(status) {
+        const normalized = String(status || 'pending').toLowerCase().replace(/\s+/g, '-');
+        const map = {
+            'pending': 'badge-pending',
+            'accepted': 'badge-accepted',
+            'approved': 'badge-approved',
+            'in-progress': 'badge-in-progress',
+            'completed': 'badge-completed',
+            'cancelled': 'badge-cancelled',
+            'rejected': 'badge-rejected'
+        };
+        return map[normalized] || 'badge-pending';
+    }
+
     // Update action required panel
     function updateActionPanel(actions) {
         const actionList = document.getElementById('actionRequiredList');
@@ -478,4 +518,23 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Refresh dashboard data to update Action Required section
         loadDashboardData();
     });
+
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', clearBookingHistory);
+    }
 });
+
+function clearBookingHistory() {
+    if (window.currentRecentBookings && window.currentRecentBookings.length > 0) {
+        const idsToClear = window.currentRecentBookings.map(b => String(b.id));
+        let clearedBookingIds = JSON.parse(localStorage.getItem('cleared_admin_bookings') || '[]');
+        clearedBookingIds = [...new Set([...clearedBookingIds, ...idsToClear])];
+        localStorage.setItem('cleared_admin_bookings', JSON.stringify(clearedBookingIds));
+    }
+
+    const tableBody = document.querySelector('.ad-table tbody');
+    if (!tableBody) return;
+    tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#888;padding:20px;">Recent booking history cleared.</td></tr>';
+    window.currentRecentBookings = [];
+}
