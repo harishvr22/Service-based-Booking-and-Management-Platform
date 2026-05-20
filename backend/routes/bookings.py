@@ -159,3 +159,25 @@ def delete_booking(booking_id):
     except Exception as e:
         print("Database error in delete_booking:", e)
         return jsonify({"status": "error", "message": str(e)}), 500
+
+# ADD REVIEW
+@booking_bp.route("/add-review", methods=["POST"])
+def add_review():
+    data = request.json
+    try:
+        booking_id = data.get("booking_id")
+        rating = data.get("rating")
+        review = data.get("review")
+
+        if not booking_id or rating is None:
+            return jsonify({"status": "error", "message": "Missing booking_id or rating"}), 400
+
+        cursor = db.cursor(buffered=True)
+        query = "UPDATE bookings SET rating=%s, review=%s WHERE id=%s"
+        cursor.execute(query, (rating, review, booking_id))
+        db.commit()
+        cursor.close()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        print("Database error in add_review:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500

@@ -142,7 +142,8 @@ def get_providers():
 
     query = """
         SELECT u.*, 
-        (SELECT COUNT(*) FROM bookings WHERE provider_id = u.id) as total_bookings 
+        (SELECT COUNT(*) FROM bookings WHERE provider_id = u.id) as total_bookings,
+        COALESCE((SELECT AVG(rating) FROM bookings WHERE provider_id = u.id AND rating IS NOT NULL), 0.0) as avg_rating
         FROM users u WHERE u.role LIKE 'Provider%'
     """
     cursor.execute(query)
@@ -363,8 +364,8 @@ def forgot_password():
     sender_password = "myitunhvvburfavs" 
     
     msg = MIMEText(f"Hello {user['name']},\n\nYour OTP for password reset is: {otp}\n\nThis OTP is valid for 15 minutes.\n\nDo not share this OTP with anyone.")
-    msg['Subject'] = "Password Reset OTP"
-    msg['From'] = sender_email
+    msg['Subject'] = "ServiceBookingSite - Password Reset OTP"
+    msg['From'] = f"ServiceBookingSite <{sender_email}>"
     msg['To'] = email
 
     try:

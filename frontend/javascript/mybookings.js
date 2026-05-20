@@ -106,13 +106,23 @@ function renderBookingsList(bookings, serviceMap) {
       const dateStr = booking.preferred_date && booking.preferred_time ? `${booking.preferred_date} - ${booking.preferred_time}` : (booking.preferred_date || 'Date TBD');
       
       let reviewSection = '';
-      if (bStatus.toLowerCase() === 'completed' && booking.review) {
-         reviewSection = `
-           <div class="booking-rating">
-             <span class="stars">★★★★★</span>
-             "${booking.review}"
-           </div>
-         `;
+      if (bStatus.toLowerCase() === 'completed') {
+         if (booking.review || booking.rating) {
+             const rating = booking.rating || 5;
+             const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+             reviewSection = `
+               <div class="booking-rating">
+                 <span class="stars">${stars}</span>
+                 "${booking.review || ''}"
+               </div>
+             `;
+         } else {
+             reviewSection = `
+               <div class="booking-rating" style="margin-top: 10px;">
+                 <button class="btn-review" onclick="openReviewModal(${booking.id})" style="background: var(--orange); border: none; padding: 6px 12px; border-radius: 4px; font-weight: 600; cursor: pointer;">Leave Feedback</button>
+               </div>
+             `;
+         }
       }
       
       let actionsHTML = `
@@ -292,4 +302,96 @@ function clearHistory() {
     showNotification('Your booking history has been cleared.', 'success');
     location.reload(); 
   }
+}
+
+function openReviewModal(bookingId) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7); z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s ease-out;
+  `;
+
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 12px;
+    padding: 24px; max-width: 400px; width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease-out;
+  `;
+
+  modal.innerHTML = `
+    <h3 style="color: #fff; margin: 0 0 12px; font-size: 18px; font-weight: 600;">Rate Service</h3>
+    <p style="color: #9e9e9e; margin: 0 0 15px; font-size: 14px;">Please rate the provider and leave a review.</p>
+    
+    <div style="margin-bottom: 20px;">
+      <label style="color: #fff; display: block; margin-bottom: 8px;">Rating (1-5)</label>
+      <input type="number" id="review-rating" min="1" max="5" value="5" style="width: 100%; background: #2a2a2a; border: 1px solid #333; color: white; padding: 10px; border-radius: 6px;" />
+    </div>
+    <div style="margin-bottom: 20px;">
+      <label style="color: #fff; display: block; margin-bottom: 8px;">Review</label>
+      <textarea id="review-text" rows="3" placeholder="How was the service?" style="width: 100%; background: #2a2a2a; border: 1px solid #333; color: white; padding: 10px; border-radius: 6px;"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+      <button class="btn-cancel" style="
+        background: transparent; border: 1px solid #2a2a2a; color: #9e9e9e;
+        padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+      ">Cancel</button>
+      <button class="btn-submit" style="
+        background: var(--orange); border: none; color: black;
+        padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;
+      ">Submit</button>
+    </div>
+  `;
+
+  const closeModal = () => {
+    overlay.style.animation = 'fadeOut 0.2s ease-in';
+    setTimeout(() => overlay.remove(), 200);
+  };
+
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+  modal.querySelector('.btn-cancel').onclick = closeModal;
+  
+  modal.querySelector('.btn-submit').onclick = () => {
+    const rating = parseInt(document.getElementById('review-rating').value, 10);
+    const review = document.getElementById('review-text').value.trim();
+    
+    if (rating < 1 || rating > 5) {
+      alert('Rating must be between 1 and 5');
+      return;
+    }
+    
+    const submitBtn = modal.querySelector('.btn-submit');
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
+
+    fetch('http://localhost:5000/add-review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ booking_id: bookingId, rating: rating, review: review })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.status === 'success') {
+        showToast('Review submitted successfully!', 'success');
+        closeModal();
+        loadBookings();
+      } else {
+        alert('Error: ' + data.message);
+        submitBtn.textContent = 'Submit';
+        submitBtn.disabled = false;
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Failed to submit review');
+      submitBtn.textContent = 'Submit';
+      submitBtn.disabled = false;
+    });
+  };
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
 }
