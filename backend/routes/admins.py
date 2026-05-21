@@ -107,7 +107,9 @@ def get_admin_bookings():
                 b.preferred_time as time, 
                 'normal' as priority,
                 b.problem_description as description,
-                b.created_at
+                b.created_at,
+                b.rating,
+                b.review
             FROM bookings b
             LEFT JOIN services s ON b.service_id = s.id
             LEFT JOIN users u_res ON b.resident_id = u_res.id

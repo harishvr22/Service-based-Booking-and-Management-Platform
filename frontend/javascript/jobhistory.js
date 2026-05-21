@@ -14,6 +14,8 @@ async function fetchHistory() {
     const list = document.getElementById('history-list');
     list.innerHTML = '<div style="text-align:center; padding: 40px; color: #888;">Fetching history...</div>';
     
+    const userId = parseInt(sessionStorage.getItem('userId'));
+
     try {
         const response = await fetch('http://127.0.0.1:5000/bookings');
         if (!response.ok) throw new Error('Server error');
@@ -22,8 +24,8 @@ async function fetchHistory() {
         if (!Array.isArray(data)) {
             historyData = [];
         } else {
-            // Filter for completed jobs
-            historyData = data.filter(req => req.status === 'completed').map(req => ({
+            // Filter for completed jobs assigned to THIS provider
+            historyData = data.filter(req => req.status === 'completed' && req.provider_id == userId).map(req => ({
                 id: req.id.toString(),
                 title: req.service_name || 'Service Request',
                 status: req.status,
@@ -31,7 +33,9 @@ async function fetchHistory() {
                 contact: req.mobile_number || 'No contact provided',
                 block: req.apartment_id || 'N/A',
                 problem: req.problem_description || 'No description provided',
-                date: req.preferred_date || 'N/A'
+                date: req.preferred_date || 'N/A',
+                rating: req.rating,
+                review: req.review
             }));
         }
         renderHistory(historyData);
@@ -59,6 +63,17 @@ function renderHistory(items) {
         const card = document.createElement('div');
         card.className = 'sr-card';
         card.style.borderLeft = '4px solid #2ecc71'; // Green for completed
+        
+        let reviewHtml = '';
+        if (req.rating) {
+            const stars = '★'.repeat(req.rating) + '☆'.repeat(5 - req.rating);
+            reviewHtml = `
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #333;">
+                    <div style="color: #ffb800; font-size: 14px; margin-bottom: 4px;">${stars}</div>
+                    <div style="color: #aaa; font-size: 13px; font-style: italic;">"${req.review || ''}"</div>
+                </div>
+            `;
+        }
 
         card.innerHTML = `
             <div class="sr-card-left">
@@ -73,6 +88,7 @@ function renderHistory(items) {
                     <div class="sr-card-info-item"><i class="fas fa-map-marker-alt"></i> ${req.block}</div>
                     <div class="sr-card-info-item"><i class="fas fa-exclamation-circle"></i> ${req.problem}</div>
                 </div>
+                ${reviewHtml}
             </div>`;
         list.appendChild(card);
     });
