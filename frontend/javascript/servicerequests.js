@@ -19,6 +19,10 @@ async function fetchRequests() {
     const list = document.getElementById('sr-requests-list');
     list.innerHTML = '<div style="text-align:center; padding: 40px; color: #888;">Fetching requests...</div>';
 
+    const userId = parseInt(sessionStorage.getItem('userId'));
+    const userRole = sessionStorage.getItem('userRole') || ''; 
+    const providerTrade = userRole.replace('Provider: ', '').trim();
+
     try {
         const response = await fetch('http://127.0.0.1:5000/bookings');
         if (!response.ok) throw new Error('Server error');
@@ -27,7 +31,16 @@ async function fetchRequests() {
         if (!Array.isArray(data)) {
             activeRequests = [];
         } else {
-            activeRequests = data.map(req => {
+            // Filter: Pending requests for this trade, OR assigned work for this provider
+            const filteredData = data.filter(req => {
+                if (req.status === 'pending') {
+                    return req.service_name === providerTrade;
+                } else {
+                    return req.provider_id == userId;
+                }
+            });
+
+            activeRequests = filteredData.map(req => {
                 let displayLocation = "";
                 let apt = req.apartment_id || "";
                 

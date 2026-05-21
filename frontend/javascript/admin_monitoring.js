@@ -199,6 +199,17 @@ document.addEventListener('DOMContentLoaded', () => {
         serviceName.textContent = `${booking.service} - ${booking.apartment}`;
         bookingId.textContent = `Booking ID: ${booking.id}`;
 
+        let feedbackHtml = '';
+        if (booking.rating || booking.review) {
+            const stars = '★'.repeat(booking.rating || 5) + '☆'.repeat(5 - (booking.rating || 5));
+            feedbackHtml = `
+            <div class="modal-row" style="flex-direction: column; align-items: flex-start; border-top: 1px dashed #333; margin-top: 10px; padding-top: 10px;">
+                <span style="color: #ffb800; font-size: 16px; margin-bottom: 4px;">${stars}</span>
+                <span style="color: #aaa; font-style: italic;">"${booking.review || 'No written review'}"</span>
+            </div>
+            `;
+        }
+
         // Set booking details
         modalRows.innerHTML = `
             <div class="modal-row">
@@ -223,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>Description</span>
                 <span>${booking.description}</span>
             </div>
+            ${feedbackHtml}
         `;
 
         // Set action buttons based on status

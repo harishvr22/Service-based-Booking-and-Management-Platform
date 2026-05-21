@@ -113,6 +113,11 @@
   border-color: #2ecc7140;
   background-color: #2ecc7110;
 }
+.status-rejected, .status-cancelled {
+  color: #e74c3c;
+  border-color: #e74c3c40;
+  background-color: #e74c3c10;
+}
 
 .btn-review {
   background-color: var(--orange);

@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         status: provider.status.toUpperCase(),
                         category: specificRole.toUpperCase(),
                         joinedDate: provider.created_at ? new Date(provider.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A',
-                        rating: provider.rating || '0.0',
+                        rating: provider.avg_rating ? parseFloat(provider.avg_rating).toFixed(1) : '0.0',
                         totalJobs: provider.total_bookings || 0,
                         description: provider.bio || 'Professional service provider.',
                         skills: provider.skills || 'N/A',
