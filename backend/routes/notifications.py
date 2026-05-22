@@ -44,7 +44,7 @@ def create_notification():
         cursor.close()
 
 # Mark as read
-@notifications_bp.route("/notifications/<int:id>/read", methods=["PUT"])
+@notifications_bp.route("/notifications/<int:id>/read", methods=["POST", "PUT"])
 def mark_read(id):
     cursor = db.cursor(buffered=True)
     cursor.execute("UPDATE notifications SET is_read = 1 WHERE id = %s", (id,))

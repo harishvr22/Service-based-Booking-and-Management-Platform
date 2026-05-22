@@ -33,9 +33,9 @@
             
             <a href="admin_profile.html" style="text-decoration: none; display: block;">
                 <div class="admin-profile" style="background: rgba(255,255,255,0.05); border: 1px solid var(--orange);">
-                    <div class="admin-avatar">AR</div>
+                    <div class="admin-avatar">AD</div>
                     <div class="admin-info">
-                        <div class="name">Alex Reed</div>
+                        <div class="name">Admin</div>
                         <div class="role">SUPER ADMIN</div>
                     </div>
                 </div>
@@ -80,7 +80,17 @@
                     <div class="ad-stat-card">
                         <div class="ad-stat-top"><i class="fas fa-dollar-sign text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">LIVE</span></div>
                         <div class="ad-stat-val" id="stat-revenue">$0</div>
-                        <div class="ad-stat-label">REVENUE</div>
+                        <div class="ad-stat-label">TOTAL REVENUE</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="fas fa-file-invoice-dollar text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">LIVE</span></div>
+                        <div class="ad-stat-val" id="stat-paid-bookings">0</div>
+                        <div class="ad-stat-label">TOTAL PAID BOOKINGS</div>
+                    </div>
+                    <div class="ad-stat-card">
+                        <div class="ad-stat-top"><i class="fas fa-clock text-orange" style="background: rgba(255,140,0,0.1); padding: 8px; border-radius: 4px; color: var(--orange);"></i> <span class="ad-stat-trend">LIVE</span></div>
+                        <div class="ad-stat-val" id="stat-pending-payments">0</div>
+                        <div class="ad-stat-label">TOTAL PENDING PAYMENTS</div>
                     </div>
                 </div>
 
@@ -124,6 +134,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="../javascript/config.js"></script>
     <script src="../javascript/admin_dashboard.js"></script>
     <script src="../javascript/admin_common.js"></script>
 </body>
