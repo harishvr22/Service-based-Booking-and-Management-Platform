@@ -239,8 +239,16 @@ def get_admin_dashboard():
     cursor.execute("SELECT COUNT(*) as count FROM bookings WHERE status IN ('pending', 'accepted')")
     active_bookings = cursor.fetchone()['count']
 
-    # 4. Revenue (Set to $0 since no revenue feature yet)
-    revenue = "$0"
+    # 4. Revenue & Payments
+    cursor.execute("SELECT COALESCE(SUM(amount), 0) as total FROM bookings WHERE payment_status = 'paid'")
+    revenue_val = cursor.fetchone()['total']
+    revenue = f"${int(revenue_val)}"
+
+    cursor.execute("SELECT COUNT(*) as count FROM bookings WHERE payment_status = 'paid'")
+    paid_bookings = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COUNT(*) as count FROM bookings WHERE payment_status = 'pending'")
+    pending_payments = cursor.fetchone()['count']
 
     # 5. Action Required counts
     cursor.execute("SELECT COUNT(*) as count FROM users WHERE role LIKE 'Resident%' AND status = 'pending'")
@@ -272,7 +280,9 @@ def get_admin_dashboard():
             "total_users": total_users,
             "active_providers": active_providers,
             "active_bookings": active_bookings,
-            "revenue": revenue
+            "revenue": revenue,
+            "paid_bookings": paid_bookings,
+            "pending_payments": pending_payments
         },
         "action_required": {
             "resident_approvals": pending_residents,

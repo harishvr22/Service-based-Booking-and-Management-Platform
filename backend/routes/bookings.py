@@ -5,19 +5,42 @@ from socketio_instance import socketio
 
 booking_bp = Blueprint("booking", __name__)
 
+# Fixed service prices mapping
+SERVICE_PRICES = {
+    1: 80,   # Plumbing
+    2: 100,  # Electrician
+    3: 90,   # Carpenter
+    4: 120,  # Painter
+    5: 50,   # Cleaner
+    6: 150,  # HVAC Technician
+    7: 110,  # Appliance Repair
+    8: 95    # Pest Control
+}
+
 # BOOK SERVICE
 @booking_bp.route("/book-service", methods=["POST"])
 def book_service():
     data = request.json
     try:
         cursor = db.cursor(buffered=True)
+        
+        # Get service details (name and price)
+        service_id = data.get("service_id")
+        cursor.execute("SELECT service_name FROM services WHERE id = %s", (service_id,))
+        service_row = cursor.fetchone()
+        service_name = service_row[0] if service_row else "Unknown Service"
+        
+        amount = SERVICE_PRICES.get(int(service_id) if service_id else 0, 50)
+        
         query = """
-        INSERT INTO bookings(resident_id, service_id, status, priority, apartment_id, mobile_number, problem_description, time_duration, preferred_date, preferred_time, additional_notes)
-        VALUES(%s, %s, 'pending', %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO bookings(resident_id, service_id, service_name, amount, payment_status, status, priority, apartment_id, mobile_number, problem_description, time_duration, preferred_date, preferred_time, additional_notes)
+        VALUES(%s, %s, %s, %s, 'pending', 'pending', %s, %s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(query, (
             data.get("resident_id"),
             data.get("service_id"),
+            service_name,
+            amount,
             data.get("priority", "medium"),
             data.get("apartment_id"),
             data.get("mobile_number"),
@@ -59,6 +82,21 @@ def book_service():
         print("Failed to create booking notification:", e)
 
     return jsonify({"status": "booking_created"})
+
+
+# UPDATE PAYMENT STATUS (SIMULATED PAYMENT DONE)
+@booking_bp.route("/bookings/<int:booking_id>/pay", methods=["POST"])
+def pay_booking(booking_id):
+    try:
+        cursor = db.cursor(buffered=True)
+        query = "UPDATE bookings SET payment_status='paid' WHERE id=%s"
+        cursor.execute(query, (booking_id,))
+        db.commit()
+        cursor.close()
+        return jsonify({"status": "success", "message": "Payment successful"})
+    except Exception as e:
+        print("Database error in pay_booking:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # VIEW BOOKINGS
