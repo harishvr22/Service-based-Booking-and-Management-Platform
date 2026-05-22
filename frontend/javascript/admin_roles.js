@@ -1,7 +1,7 @@
 // ── Admin Roles JavaScript ─────────────────────────────────────────────────
 
-// API Base URL
-const API_BASE = 'http://localhost:5000';
+// API Base URL - loaded from centralized config
+const API_BASE = window.API_BASE_URL || 'http://localhost:5000';
 
 // ── State ───────────────────────────────────────────────────────────────────
 let admins = [];
@@ -13,6 +13,7 @@ let isLoading = false;
 async function fetchAdmins() {
     try {
         const response = await fetch(`${API_BASE}/admins`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (data.status === 'success') {
             admins = data.admins || [];
@@ -32,6 +33,7 @@ async function addAdmin(adminData) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(adminData)
         });
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (data.status === 'success') {
             showToast('Admin added successfully', 'success');
@@ -56,6 +58,7 @@ async function deleteAdmin(adminId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: adminId })
         });
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (data.status === 'success') {
             showToast('Admin access revoked', 'success');

@@ -225,7 +225,7 @@ function closeMessageModal() {
  * Handle sending a message
  */
 async function handleSendMessage() {
-    const API_BASE = 'http://localhost:5000';
+    const API_BASE = `${API_BASE_URL}`;
     const sendBtn = document.getElementById('sendMsgBtn');
     const subjectInput = document.getElementById('msgSubject');
     const contentInput = document.getElementById('msgContent');
@@ -296,12 +296,13 @@ async function handleResolveComplaint(id, element) {
     btn.disabled = true;
 
     try {
-        const response = await fetch(`http://localhost:5000/admin/complaints/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/admin/complaints/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: 'resolved' })
         });
 
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
 
         if (data.status === 'success') {

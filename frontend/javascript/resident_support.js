@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchUserComplaints(userId) {
     const list = document.getElementById('complaintList');
     try {
-        const response = await fetch(`http://localhost:5000/admin/complaints`); // Using existing admin route but we will filter
+        const response = await fetch(`${API_BASE_URL}/admin/complaints`); // Using existing admin route but we will filter
         const data = await response.json();
         
         if (data.status === 'success') {
@@ -85,7 +85,7 @@ window.submitComplaint = function() {
         priority: priority
     };
     
-    fetch('http://localhost:5000/complaints', {
+    fetch(`${API_BASE_URL}/complaints`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -140,7 +140,7 @@ window.clearMyComplaints = function() {
         'Clear History', 
         'Are you sure you want to clear your complaint history? This will delete all your past records from the database.',
         () => {
-            fetch(`http://localhost:5000/complaints?user_id=${userId}`, {
+            fetch(`${API_BASE_URL}/complaints?user_id=${userId}`, {
                 method: 'DELETE'
             })
             .then(res => res.json())

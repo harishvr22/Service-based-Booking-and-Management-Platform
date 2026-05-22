@@ -112,7 +112,7 @@ document.querySelector(".submit").addEventListener("click", () => {
   const serviceName = urlParams.get('service') || 'General Service';
 
   // Fetch services to get service_id
-  fetch('http://localhost:5000/services')
+  fetch(`${API_BASE_URL}/services`)
     .then(response => response.json())
     .then(services => {
       const service = services.find(s => (s.service_name || s.name) === serviceName);
@@ -125,7 +125,7 @@ document.querySelector(".submit").addEventListener("click", () => {
       const residentId = sessionStorage.getItem('userId') || '1';
 
       // Post to backend
-      fetch('http://localhost:5000/book-service', {
+      fetch(`${API_BASE_URL}/book-service`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:5000';
+const API_BASE = window.API_BASE_URL || 'http://127.0.0.1:5000';
 let residentsData = {};
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch residents from API
     async function loadResidents() {
         try {
-            const response = await fetch(`${API_BASE_URL}/residents`);
+            const response = await fetch(`${API_BASE}/residents`);
             const data = await response.json();
             if (data.residents) {
                 residentsData = {};
@@ -138,9 +138,27 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('dPhone').textContent = res.phone || 'N/A';
         document.getElementById('dBookings').textContent = res.total_bookings || 0;
         
-        // Joined date from created_at
-        const joinedDate = res.created_at ? new Date(res.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
-        document.getElementById('dMovein').textContent = joinedDate;
+        // Move-in date from availability field in database
+        let moveInDisplay = 'N/A';
+        if (res.availability) {
+            try {
+                const moveInDate = new Date(res.availability);
+                if (!isNaN(moveInDate.getTime())) {
+                    moveInDisplay = moveInDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                } else {
+                    moveInDisplay = res.availability;
+                }
+            } catch (e) {
+                moveInDisplay = res.availability;
+            }
+        } else if (res.created_at) {
+            // Fallback to joined date if move-in date was not supplied
+            const joinedDate = new Date(res.created_at);
+            if (!isNaN(joinedDate.getTime())) {
+                moveInDisplay = joinedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+        }
+        document.getElementById('dMovein').textContent = moveInDisplay;
 
         const badge = document.getElementById('dBadge');
         badge.textContent = res.status.toUpperCase();
@@ -183,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function updateStatus(id, status) {
         try {
-            const response = await fetch(`${API_BASE_URL}/update-resident-status`, {
+            const response = await fetch(`${API_BASE}/update-resident-status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ resident_id: id, status: status })
@@ -199,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function deleteResident(id) {
         try {
-            const response = await fetch(`${API_BASE_URL}/resident/${id}`, {
+            const response = await fetch(`${API_BASE}/resident/${id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
@@ -256,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/notifications`, {
+            const response = await fetch(`${API_BASE}/notifications`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

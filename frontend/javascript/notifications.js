@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Try Socket.IO only if available
     try {
-        const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'], timeout: 3000 });
+        const socket = io(`${API_BASE_URL}`, { transports: ['websocket', 'polling'], timeout: 3000 });
         socket.on('new_notification', function (data) {
             const currentUserId = sessionStorage.getItem('userId') || sessionStorage.getItem('user_id');
             const matchAudience = allowedAudiences.includes(data.audience);
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
-            const response = await fetch('http://localhost:5000/notifications', { signal: controller.signal });
+            const response = await fetch(`${API_BASE_URL}/notifications`, { signal: controller.signal });
             clearTimeout(timeoutId);
             if (!response.ok) throw new Error('Failed to fetch');
             const allNotifs = await response.json();
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Try backend call (fire-and-forget)
         if (id) {
-            fetch(`http://localhost:5000/notifications/${id}/read`, { method: 'POST' })
+            fetch(`${API_BASE_URL}/notifications/${id}/read`, { method: 'POST' })
                 .catch(() => { /* Backend may not have this endpoint; local state already updated */ });
         }
 
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const deletePromises = currentNotifs.map(notif => {
                         const id = notif.id || notif._id || notif.notification_id;
                         if (id) {
-                            return fetch(`http://localhost:5000/notifications/${id}`, { method: 'DELETE' }).catch(() => { });
+                            return fetch(`${API_BASE_URL}/notifications/${id}`, { method: 'DELETE' }).catch(() => { });
                         }
                         return Promise.resolve();
                     });

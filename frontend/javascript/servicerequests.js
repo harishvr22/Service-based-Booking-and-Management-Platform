@@ -24,7 +24,7 @@ async function fetchRequests() {
     const providerTrade = userRole.replace('Provider: ', '').trim();
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/bookings');
+        const response = await fetch(`${API_BASE_URL}/bookings`);
         if (!response.ok) throw new Error('Server error');
         const data = await response.json();
         
@@ -205,7 +205,7 @@ function setupModalClose() {
 async function updateStatus(bookingId, newStatus) {
     const providerId = sessionStorage.getItem('userId');
     try {
-        const response = await fetch('http://localhost:5000/update-status', {
+        const response = await fetch(`${API_BASE_URL}/update-status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 

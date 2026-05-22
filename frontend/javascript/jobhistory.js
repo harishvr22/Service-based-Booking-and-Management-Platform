@@ -17,7 +17,7 @@ async function fetchHistory() {
     const userId = parseInt(sessionStorage.getItem('userId'));
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/bookings');
+        const response = await fetch(`${window.API_BASE_URL || 'http://127.0.0.1:5000'}/bookings`);
         if (!response.ok) throw new Error('Server error');
         const data = await response.json();
         

@@ -1,3 +1,5 @@
+const API_BASE = window.API_BASE_URL || 'http://localhost:5000';
+
 document.addEventListener('DOMContentLoaded', function () {
     // Sample Data (Same as in users.js for consistency in demo)
     const residents = [
@@ -87,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         confirmDeleteBtn.disabled = true;
         confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-        fetch('http://localhost:5000/delete-account', {
+        fetch(`${API_BASE}/delete-account`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -133,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const apartment_id = block && flat ? `${block}|${flat}` : flat;
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/update-profile', {
+            const response = await fetch(`${API_BASE}/update-profile`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -188,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const userId = sessionStorage.getItem('userId');
         if (userId) {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/profile/${userId}`);
+                const response = await fetch(`${API_BASE}/profile/${userId}`);
                 const result = await response.json();
                 if (result.status === 'success') {
                     const user = result.user;
@@ -206,7 +208,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('dispPhone').value = user.phone || 'Not set';
                     document.getElementById('dispFlat').value = flat;
                     document.getElementById('dispBlock').value = block;
-                    document.getElementById('dispMoveIn').value = user.availability || 'Not set';
+                    
+                    // Move-in date formatting
+                    let moveInDisplay = user.availability || 'Not set';
+                    if (user.availability && user.availability !== 'Not set') {
+                        try {
+                            const moveInDate = new Date(user.availability);
+                            if (!isNaN(moveInDate.getTime())) {
+                                moveInDisplay = moveInDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                            }
+                        } catch (e) {
+                            console.error("Error formatting move-in date:", e);
+                        }
+                    }
+                    document.getElementById('dispMoveIn').value = moveInDisplay;
+                    
                     document.getElementById('dispEmergencyName').value = user.skills || 'Not set';
                     document.getElementById('dispEmergencyPhone').value = user.bio || 'Not set';
                     
@@ -243,7 +259,22 @@ document.addEventListener('DOMContentLoaded', function () {
             
             document.getElementById('dispFlat').value = flat;
             document.getElementById('dispBlock').value = block;
-            document.getElementById('dispMoveIn').value = sessionStorage.getItem('userAvailability') || user.moveIn || 'Not set';
+            
+            // Move-in date formatting
+            const storageMoveIn = sessionStorage.getItem('userAvailability') || user.moveIn || 'Not set';
+            let moveInDisplay = storageMoveIn;
+            if (storageMoveIn && storageMoveIn !== 'Not set') {
+                try {
+                    const moveInDate = new Date(storageMoveIn);
+                    if (!isNaN(moveInDate.getTime())) {
+                        moveInDisplay = moveInDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                    }
+                } catch (e) {
+                    console.error("Error formatting storage move-in date:", e);
+                }
+            }
+            document.getElementById('dispMoveIn').value = moveInDisplay;
+            
             document.getElementById('dispEmergencyName').value = sessionStorage.getItem('userSkills') || 'Not set';
             document.getElementById('dispEmergencyPhone').value = sessionStorage.getItem('userBio') || 'Not set';
             

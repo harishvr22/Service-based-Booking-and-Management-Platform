@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Dynamic updates via Socket.IO if available (shared with notifications.js logic)
   try {
     if (typeof io !== 'undefined') {
-      const socket = io('http://localhost:5000');
+      const socket = io(`${API_BASE_URL}`);
       socket.on('new_notification', (data) => {
         // Refresh dashboard data if a relevant notification occurs
         // This makes the dashboard "dynamically change over booking"
@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function fetchDashboardData(userId) {
   console.log('Fetching dashboard data for user:', userId);
   Promise.all([
-    fetch(`http://localhost:5000/bookings?resident_id=${userId}`).then(r => r.ok ? r.json() : []),
-    fetch('http://localhost:5000/services').then(r => r.ok ? r.json() : [])
+    fetch(`${API_BASE_URL}/bookings?resident_id=${userId}`).then(r => r.ok ? r.json() : []),
+    fetch(`${API_BASE_URL}/services`).then(r => r.ok ? r.json() : [])
   ])
     .then(([bookings, services]) => {
       console.log(`Received ${bookings.length} bookings and ${services.length} services`);
@@ -154,7 +154,7 @@ window.submitComplaint = function() {
   
   console.log('Submitting complaint:', payload);
   
-  fetch('http://localhost:5000/complaints', {
+  fetch(`${API_BASE_URL}/complaints`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)

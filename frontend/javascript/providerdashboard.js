@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function fetchProfile(userId) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/profile/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/profile/${userId}`);
         const result = await response.json();
 
         if (result.status === 'success') {
@@ -191,7 +191,7 @@ if (logoutBtn) {
 
 // Live Updates via Socket.IO
 try {
-    const socket = io('http://localhost:5000');
+    const socket = io(`${API_BASE_URL}`);
     socket.on('new_notification', function (data) {
         console.log('Live update triggered by notification:', data);
         const userId = sessionStorage.getItem('userId');
@@ -248,7 +248,7 @@ window.submitComplaint = function() {
     priority: priority
   };
   
-  fetch('http://localhost:5000/complaints', {
+    fetch(`${API_BASE_URL}/complaints`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)

@@ -38,7 +38,7 @@ function loadBookings() {
   }
 
   console.log('Loading bookings for user:', userId);
-  fetch(`http://localhost:5000/bookings?resident_id=${userId}`)
+  fetch(`${API_BASE_URL}/bookings?resident_id=${userId}`)
     .then(response => {
       console.log('Bookings response status:', response.status);
       return response.json();
@@ -105,20 +105,52 @@ function renderBookingsList(bookings, serviceMap) {
       
       const dateStr = booking.preferred_date && booking.preferred_time ? `${booking.preferred_date} - ${booking.preferred_time}` : (booking.preferred_date || 'Date TBD');
       
+      // Fixed basic price display
+      const priceVal = booking.amount || 0;
+      const priceHTML = `<p style="font-size: 13px; color: #ccc; margin-top: 4px;"><i class="fas fa-dollar-sign"></i> Price: <strong style="color: var(--orange);">$${priceVal}</strong></p>`;
+      
+      // Payment badge/button
+      const payStatus = booking.payment_status || 'pending';
+      let paymentHTML = '';
+      if (bStatus.toLowerCase() === 'completed') {
+          if (payStatus === 'pending') {
+              paymentHTML = `
+                <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <span class="badge-solid badge-pending" style="font-size: 11px; padding: 4px 8px;">Unpaid</span>
+                  <button class="btn-pay" onclick="payBooking(${booking.id})" style="background: #2ecc71; color: black; border: none; padding: 6px 12px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 12px; transition: transform 0.2s, background-color 0.2s;" onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='#27ae60';" onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#2ecc71';">
+                    <i class="fas fa-wallet"></i> Payment Done
+                  </button>
+                </div>
+              `;
+          } else {
+              paymentHTML = `
+                <div style="margin-top: 10px;">
+                  <span class="badge-solid badge-accepted" style="font-size: 11px; color: #2ecc71; border-color: #2ecc71; background: rgba(46,204,113,0.1); padding: 4px 8px;"><i class="fas fa-check-circle"></i> Paid</span>
+                </div>
+              `;
+          }
+      } else {
+          paymentHTML = `
+            <div style="margin-top: 10px;">
+              <span class="badge-solid badge-pending" style="font-size: 11px; color: #f1c40f; border-color: #f1c40f; background: rgba(241,196,15,0.1); padding: 4px 8px;">Payment: Pending Completion</span>
+            </div>
+          `;
+      }
+
       let reviewSection = '';
       if (bStatus.toLowerCase() === 'completed') {
          if (booking.review || booking.rating) {
              const rating = booking.rating || 5;
              const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
              reviewSection = `
-               <div class="booking-rating">
+               <div class="booking-rating" style="margin-top: 8px;">
                  <span class="stars">${stars}</span>
                  "${booking.review || ''}"
                </div>
              `;
          } else {
              reviewSection = `
-               <div class="booking-rating" style="margin-top: 10px;">
+               <div class="booking-rating" style="margin-top: 8px;">
                  <button class="btn-review" onclick="openReviewModal(${booking.id})" style="background: var(--orange); border: none; padding: 6px 12px; border-radius: 4px; font-weight: 600; cursor: pointer;">Leave Feedback</button>
                </div>
              `;
@@ -139,9 +171,11 @@ function renderBookingsList(bookings, serviceMap) {
           <div class="item-details">
             <h4>${sName}</h4>
             <p><i class="far fa-calendar-alt"></i> ${dateStr}</p>
+            ${priceHTML}
             <p class="problem-summary" style="font-size: 13px; color: #aaa; margin-top: 5px; font-style: italic;">
               "${booking.problem_description || 'No description provided'}"
             </p>
+            ${paymentHTML}
             ${reviewSection}
           </div>
           <div class="item-actions">
@@ -160,7 +194,7 @@ function deleteBooking(bookingId) {
     'Delete Booking',
     'Are you sure you want to delete this booking record? This action cannot be undone.',
     () => {
-      fetch(`http://localhost:5000/bookings/${bookingId}`, {
+      fetch(`${API_BASE_URL}/bookings/${bookingId}`, {
         method: 'DELETE'
       })
         .then(response => response.json())
@@ -367,7 +401,7 @@ function openReviewModal(bookingId) {
     submitBtn.textContent = 'Submitting...';
     submitBtn.disabled = true;
 
-    fetch('http://localhost:5000/add-review', {
+    fetch(`${API_BASE_URL}/add-review`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ booking_id: bookingId, rating: rating, review: review })
@@ -395,3 +429,28 @@ function openReviewModal(bookingId) {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 }
+
+// SIMULATED PAYMENT HANDLER
+window.payBooking = function(bookingId) {
+  showToast('Processing simulated payment...', 'info');
+  
+  fetch(`${API_BASE_URL}/bookings/${bookingId}/pay`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showToast('Simulated payment successful!', 'success');
+      loadBookings();
+    } else {
+      showToast('Error: ' + data.message, 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error processing payment:', error);
+    showToast('Failed to complete simulated payment', 'error');
+  });
+};

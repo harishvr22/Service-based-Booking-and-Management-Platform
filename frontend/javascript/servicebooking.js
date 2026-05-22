@@ -207,7 +207,7 @@ function confirmBooking() {
       additional_notes: additionalNotes
     };
 
-    fetch('http://localhost:5000/book-service', {
+    fetch(`${API_BASE_URL}/book-service`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

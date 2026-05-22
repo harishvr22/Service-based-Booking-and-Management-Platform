@@ -10,7 +10,7 @@ if (loginForm) {
     console.log("Login:", email, password);
 
     // Connect to Flask API
-    fetch('http://127.0.0.1:5000/login', {
+    fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ if (signupForm) {
     } else {
       data.phone = document.getElementById("providerPhone").value;
       const serviceCategory = document.getElementById("serviceCategory")?.value || '';
-      
+
       // Map category to Role
       const roleMap = {
         'Plumbing': 'Provider: Plumber',
@@ -176,13 +176,13 @@ if (signupForm) {
         'HVAC': 'Provider: HVAC Technician'
       };
       data.role = roleMap[serviceCategory] || 'Provider';
-      
+
       const specialization = document.getElementById("specialization")?.value || '';
       data.skills = specialization || 'General Service';
 
       const experience = document.getElementById("experience")?.value || '';
       const serviceArea = document.getElementById("serviceArea")?.value || '';
-      
+
       // Combine experience and area into Bio
       let bioParts = [];
       if (experience) bioParts.push(`Experience: ${experience}`);
@@ -210,7 +210,7 @@ if (signupForm) {
     // Connect to Flask API
     console.log('Sending data to backend:', JSON.stringify(data, null, 2));
 
-    fetch('http://127.0.0.1:5000/signup', {
+    fetch(`${API_BASE_URL}/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -564,32 +564,32 @@ function sendOTP() {
     showNotification("Please enter your email", "error");
     return;
   }
-  
-  const btn = document.querySelector("#forgotStep1 .btn");
-  if(btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
-  fetch('http://127.0.0.1:5000/forgot-password', {
+  const btn = document.querySelector("#forgotStep1 .btn");
+  if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+  fetch(`${API_BASE_URL}/forgot-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: emailInput })
   })
-  .then(res => res.json())
-  .then(data => {
-    if(btn) btn.innerHTML = 'Send OTP';
-    if (data.status === 'success') {
-      showNotification(data.message, "success");
-      resetEmail = emailInput;
-      document.getElementById("forgotStep1").style.display = "none";
-      document.getElementById("forgotStep2").style.display = "block";
-    } else {
-      showNotification(data.message || "Failed to send OTP", "error");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    if(btn) btn.innerHTML = 'Send OTP';
-    showNotification("Server error while sending OTP", "error");
-  });
+    .then(res => res.json())
+    .then(data => {
+      if (btn) btn.innerHTML = 'Send OTP';
+      if (data.status === 'success') {
+        showNotification(data.message, "success");
+        resetEmail = emailInput;
+        document.getElementById("forgotStep1").style.display = "none";
+        document.getElementById("forgotStep2").style.display = "block";
+      } else {
+        showNotification(data.message || "Failed to send OTP", "error");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      if (btn) btn.innerHTML = 'Send OTP';
+      showNotification("Server error while sending OTP", "error");
+    });
 }
 
 function verifyOTP() {
@@ -599,25 +599,25 @@ function verifyOTP() {
     return;
   }
 
-  fetch('http://127.0.0.1:5000/verify-otp', {
+  fetch(`${API_BASE_URL}/verify-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: resetEmail, otp: otpInput })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data.status === 'success') {
-      showNotification(data.message, "success");
-      document.getElementById("forgotStep2").style.display = "none";
-      document.getElementById("forgotStep3").style.display = "block";
-    } else {
-      showNotification(data.message || "Invalid OTP", "error");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    showNotification("Server error while verifying OTP", "error");
-  });
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showNotification(data.message, "success");
+        document.getElementById("forgotStep2").style.display = "none";
+        document.getElementById("forgotStep3").style.display = "block";
+      } else {
+        showNotification(data.message || "Invalid OTP", "error");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showNotification("Server error while verifying OTP", "error");
+    });
 }
 
 function resetPassword() {
@@ -634,23 +634,23 @@ function resetPassword() {
     return;
   }
 
-  fetch('http://127.0.0.1:5000/reset-password', {
+  fetch(`${API_BASE_URL}/reset-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: resetEmail, otp: otpInput, new_password: newPass })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data.status === 'success') {
-      showConfirmDialog("Success", "Password reset successfully. You can now login.", () => {
-        closeForgotModal();
-      }, "Login", "Login");
-    } else {
-      showNotification(data.message || "Failed to reset password", "error");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    showNotification("Server error while resetting password", "error");
-  });
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showConfirmDialog("Success", "Password reset successfully. You can now login.", () => {
+          closeForgotModal();
+        }, "Login", "Login");
+      } else {
+        showNotification(data.message || "Failed to reset password", "error");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showNotification("Server error while resetting password", "error");
+    });
 }

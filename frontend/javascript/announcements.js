@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Announcements JS Initialized');
 
-    const API_BASE = 'http://localhost:5000';
+    const API_BASE = window.API_BASE_URL || 'http://localhost:5000';
     const audienceButtons = document.querySelectorAll('.audience-btn');
     const publishBtn = document.getElementById('publishBtn');
     const announcementList = document.getElementById('announcementList');
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         publishBtn.disabled = true;
 
         const adminId = localStorage.getItem('userId') || '1';
-        const adminName = localStorage.getItem('userName') || 'Alex Reed';
+        const adminName = localStorage.getItem('userName') || 'Admin';
 
         const payload = {
             title: title,

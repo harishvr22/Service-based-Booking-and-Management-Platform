@@ -79,7 +79,7 @@ function updateProfile() {
     button.innerText = 'Updating...';
     button.disabled = true;
 
-    fetch('http://localhost:5000/update-profile', {
+    fetch(`${API_BASE_URL}/update-profile`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ function changePassword() {
     button.innerText = 'Changing...';
     button.disabled = true;
 
-    fetch('http://localhost:5000/change-password', {
+    fetch(`${API_BASE_URL}/change-password`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

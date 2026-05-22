@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const apiHost = window.location.hostname || '127.0.0.1';
-    const API_BASE_URL = `http://${apiHost}:5000`;
-    
+    const API_BASE_URL = window.API_BASE_URL || `http://${apiHost}:5000`;
+
     const userId = sessionStorage.getItem('userId');
     const userRole = sessionStorage.getItem('userRole');
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const activeUserRole = userRole || 'admin';
 
     // Logout handler
-    document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+    document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
         e.preventDefault();
         sessionStorage.clear();
         window.location.href = 'login.html';
@@ -23,19 +23,19 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             if (data.status === 'success') {
                 const user = data.user;
-                
+
                 // Populate forms
                 document.getElementById('adminName').value = user.name || '';
                 document.getElementById('adminEmail').value = user.email || '';
                 document.getElementById('adminPhone').value = user.phone || '';
                 document.getElementById('adminRole').value = (user.role || 'Admin').toUpperCase();
-                
+
                 // Update sidebars and headers
                 const initials = (user.name || 'Admin').substring(0, 2).toUpperCase();
                 document.getElementById('sidebar-name').textContent = user.name;
                 document.getElementById('sidebar-role').textContent = (user.role || 'Admin').toUpperCase();
                 document.getElementById('sidebar-avatar').textContent = initials;
-                
+
                 document.getElementById('main-name').textContent = user.name;
                 document.getElementById('main-avatar').textContent = initials;
             } else {
@@ -51,9 +51,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     loadAdminProfile();
 
     // Handle Profile Update
-    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+    document.getElementById('profileForm').addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         const name = document.getElementById('adminName').value;
         const email = document.getElementById('adminEmail').value;
         const phone = document.getElementById('adminPhone').value;
@@ -88,9 +88,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     // Handle Password Update
-    document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+    document.getElementById('passwordForm').addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         const currentPassword = document.getElementById('currentPassword').value;
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;

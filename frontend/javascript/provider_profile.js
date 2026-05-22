@@ -50,7 +50,7 @@ async function setupDeleteAccount() {
         confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/delete-account', {
+            const response = await fetch(`${API_BASE_URL}/delete-account`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -79,7 +79,7 @@ async function setupDeleteAccount() {
 
 async function fetchProfile(userId) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/profile/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/profile/${userId}`);
         const result = await response.json();
 
         if (result.status === 'success') {
@@ -118,7 +118,7 @@ async function fetchProfile(userId) {
 
 async function fetchJobStats(userId) {
     try {
-        const response = await fetch('http://127.0.0.1:5000/bookings');
+        const response = await fetch(`${API_BASE_URL}/bookings`);
         const bookings = await response.json();
         if (!Array.isArray(bookings)) throw new Error('Invalid data format');
 
@@ -152,7 +152,7 @@ function setupSaveButton(userId) {
         saveBtn.disabled = true;
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/update-profile', {
+            const response = await fetch(`${API_BASE_URL}/update-profile`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

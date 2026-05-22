@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const apiHost = window.location.hostname || '127.0.0.1';
-    const API_BASE_URL = `http://${apiHost}:5000`;
-    
+    const API_BASE_URL = window.API_BASE_URL || `http://${apiHost}:5000`;
+
     // Update admin profile details from session
     const adminName = sessionStorage.getItem('userName');
     const adminRole = sessionStorage.getItem('userRole');
     if (adminName) {
         const nameEl = document.querySelector('.admin-info .name');
         if (nameEl) nameEl.textContent = adminName;
-        
+
         const avatarEl = document.querySelector('.admin-avatar');
         if (avatarEl) avatarEl.textContent = adminName.substring(0, 2).toUpperCase();
     }
@@ -16,27 +16,34 @@ document.addEventListener('DOMContentLoaded', async function () {
         const roleEl = document.querySelector('.admin-info .role');
         if (roleEl) roleEl.textContent = adminRole.toUpperCase();
     }
-    
+
     // Load dashboard data from API
     async function loadDashboardData() {
         try {
             // Show loading states
             updateStatsDisplay('Loading...');
-            
+
             const response = await fetch(`${API_BASE_URL}/admin/dashboard`);
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             const data = await response.json();
             console.log('Dashboard Data Received:', data);
-            
+
             // Update stats
             if (data.stats) {
-                updateStatsDisplay(data.stats.total_users, data.stats.active_providers, data.stats.active_bookings, data.stats.revenue);
+                updateStatsDisplay(
+                    data.stats.total_users,
+                    data.stats.active_providers,
+                    data.stats.active_bookings,
+                    data.stats.revenue,
+                    data.stats.paid_bookings,
+                    data.stats.pending_payments
+                );
             }
-            
+
             // Update recent bookings table
             if (data.recent_bookings) {
                 let clearedBookingIds = JSON.parse(localStorage.getItem('cleared_admin_bookings') || '[]');
@@ -44,24 +51,24 @@ document.addEventListener('DOMContentLoaded', async function () {
                 window.currentRecentBookings = filteredBookings;
                 updateBookingsTable(filteredBookings);
             }
-            
+
             // Update action required panel
             if (data.action_required) {
                 updateActionPanel(data.action_required);
             }
-            
+
             // Update charts with real data
             if (data.charts) {
                 updateCharts(data.charts);
             }
-            
+
         } catch (error) {
             console.error('Error loading dashboard data:', error);
             const tableBody = document.querySelector('.ad-table tbody');
             if (tableBody) {
                 tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#888;padding:20px;">Unable to load recent bookings from the database.</td></tr>';
             }
-            
+
             // Don't show error notification for development, just log it
             if (error.message.includes('Failed to fetch')) {
                 console.log('API endpoint not available yet - using default data');
@@ -71,32 +78,36 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         }
     }
-    
+
     // Update stats display
-    function updateStatsDisplay(users, providers, bookings, revenue) {
+    function updateStatsDisplay(users, providers, bookings, revenue, paidBookings, pendingPayments) {
         const userStat = document.getElementById('stat-users');
         const providerStat = document.getElementById('stat-providers');
         const bookingStat = document.getElementById('stat-bookings');
         const revenueStat = document.getElementById('stat-revenue');
-        
+        const paidBookingsStat = document.getElementById('stat-paid-bookings');
+        const pendingPaymentsStat = document.getElementById('stat-pending-payments');
+
         if (userStat) userStat.textContent = users || '0';
         if (providerStat) providerStat.textContent = providers || '0';
         if (bookingStat) bookingStat.textContent = bookings || '0';
         if (revenueStat) revenueStat.textContent = revenue || '$0';
+        if (paidBookingsStat) paidBookingsStat.textContent = paidBookings || '0';
+        if (pendingPaymentsStat) pendingPaymentsStat.textContent = pendingPayments || '0';
     }
-    
+
     // Update recent bookings table
     function updateBookingsTable(bookings) {
         const tableBody = document.querySelector('.ad-table tbody');
         if (!tableBody) return;
-        
+
         tableBody.innerHTML = '';
-        
+
         if (!bookings || bookings.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#888;padding:20px;">No recent bookings found</td></tr>';
             return;
         }
-        
+
         bookings.forEach(booking => {
             const row = document.createElement('tr');
             const badgeClass = getStatusBadgeClass(booking.status);
@@ -109,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             tableBody.appendChild(row);
         });
     }
-    
+
     // Map booking statuses to badge classes
     function getStatusBadgeClass(status) {
         const normalized = String(status || 'pending').toLowerCase().replace(/\s+/g, '-');
@@ -129,18 +140,18 @@ document.addEventListener('DOMContentLoaded', async function () {
     function updateActionPanel(actions) {
         const actionList = document.getElementById('actionRequiredList');
         if (!actionList) return;
-        
+
         actionList.innerHTML = '';
-        
+
         let hasActions = false;
 
         // 1. Resident Approvals
         if (actions.resident_approvals > 0) {
             hasActions = true;
             const item = createActionItem(
-                'icon-orange', 
-                'fas fa-users', 
-                'Resident Approvals', 
+                'icon-orange',
+                'fas fa-users',
+                'Resident Approvals',
                 `${actions.resident_approvals} new residents`,
                 'users.html'
             );
@@ -151,35 +162,35 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (actions.provider_approvals > 0) {
             hasActions = true;
             const item = createActionItem(
-                'icon-orange', 
-                'fas fa-wrench', 
-                'Provider Approvals', 
+                'icon-orange',
+                'fas fa-wrench',
+                'Provider Approvals',
                 `${actions.provider_approvals} awaiting review`,
                 'admin_providers.html'
             );
             actionList.appendChild(item);
         }
-        
+
         // 3. Open Complaints
         if (actions.open_complaints > 0) {
             hasActions = true;
             const item = createActionItem(
-                'icon-red', 
-                'fas fa-exclamation-triangle', 
-                'Open Complaints', 
+                'icon-red',
+                'fas fa-exclamation-triangle',
+                'Open Complaints',
                 `${actions.open_complaints} need attention`,
                 'admin_complaints.html'
             );
             actionList.appendChild(item);
         }
-        
+
         // 4. Pending Bookings
         if (actions.pending_bookings > 0) {
             hasActions = true;
             const item = createActionItem(
-                'icon-orange', 
-                'far fa-clock', 
-                'Pending Bookings', 
+                'icon-orange',
+                'far fa-clock',
+                'Pending Bookings',
                 `${actions.pending_bookings} to approve`,
                 'admin_monitoring.html'
             );
@@ -196,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         div.className = 'ad-action-item';
         div.style.cursor = 'pointer';
         div.onclick = () => window.location.href = link;
-        
+
         div.innerHTML = `
             <div class="ad-action-icon ${iconClass}"><i class="${iconIcon}"></i></div>
             <div class="ad-action-info">
@@ -206,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         `;
         return div;
     }
-    
+
     // Update charts with real data
     function updateCharts(chartData) {
         // Update booking trends chart
@@ -240,7 +251,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 });
             }
         }
-        
+
         // Update service breakdown chart
         if (chartData.service_breakdown) {
             const serviceCtx = document.getElementById('serviceBreakdownChart');
@@ -284,7 +295,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 });
             }
         }
-        
+
         // Update revenue trend chart
         if (chartData.revenue_trends) {
             const revenueCtx = document.getElementById('revenueTrendChart');
@@ -335,7 +346,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         }
     }
-    
+
     // Shared Chart Options
     const commonOptions = {
         responsive: true,
@@ -507,8 +518,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     loadDashboardData();
 
     // Socket.io for real-time updates
-    const socket = io('http://localhost:5000');
-    
+    const socket = io(`${API_BASE_URL}`);
+
     socket.on('connect', () => {
         console.log('Connected to real-time server');
     });
