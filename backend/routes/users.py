@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 users_bp = Blueprint('users', __name__)
 
@@ -35,8 +36,11 @@ def register_user():
     if cursor.fetchone():
         return jsonify({'status': 'error', 'message': 'Email already exists'}), 400
     
+    # Generate secure password hash
+    hashed_password = generate_password_hash(password)
+    
     query = 'INSERT INTO users (name, email, password, phone, apartment_id, role, status, skills, bio, availability, created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())'
-    cursor.execute(query, (name, email, password, phone, apartment_id, role, status, skills, bio, availability))
+    cursor.execute(query, (name, email, hashed_password, phone, apartment_id, role, status, skills, bio, availability))
     cursor.close()
     db.commit()
     
@@ -58,7 +62,8 @@ def login_user():
     if not user:
         return jsonify({'status': 'error', 'message': 'Invalid email or password'}), 401
     
-    if user['password'] != password:
+    # Verify using secure password hash check
+    if not check_password_hash(user['password'], password):
         return jsonify({'status': 'error', 'message': 'Invalid email or password'}), 401
     
     if user['status'] == 'pending':
