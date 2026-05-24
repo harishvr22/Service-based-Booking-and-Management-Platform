@@ -53,7 +53,7 @@ async function fetchDashboardStats() {
     const providerTrade = userRole.replace('Provider: ', '').trim();
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/bookings');
+        const response = await fetch(`${API_BASE_URL}/bookings`);
         if (!response.ok) throw new Error('Server error');
         const bookings = await response.json();
 
@@ -90,7 +90,7 @@ async function fetchPendingRequests() {
     const providerTrade = userRole.replace('Provider: ', '').trim();
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/bookings');
+        const response = await fetch(`${API_BASE_URL}/bookings`);
         if (!response.ok) throw new Error('Server error');
         const bookings = await response.json();
 
@@ -146,7 +146,7 @@ async function fetchRecentHistory() {
     const userId = parseInt(sessionStorage.getItem('userId'));
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/bookings');
+        const response = await fetch(`${API_BASE_URL}/bookings`);
         if (!response.ok) throw new Error('Server error');
         const bookings = await response.json();
 

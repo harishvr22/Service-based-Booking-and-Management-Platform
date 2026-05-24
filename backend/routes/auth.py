@@ -5,6 +5,8 @@ import string
 from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -26,15 +28,16 @@ def delete_account():
 
         # Verify user exists and password matches
         if user_id:
-            query = "SELECT id, email FROM users WHERE id=%s AND password=%s"
-            cursor.execute(query, (user_id, password))
+            query = "SELECT id, email, password FROM users WHERE id=%s"
+            cursor.execute(query, (user_id,))
         else:
-            query = "SELECT id, email FROM users WHERE email=%s AND password=%s"
-            cursor.execute(query, (email, password))
+            query = "SELECT id, email, password FROM users WHERE email=%s"
+            cursor.execute(query, (email,))
 
         user = cursor.fetchone()
 
-        if not user:
+        if not user or not check_password_hash(user["password"], password):
+            cursor.close()
             return jsonify({"status": "error", "message": "Invalid credentials"}), 401
 
         # Delete related bookings (as resident or provider)
@@ -117,17 +120,19 @@ def change_password():
     cursor = db.cursor(dictionary=True, buffered=True)
 
     # Verify current password
-    query = "SELECT id FROM users WHERE id=%s AND password=%s"
-    cursor.execute(query, (user_id, current_password))
+    query = "SELECT id, password FROM users WHERE id=%s"
+    cursor.execute(query, (user_id,))
 
     user = cursor.fetchone()
 
-    if not user:
+    if not user or not check_password_hash(user["password"], current_password):
+        cursor.close()
         return jsonify({"status": "error", "message": "Current password is incorrect"}), 401
 
     # Update password
+    hashed_pwd = generate_password_hash(new_password)
     query = "UPDATE users SET password=%s WHERE id=%s"
-    cursor.execute(query, (new_password, user_id))
+    cursor.execute(query, (hashed_pwd, user_id))
 
     cursor.close()
     db.commit()
@@ -370,8 +375,8 @@ def forgot_password():
     cursor.close()
 
     # Send Email
-    sender_email = "kit27.am22@gmail.com" 
-    sender_password = "myitunhvvburfavs" 
+    sender_email = os.getenv("MAIL_DEFAULT_SENDER", "kit27.am22@gmail.com")
+    sender_password = os.getenv("MAIL_PASSWORD", "myitunhvvburfavs")
     
     msg = MIMEText(f"Hello {user['name']},\n\nYour OTP for password reset is: {otp}\n\nThis OTP is valid for 15 minutes.\n\nDo not share this OTP with anyone.")
     msg['Subject'] = "ServiceBookingSite - Password Reset OTP"
@@ -442,7 +447,8 @@ def reset_password():
         return jsonify({"status": "error", "message": "Invalid or expired OTP"}), 400
 
     # Update password in users table
-    cursor.execute("UPDATE users SET password=%s WHERE email=%s", (new_password, email))
+    hashed_pwd = generate_password_hash(new_password)
+    cursor.execute("UPDATE users SET password=%s WHERE email=%s", (hashed_pwd, email))
     
     # Delete OTP record after successful use
     cursor.execute("DELETE FROM password_resets WHERE email=%s", (email,))

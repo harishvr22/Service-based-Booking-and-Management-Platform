@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
+from werkzeug.security import generate_password_hash
 
 admins_bp = Blueprint("admins", __name__)
 
@@ -50,12 +51,13 @@ def add_admin():
         return jsonify({"status": "error", "message": "Email already exists"}), 400
     
     # Insert new admin
+    hashed_password = generate_password_hash(password)
     query = """
     INSERT INTO users (name, email, password, role)
     VALUES (%s, %s, %s, %s)
     """
     
-    cursor.execute(query, (name, email, password, role.lower()))
+    cursor.execute(query, (name, email, hashed_password, role.lower()))
     db.commit()
     
     return jsonify({"status": "success", "message": "Admin added successfully"})
