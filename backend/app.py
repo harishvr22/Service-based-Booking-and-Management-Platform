@@ -1,3 +1,8 @@
+import os
+import sys
+# Dynamically add the current directory to sys.path so that absolute imports work when run as a module
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from flask import Flask
 from flask_cors import CORS
 from socketio_instance import socketio
