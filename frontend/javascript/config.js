@@ -19,7 +19,7 @@ const API_BASE_URL = (() => {
     // 3. Production Deployment (Render)
     // IMPORTANT: Replace the placeholder below with your actual deployed Render backend URL.
     // Example: 'https://apartment-service-backend.onrender.com'
-    const PRODUCTION_BACKEND_URL = 'https://YOUR_BACKEND_SERVICE.onrender.com';
+    const PRODUCTION_BACKEND_URL = 'https://service-based-booking-and-management.onrender.com';
     
     if (PRODUCTION_BACKEND_URL.includes('YOUR_BACKEND_SERVICE')) {
         console.warn(
