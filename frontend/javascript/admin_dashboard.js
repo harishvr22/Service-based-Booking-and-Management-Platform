@@ -518,17 +518,25 @@ document.addEventListener('DOMContentLoaded', async function () {
     loadDashboardData();
 
     // Socket.io for real-time updates
-    const socket = io(`${API_BASE_URL}`);
+    if (typeof io !== 'undefined') {
+        try {
+            const socket = io(`${API_BASE_URL}`);
 
-    socket.on('connect', () => {
-        console.log('Connected to real-time server');
-    });
+            socket.on('connect', () => {
+                console.log('Connected to real-time server');
+            });
 
-    socket.on('new_complaint', (data) => {
-        console.log('New complaint received:', data);
-        // Refresh dashboard data to update Action Required section
-        loadDashboardData();
-    });
+            socket.on('new_complaint', (data) => {
+                console.log('New complaint received:', data);
+                // Refresh dashboard data to update Action Required section
+                loadDashboardData();
+            });
+        } catch (err) {
+            console.warn('Failed to initialize Socket.IO:', err);
+        }
+    } else {
+        console.warn('Socket.IO client library is not loaded. Real-time updates are disabled.');
+    }
 
     const clearHistoryBtn = document.getElementById('clear-history-btn');
     if (clearHistoryBtn) {
